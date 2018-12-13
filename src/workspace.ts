@@ -21,10 +21,15 @@ import * as pQueue from 'p-queue';
 import * as vscode from 'vscode';
 import * as vscode_helpers from 'vscode-helpers';
 
+
 /**
  * A context for a workspace instaqnce.
  */
 export interface WorkspaceContext {
+    /**
+     * The extension context.
+     */
+    readonly extension: vscode.ExtensionContext;
     /**
      * The underlying file system watcher.
      */
@@ -33,6 +38,10 @@ export interface WorkspaceContext {
      * The logger for that workspace.
      */
     readonly logger: vscode_helpers.Logger;
+    /**
+     * The output channel.
+     */
+    readonly output: vscode.OutputChannel;
     /**
      * The underlying queue for handling concurrent actions between all workspaces.
      */

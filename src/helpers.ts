@@ -15,40 +15,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as ego_contracts from './contracts';
+import * as path from 'path';
+import * as os from 'os';
+
+
 /**
- * Extension configuration.
+ * Returns the (possible path) of the extension's sub folder inside the home directory.
+ *
+ * @return {string} The path of the extension's sub folder inside the home directory.
  */
-export interface ExtensionConfiguration {
+export function getExtensionDirInHome() {
+    return path.resolve(
+        path.join(os.homedir(),
+                  ego_contracts.HOMEDIR_SUBFOLDER)
+    );
 }
-
-/**
- * List of file change events.
- */
-export enum FileChangeType {
-    /**
-     * Changed
-     */
-    Changed,
-    /**
-     * Created / new
-     */
-    Created,
-    /**
-     * Deleted
-     */
-    Deleted,
-    /**
-     * Saved / updated by user
-     */
-    Saved,
-}
-
-/**
- * (Display) Name of the extension.
- */
-export const EXTENSION_NAME = 'Power Tools by e.GO';
-
-/**
- * The name of the extension's subfolder inside the home directory of the current user.
- */
-export const HOMEDIR_SUBFOLDER = '.vscode-powertools';
