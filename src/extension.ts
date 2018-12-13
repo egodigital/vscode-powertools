@@ -104,22 +104,34 @@ async function createNewWorkspace(folder: vscode.WorkspaceFolder): Promise<ego_w
     return newWorkspace;
 }
 
-async function onDidSaveTextDocument(e: vscode.TextDocument) {
+async function onDidSaveTextDocument(doc: vscode.TextDocument) {
+    await withTextDocument(doc, async (ws, d) => {
+        await ws.onDidSaveTextDocument(d);
+    });
+}
+
+async function withTextDocument(
+    doc: vscode.TextDocument,
+    action: (ws: ego_workspace.Workspace, d: vscode.TextDocument) => void | PromiseLike<void>,
+) {
     if (isDeactivating) {
         return;
     }
 
     for (const WS of ego_workspace.getAllWorkspaces()) {
         try {
-            if (WS.isPathOf(e.fileName)) {
-                await WS.onDidSaveTextDocument(e);
+            if (WS.isPathOf(doc.fileName)) {
+                await Promise.resolve(
+                    action(WS, doc)
+                );
             }
         } catch (e) {
-            ego_log.CONSOLE
-                   .trace(e, 'extension.onDidSaveTextDocument(1)');
+            WS.logger
+              .err(e, 'extension.withTextDocument(1)');
         }
     }
 }
+
 
 export async function activate(context: vscode.ExtensionContext) {
     const WF = vscode_helpers.buildWorkflow();
