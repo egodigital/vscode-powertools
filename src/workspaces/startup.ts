@@ -84,7 +84,7 @@ export async function onStartup() {
                         }
                     } catch (e) {
                         WORKSPACE.logger
-                                .err(e, 'workspaces.onStartup(1)');
+                                 .err(e, 'workspaces.onStartup(1)');
                     }
                 }
                 break;
