@@ -31,6 +31,16 @@ export interface ExtensionConfiguration extends WithValues {
 export type StartupEntry = string;
 
 /**
+ * A static value item.
+ */
+export interface StaticValueItem extends ValueItem {
+    /**
+     * The value.
+     */
+    value: any;
+}
+
+/**
  * A value.
  */
 export interface Value {
@@ -47,7 +57,17 @@ export interface Value {
 /**
  * A value entry.
  */
-export type ValueEntry = string;
+export type ValueEntry = string | ValueItem;
+
+/**
+ * A value item.
+ */
+export interface ValueItem {
+    /**
+     * The value type.
+     */
+    type?: string;
+}
 
 /**
  * An object which contains one or more value entries.

@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -44,6 +44,24 @@
                                         {
                                             "description": "A static string value.",
                                             "type": "string"
+                                        },
+                                        {
+                                            "description": "A static value.",
+                                            "type": "object",
+                                            "properties": {
+                                                "type": {
+                                                    "description": "The type.",
+                                                    "enum": [
+                                                        "",
+                                                        "static",
+                                                        "string"
+                                                    ],
+                                                    "type": "string"
+                                                },
+                                                "value": {
+                                                    "description": "The value."
+                                                }
+                                            }
                                         }
                                     ]
                                 }

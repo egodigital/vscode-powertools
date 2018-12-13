@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as _ from 'lodash';
 import * as ego_contracts from './contracts';
 import * as vscode_helpers from 'vscode-helpers';
 
@@ -132,14 +133,38 @@ export function toValues(obj: ego_contracts.WithValues): ego_contracts.Value[] {
     if (obj) {
         const ALL_ENTRIES = obj.values;
         if (ALL_ENTRIES) {
-            for (const NAME in ALL_ENTRIES) {
-                const ENTRY = ALL_ENTRIES[NAME];
+            for (const KEY in ALL_ENTRIES) {
+                const ENTRY = ALL_ENTRIES[KEY];
+                const NAME = vscode_helpers.normalizeString(KEY);
 
-                VALUES.push(
-                    new StaticValue(
-                        ENTRY, NAME
-                    )
-                );
+                let valueItem: ego_contracts.ValueItem | false = false;
+                if (!_.isNil(ENTRY)) {
+                    if (_.isObjectLike(ENTRY)) {
+                        valueItem = <ego_contracts.ValueItem>ENTRY;
+                    } else {
+                        valueItem = <ego_contracts.StaticValueItem>{
+                            value: ENTRY
+                        };
+                    }
+                }
+
+                if (false !== valueItem) {
+                    switch (vscode_helpers.normalizeString(valueItem.type)) {
+                        case '':
+                        case 'static':
+                        case 'string':
+                            {
+                                const STATIC_ITEM = <ego_contracts.StaticValueItem>valueItem;
+
+                                VALUES.push(
+                                    new StaticValue(
+                                        STATIC_ITEM.value, NAME
+                                    )
+                                );
+                            }
+                            break;
+                    }
+                }
             }
         }
     }
