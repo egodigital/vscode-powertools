@@ -18,8 +18,47 @@
 /**
  * Extension configuration.
  */
-export interface ExtensionConfiguration {
+export interface ExtensionConfiguration extends WithValues {
+    /**
+     * One or more things to run at startup.
+     */
+    startup?: StartupEntry[];
 }
+
+/**
+ * A startup entry.
+ */
+export type StartupEntry = string;
+
+/**
+ * A value.
+ */
+export interface Value {
+    /**
+     * The name of the value (if available).
+     */
+    readonly name?: string;
+    /**
+     * The value.
+     */
+    readonly value: any;
+}
+
+/**
+ * A value entry.
+ */
+export type ValueEntry = string;
+
+/**
+ * An object which contains one or more value entries.
+ */
+export interface WithValues {
+    /**
+     * One or more values.
+     */
+    values?: { [name: string]: ValueEntry };
+}
+
 
 /**
  * List of file change events.

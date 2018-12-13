@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -14,7 +14,45 @@
     ],
     "main": "./out/extension",
     "contributes": {
-        "commands": []
+        "commands": [],
+        "configuration": {
+            "properties": {
+                "ego.power-tools": {
+                    "description": "Settings for 'vscode-powertools' extension.",
+                    "type": "object",
+                    "scope": "resource",
+                    "properties": {
+                        "startup": {
+                            "description": "An or more things to execute at startup.",
+                            "type": "array",
+                            "items": {
+                                "oneOf": [
+                                    {
+                                        "type": "string",
+                                        "description": "The command to execute."
+                                    }
+                                ]
+                            }
+                        },
+                        "values": {
+                            "description": "Defines one or more values for the workspace.",
+                            "type": "object",
+                            "patternProperties": {
+                                "(.*)": {
+                                    "description": "A value.",
+                                    "oneOf": [
+                                        {
+                                            "description": "A static string value.",
+                                            "type": "string"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

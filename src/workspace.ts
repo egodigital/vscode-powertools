@@ -16,6 +16,8 @@
  */
 
 import * as ego_contracts from './contracts';
+import * as ego_values from './values';
+import * as ego_workspaces_startup from './workspaces/startup';
 import * as path from 'path';
 import * as pQueue from 'p-queue';
 import * as vscode from 'vscode';
@@ -70,6 +72,7 @@ let allWorkspacesProvider: WorkspaceProvider;
  */
 export class Workspace extends vscode_helpers.WorkspaceBase {
     private _configSrc: vscode_helpers.WorkspaceConfigSource;
+    private _isInitialized = false;
     private readonly _QUEUE = vscode_helpers.createQueue();
     private _settings: WorkspaceSettings;
 
@@ -127,7 +130,25 @@ export class Workspace extends vscode_helpers.WorkspaceBase {
             });
         }
 
+        try {
+            this._isInitialized = true;
+            await this.reloadConfiguration();
+        } catch (e) {
+            this.logger.err(
+                e, 'workspace.initialize(1)'
+            );
+
+            return false;
+        }
+
         return true;
+    }
+
+    /**
+     * Gets if workspace has been initialized or not.
+     */
+    public get isInitialized() {
+        return this._isInitialized;
     }
 
     /**
@@ -153,26 +174,19 @@ export class Workspace extends vscode_helpers.WorkspaceBase {
      */
     public async onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
         await this._QUEUE.add(async () => {
-            try {
-                let loadedSettings: WorkspaceSettings = vscode.workspace.getConfiguration(this.configSource.section,
-                                                                                          this.configSource.resource) || <any>{};
-
-                this._settings = loadedSettings;
-            } finally {
-
-            }
+            await this.reloadConfiguration();
         });
     }
 
     /**
      * Is invoked when a text document has been changed.
      *
-     * @param {vscode.TextDocument} e The underlying text document.
+     * @param {vscode.TextDocument} doc The underlying text document.
      */
-    public async onDidSaveTextDocument(e: vscode.TextDocument) {
+    public async onDidSaveTextDocument(doc: vscode.TextDocument) {
         await this._QUEUE.add(async () => {
             await this.onFileChange(
-                ego_contracts.FileChangeType.Saved, e.uri
+                ego_contracts.FileChangeType.Saved, doc.uri
             );
         });
     }
@@ -181,10 +195,77 @@ export class Workspace extends vscode_helpers.WorkspaceBase {
      * @inheritdoc
      */
     protected onDispose() {
+        if (!this.isInitialized) {
+            return;
+        }
+
         vscode_helpers.tryDispose(this.context.fileWatcher);
     }
 
     private async onFileChange(type: ego_contracts.FileChangeType, file: vscode.Uri) {
+        if (this.isInFinalizeState) {
+            return;
+        }
+    }
+
+    private async reloadConfiguration() {
+        if (this.isInFinalizeState) {
+            return;
+        }
+        if (!this.isInitialized) {
+            return;
+        }
+
+        try {
+            let loadedSettings: WorkspaceSettings = vscode.workspace.getConfiguration(this.configSource.section,
+                                                                                      this.configSource.resource) || <any>{};
+
+            this._settings = loadedSettings;
+
+            await ego_workspaces_startup.onStartup.apply(
+                this
+            );
+        } finally {
+
+        }
+    }
+
+    /**
+     * Handles a value as string and replaces placeholders.
+     *
+     * @param {ego_contracts.WithValues} obj The object with value entries.
+     * @param {any} val The input value.
+     *
+     * @return {string} The output value.
+     */
+    public replaceValues(val: any): string {
+        val = vscode_helpers.toStringSafe(val);
+
+        if (!this.isInFinalizeState) {
+            if (this.isInitialized) {
+                val = ego_values.replaceValues(this.settings, val, {
+                    buildInValues: [
+                        new ego_values.FunctionValue(() => {
+                            return this.id;
+                        }, 'workspaceId'),
+                        new ego_values.FunctionValue(() => {
+                            return this.folder.index;
+                        }, 'workspaceIndex'),
+                        new ego_values.FunctionValue(() => {
+                            return this.folder.name;
+                        }, 'workspaceName'),
+                        new ego_values.FunctionValue(() => {
+                            return this.rootPath;
+                        }, 'workspaceRoot'),
+                        new ego_values.FunctionValue(() => {
+                            return this.folder.uri;
+                        }, 'workspaceUri'),
+                    ]
+                });
+            }
+        }
+
+        return val;
     }
 
     /**
