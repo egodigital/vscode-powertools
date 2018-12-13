@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -30,6 +30,29 @@
                                     {
                                         "type": "string",
                                         "description": "The command to execute."
+                                    },
+                                    {
+                                        "description": "A command that is run as shell command.",
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "description": "The type.",
+                                                "enum": [
+                                                    "",
+                                                    "shell"
+                                                ],
+                                                "type": "string"
+                                            },
+                                            "command": {
+                                                "description": "The command to execute.",
+                                                "type": "string"
+                                            },
+                                            "silent": {
+                                                "description": "Do not write result to output.",
+                                                "type": "boolean",
+                                                "default": true
+                                            }
+                                        }
                                     }
                                 ]
                             }

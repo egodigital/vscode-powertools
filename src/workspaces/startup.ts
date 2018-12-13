@@ -15,7 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as _ from 'lodash';
 import * as childProcess from 'child_process';
+import * as ego_contracts from '../contracts';
 import * as ego_workspace from '../workspace';
 import * as vscode_helpers from 'vscode-helpers';
 
@@ -46,21 +48,46 @@ export async function onStartup() {
     }
 
     for (const S of STARTUPS) {
-        const CMD = WORKSPACE.replaceValues(S);
-        if ('' === CMD.trim()) {
-            continue;
+        let entry: ego_contracts.StartupItem;
+        if (_.isObjectLike(S)) {
+            entry = <ego_contracts.StartupItem>S;
+        } else {
+            entry = <ego_contracts.ShellCommandStartupItem>{
+                command: vscode_helpers.toStringSafe(S),
+            };
         }
 
-        try {
-            WORKSPACE.logger
-                     .info(`Executing '${ CMD }' ...`);
+        switch (vscode_helpers.normalizeString(entry.type)) {
+            case '':
+            case 'shell':
+                {
+                    const SHELL_ITEM = <ego_contracts.ShellCommandStartupItem>entry;
 
-            childProcess.execSync(CMD, {
-                cwd: WORKSPACE.rootPath,
-            });
-        } catch (e) {
-            WORKSPACE.logger
-                     .err(e, 'workspaces.onStartup(1)');
+                    const CMD = WORKSPACE.replaceValues(SHELL_ITEM.command);
+                    if ('' === CMD.trim()) {
+                        continue;
+                    }
+
+                    const SILENT = vscode_helpers.toBooleanSafe(SHELL_ITEM.silent, true);
+
+                    try {
+                        WORKSPACE.logger
+                                 .info(`Executing '${ CMD }' in shell ...`);
+
+                        const RESULT = childProcess.execSync(CMD, {
+                            cwd: WORKSPACE.rootPath,
+                        });
+
+                        if (!SILENT) {
+                            WORKSPACE.output
+                                     .appendLine(RESULT.toString('utf8'));
+                        }
+                    } catch (e) {
+                        WORKSPACE.logger
+                                .err(e, 'workspaces.onStartup(1)');
+                    }
+                }
+                break;
         }
     }
 

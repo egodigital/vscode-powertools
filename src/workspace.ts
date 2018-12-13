@@ -208,6 +208,13 @@ export class Workspace extends vscode_helpers.WorkspaceBase {
         }
     }
 
+    /**
+     * Gets the output channel.
+     */
+    public get output() {
+        return this.context.output;
+    }
+
     private async reloadConfiguration() {
         if (this.isInFinalizeState) {
             return;

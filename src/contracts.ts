@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 /**
  * Extension configuration.
  */
@@ -26,9 +27,33 @@ export interface ExtensionConfiguration extends WithValues {
 }
 
 /**
+ * A startup item running a (shell) command.
+ */
+export interface ShellCommandStartupItem extends StartupItem {
+    /**
+     * The command to execute.
+     */
+    command?: string;
+    /**
+     * Do not write result to output.
+     */
+    silent?: boolean;
+}
+
+/**
  * A startup entry.
  */
-export type StartupEntry = string;
+export type StartupEntry = string | StartupItem;
+
+/**
+ * A startup item.
+ */
+export interface StartupItem {
+    /**
+     * The type.
+     */
+    type?: string;
+}
 
 /**
  * A static value item.
