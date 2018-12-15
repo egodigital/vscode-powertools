@@ -28,6 +28,8 @@ function ego_update_markdown(md) {
     $('main').append(
         DOCUMENT
     );
+
+    ego_apply_highlight(DOCUMENT);
 }
 
 $(() => {

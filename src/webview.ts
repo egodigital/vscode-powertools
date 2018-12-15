@@ -100,6 +100,8 @@ ${ this.generateHtmlFooter() }`;
         <script type="text/javascript" src="${ this.getFileResourceUri('js/showdown.js') }"></script>
         <!-- JQuery -->
         <script type="text/javascript" src="${ this.getFileResourceUri('js/jquery-3.3.1.js') }"></script>
+        <!-- highlight.js -->
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/highlight.pack.js') }"></script>
         <!-- Bootstrap tooltips -->
         <script type="text/javascript" src="${ this.getFileResourceUri('js/popper.min.js') }"></script>
         <!-- Bootstrap core JavaScript -->
@@ -133,6 +135,9 @@ ${ this.generateHtmlFooter() }`;
 
     <!-- Font Awesome -->
     <link href="${ this.getFileResourceUri('css/font-awesome.css') }" rel="stylesheet">
+    <!-- highlight.js -->
+    <link href="${ this.getFileResourceUri('css/highlight/default.css') }" rel="stylesheet">
+    <link href="${ this.getFileResourceUri('css/highlight/mono-blue.css') }" rel="stylesheet">
     <!-- Bootstrap core CSS -->
     <link href="${ this.getFileResourceUri('css/bootstrap.css') }" rel="stylesheet">
     <!-- Material Design Bootstrap -->

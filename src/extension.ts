@@ -19,7 +19,6 @@
 
 import * as ego_commands from './commands';
 import * as ego_helpers from './helpers';
-import * as ego_markdown from './markdown';
 import * as ego_log from './log';
 import * as ego_workspace from './workspace';
 import * as vscode from 'vscode';
@@ -240,18 +239,6 @@ export async function activate(context: vscode.ExtensionContext) {
         outputChannel.appendLine('');
         outputChannel.appendLine(`Extension has been initialized.`);
         outputChannel.appendLine('');
-    });
-
-    WF.next(async () => {
-        const VIEW = new ego_markdown.MarkdownWebView({
-            markdown: `# Header 1
-
-## Header 2
-
-### Header 3`
-        });
-
-        await VIEW.open();
     });
 
     await ego_helpers.QUEUE.add(async () => {

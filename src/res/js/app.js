@@ -15,6 +15,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+function ego_apply_highlight(selector) {
+    if (arguments.length < 1) {
+        selector = $('main');
+    }
+
+    selector.find('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+    });
+}
+
 function ego_from_markdown(md) {
     const CONVERTER = new showdown.Converter();
 
