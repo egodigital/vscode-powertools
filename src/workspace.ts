@@ -16,12 +16,12 @@
  */
 
 import * as ego_contracts from './contracts';
+import * as ego_helpers from './helpers';
 import * as ego_values from './values';
 import * as ego_workspaces_startup from './workspaces/startup';
 import * as path from 'path';
 import * as pQueue from 'p-queue';
 import * as vscode from 'vscode';
-import * as vscode_helpers from 'vscode-helpers';
 
 
 /**
@@ -39,7 +39,7 @@ export interface WorkspaceContext {
     /**
      * The logger for that workspace.
      */
-    readonly logger: vscode_helpers.Logger;
+    readonly logger: ego_helpers.Logger;
     /**
      * The output channel.
      */
@@ -70,10 +70,10 @@ let allWorkspacesProvider: WorkspaceProvider;
 /**
  * Handles a workspace.
  */
-export class Workspace extends vscode_helpers.WorkspaceBase {
-    private _configSrc: vscode_helpers.WorkspaceConfigSource;
+export class Workspace extends ego_helpers.WorkspaceBase {
+    private _configSrc: ego_helpers.WorkspaceConfigSource;
     private _isInitialized = false;
-    private readonly _QUEUE = vscode_helpers.createQueue();
+    private readonly _QUEUE = ego_helpers.createQueue();
     private _settings: WorkspaceSettings;
 
     /**
@@ -199,7 +199,7 @@ export class Workspace extends vscode_helpers.WorkspaceBase {
             return;
         }
 
-        vscode_helpers.tryDispose(this.context.fileWatcher);
+        ego_helpers.tryDispose(this.context.fileWatcher);
     }
 
     private async onFileChange(type: ego_contracts.FileChangeType, file: vscode.Uri) {
@@ -246,7 +246,7 @@ export class Workspace extends vscode_helpers.WorkspaceBase {
      * @return {string} The output value.
      */
     public replaceValues(val: any): string {
-        val = vscode_helpers.toStringSafe(val);
+        val = ego_helpers.toStringSafe(val);
 
         if (!this.isInFinalizeState) {
             if (this.isInitialized) {
@@ -311,7 +311,7 @@ export class Workspace extends vscode_helpers.WorkspaceBase {
      * @return {string|false} The relative path or (false) if 'path' could not be converted.
      */
     public toRelativePath(p: string): string | false {
-        p = vscode_helpers.toStringSafe(p);
+        p = ego_helpers.toStringSafe(p);
         p = path.resolve(p)
                 .split(path.sep)
                 .join('/');
@@ -362,8 +362,8 @@ export function setAllWorkspacesProvider(newProvider: WorkspaceProvider) {
 }
 
 function sortWorkspaces(workspaces: Workspace | Workspace[]) {
-    return vscode_helpers.asArray(workspaces).sort((x, y) => {
-        return vscode_helpers.compareValuesBy(x, y, ws => {
+    return ego_helpers.asArray(workspaces).sort((x, y) => {
+        return ego_helpers.compareValuesBy(x, y, ws => {
             return ws.folder.index;
         });
     });

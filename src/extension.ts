@@ -17,19 +17,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as ego_commands from './commands';
+import * as ego_helpers from './helpers';
+import * as ego_markdown from './markdown';
 import * as ego_log from './log';
 import * as ego_workspace from './workspace';
 import * as vscode from 'vscode';
-import * as vscode_helpers from 'vscode-helpers';
 
 
 let currentContext: vscode.ExtensionContext;
 let isDeactivating = false;
 let nextWorkspaceId = Number.MAX_SAFE_INTEGER;
 let outputChannel: vscode.OutputChannel;
-let packageFile: vscode_helpers.PackageFile;
-const WORKSPACE_QUEUE = vscode_helpers.createQueue();
-let workspaceWatcher: vscode_helpers.WorkspaceWatcherContext<ego_workspace.Workspace>;
+let packageFile: ego_helpers.PackageFile;
+const WORKSPACE_QUEUE = ego_helpers.createQueue();
+let workspaceWatcher: ego_helpers.WorkspaceWatcherContext<ego_workspace.Workspace>;
 
 
 async function createNewWorkspace(folder: vscode.WorkspaceFolder): Promise<ego_workspace.Workspace> {
@@ -41,7 +43,7 @@ async function createNewWorkspace(folder: vscode.WorkspaceFolder): Promise<ego_w
             false, false, false,
         );
 
-        const LOGGER = vscode_helpers.createLogger();
+        const LOGGER = ego_helpers.createLogger();
 
         const CONTEXT: ego_workspace.WorkspaceContext = {
             extension: currentContext,
@@ -56,17 +58,17 @@ async function createNewWorkspace(folder: vscode.WorkspaceFolder): Promise<ego_w
 
             const ICON = ego_log.LOG_ICONS[log.type];
 
-            if (!vscode_helpers.isEmptyString(ICON)) {
+            if (!ego_helpers.isEmptyString(ICON)) {
                 fullMsg += ICON + ' ';
             }
 
             let tagPrefix = '';
-            if (!vscode_helpers.isEmptyString(log.tag)) {
-                tagPrefix = `${ vscode_helpers.normalizeString(log.tag) } :: `;
+            if (!ego_helpers.isEmptyString(log.tag)) {
+                tagPrefix = `${ ego_helpers.normalizeString(log.tag) } :: `;
             }
 
             CONTEXT.output.appendLine(
-                `${ fullMsg }${ tagPrefix }${ vscode_helpers.toStringSafe(log.message).trim() }`
+                `${ fullMsg }${ tagPrefix }${ ego_helpers.toStringSafe(log.message).trim() }`
             );
         });
 
@@ -95,8 +97,8 @@ async function createNewWorkspace(folder: vscode.WorkspaceFolder): Promise<ego_w
         ego_log.CONSOLE
                .trace(e, 'extension.createNewWorkspace(1)');
 
-        vscode_helpers.tryDispose(fileWatcher);
-        vscode_helpers.tryDispose(newWorkspace);
+        ego_helpers.tryDispose(fileWatcher);
+        ego_helpers.tryDispose(newWorkspace);
 
         newWorkspace = null;
     }
@@ -134,11 +136,11 @@ async function withTextDocument(
 
 
 export async function activate(context: vscode.ExtensionContext) {
-    const WF = vscode_helpers.buildWorkflow();
+    const WF = ego_helpers.buildWorkflow();
 
     // extension's root directory
     WF.next(() => {
-        vscode_helpers.setExtensionRoot(__dirname);
+        ego_helpers.setExtensionRoot(__dirname);
     });
 
     WF.next(() => {
@@ -148,7 +150,7 @@ export async function activate(context: vscode.ExtensionContext) {
     // package file
     WF.next(async () => {
         try {
-            packageFile = await vscode_helpers.getPackageFile();
+            packageFile = await ego_helpers.getPackageFile();
         } catch (e) {
             ego_log.CONSOLE
                    .trace(e, 'extension.activate(package file)');
@@ -161,7 +163,7 @@ export async function activate(context: vscode.ExtensionContext) {
             outputChannel = vscode.window.createOutputChannel('Power Tools by e.GO')
         );
 
-        const NOW = vscode_helpers.now();
+        const NOW = ego_helpers.now();
 
         if (packageFile) {
             outputChannel.appendLine(`${packageFile.displayName} (${packageFile.name}) - v${packageFile.version}`);
@@ -185,11 +187,11 @@ export async function activate(context: vscode.ExtensionContext) {
     // workspace watcher
     WF.next(() => {
         context.subscriptions.push(
-            workspaceWatcher = vscode_helpers.registerWorkspaceWatcher<ego_workspace.Workspace>(
+            workspaceWatcher = ego_helpers.registerWorkspaceWatcher<ego_workspace.Workspace>(
                 context,
                 async (e, folder) => {
-                    if (e === vscode_helpers.WorkspaceWatcherEvent.Added) {
-                        if (folder && folder.uri && (['', 'file'].indexOf(vscode_helpers.normalizeString(folder.uri.scheme)) > -1)) {
+                    if (e === ego_helpers.WorkspaceWatcherEvent.Added) {
+                        if (folder && folder.uri && (['', 'file'].indexOf(ego_helpers.normalizeString(folder.uri.scheme)) > -1)) {
                             // only if local URI
                             return await createNewWorkspace(folder);
                         }
@@ -229,13 +231,30 @@ export async function activate(context: vscode.ExtensionContext) {
         await workspaceWatcher.reload();
     });
 
+    // global extension commands
+    WF.next(() => {
+        ego_commands.registerCommands(context);
+    });
+
     WF.next(() => {
         outputChannel.appendLine('');
         outputChannel.appendLine(`Extension has been initialized.`);
         outputChannel.appendLine('');
     });
 
-    await vscode_helpers.QUEUE.add(async () => {
+    WF.next(async () => {
+        const VIEW = new ego_markdown.MarkdownWebView({
+            markdown: `# Header 1
+
+## Header 2
+
+### Header 3`
+        });
+
+        await VIEW.open();
+    });
+
+    await ego_helpers.QUEUE.add(async () => {
         if (isDeactivating) {
             return;
         }
@@ -245,11 +264,11 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 export async function deactivate() {
-    const WF = vscode_helpers.buildWorkflow();
+    const WF = ego_helpers.buildWorkflow();
 
     // TODO
 
-    await vscode_helpers.QUEUE.add(async () => {
+    await ego_helpers.QUEUE.add(async () => {
         if (isDeactivating) {
             return;
         }

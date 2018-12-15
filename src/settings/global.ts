@@ -15,40 +15,45 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as ego_contracts from './contracts';
-import * as path from 'path';
-import * as os from 'os';
+import * as ego_webview from '../webview';
 import * as vscode from 'vscode';
-import {
-    toStringSafe
-} from 'vscode-helpers';
-
-export * from 'vscode-helpers';
 
 
 /**
- * Returns the (possible path) of the extension's sub folder inside the home directory.
- *
- * @return {string} The path of the extension's sub folder inside the home directory.
+ * A web view for global settings.
  */
-export function getExtensionDirInHome() {
-    return path.resolve(
-        path.join(os.homedir(),
-                  ego_contracts.HOMEDIR_SUBFOLDER)
-    );
+export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
+    /**
+     * @inheritdoc
+     */
+    protected generateHtmlBody(): string {
+        return `@TODO`;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected getTitle(): string {
+        return 'Global Settings';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected getType(): string {
+        return 'GlobalSettings';
+    }
 }
 
+
 /**
- * Shows an error message.
+ * Opens the web view with the global settings.
  *
- * @param {any} err The message to show.
- *
- * @return {Promise<string>} The promise with the result.
+ * @param {vscode.ExtensionContext} extension The extension context.
  */
-export async function showErrorMessage(err: any) {
-    if (err) {
-        return await vscode.window.showErrorMessage(
-            toStringSafe(err).trim()
-        );
-    }
+export async function openGlobalSettings(extension: vscode.ExtensionContext) {
+    const NEW_VIEW = new GlobalSettingsWebView(extension);
+    await NEW_VIEW.open();
+
+    return NEW_VIEW;
 }

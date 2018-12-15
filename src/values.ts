@@ -17,7 +17,7 @@
 
 import * as _ from 'lodash';
 import * as ego_contracts from './contracts';
-import * as vscode_helpers from 'vscode-helpers';
+import * as ego_helpers from './helpers';
 
 
 /**
@@ -84,13 +84,13 @@ export function replaceValues(
     obj: ego_contracts.WithValues, val: any,
     opts?: ReplaceValuesOptions
 ): string {
-    val = vscode_helpers.toStringSafe(val);
+    val = ego_helpers.toStringSafe(val);
 
     if (!opts) {
         opts = <any>{};
     }
 
-    const ALL_VALUES = vscode_helpers.asArray(
+    const ALL_VALUES = ego_helpers.asArray(
         opts.buildInValues
     ).concat(
         toValues(obj)
@@ -98,18 +98,18 @@ export function replaceValues(
 
     // ${VALUE_NAME}
     val = val.replace(/(\$)(\{)([^\}]*)(\})/gm, (match, varIdentifier, openBracket, varName: string, closedBracked) => {
-        let newValue = vscode_helpers.toStringSafe(
+        let newValue = ego_helpers.toStringSafe(
             match
         );
 
-        varName = vscode_helpers.normalizeString(varName);
+        varName = ego_helpers.normalizeString(varName);
 
-        const LAST_VALUE = vscode_helpers.from(ALL_VALUES).lastOrDefault(v => {
-            return vscode_helpers.normalizeString(v.name) === varName;
+        const LAST_VALUE = ego_helpers.from(ALL_VALUES).lastOrDefault(v => {
+            return ego_helpers.normalizeString(v.name) === varName;
         }, false);
 
         if (false !== LAST_VALUE) {
-            newValue = vscode_helpers.toStringSafe(
+            newValue = ego_helpers.toStringSafe(
                 LAST_VALUE.value
             );
         }
@@ -135,7 +135,7 @@ export function toValues(obj: ego_contracts.WithValues): ego_contracts.Value[] {
         if (ALL_ENTRIES) {
             for (const KEY in ALL_ENTRIES) {
                 const ENTRY = ALL_ENTRIES[KEY];
-                const NAME = vscode_helpers.normalizeString(KEY);
+                const NAME = ego_helpers.normalizeString(KEY);
 
                 let valueItem: ego_contracts.ValueItem | false = false;
                 if (!_.isNil(ENTRY)) {
@@ -149,7 +149,7 @@ export function toValues(obj: ego_contracts.WithValues): ego_contracts.Value[] {
                 }
 
                 if (false !== valueItem) {
-                    switch (vscode_helpers.normalizeString(valueItem.type)) {
+                    switch (ego_helpers.normalizeString(valueItem.type)) {
                         case '':
                         case 'static':
                         case 'string':

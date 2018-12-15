@@ -7,5 +7,36 @@
         "out": true // set this to false to include "out" folder in search results
     },
     // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
-    "typescript.tsc.autoDetect": "off"
+    "typescript.tsc.autoDetect": "off",
+
+    "deploy.reloaded": {
+        "packages": [
+            {
+                "name": "Resources",
+                "files": [
+                    "src/res/**/*"
+                ],
+
+                "deployOnChange": true,
+                "removeOnChange": true,
+
+                "targets": [ "res" ]
+            }
+        ],
+
+        "targets": [
+            {
+                "name": "res",
+                "type": "local",
+                "dir": "./out/res",
+
+                "mappings": {
+                    "src/res": "/",
+                    "src/res/**/*": "/"
+                }
+            }
+        ],
+
+        "useFastGlob": true
+    }
 }

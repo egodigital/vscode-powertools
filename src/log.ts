@@ -20,31 +20,35 @@ import * as ego_helpers from './helpers';
 import * as fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import * as vscode_helpers from 'vscode-helpers';
 
 
-const NEW_CONSOLE_LOGGER = vscode_helpers.createLogger();
+const NEW_CONSOLE_LOGGER = ego_helpers.createLogger();
 
 // write to console
 NEW_CONSOLE_LOGGER.addAction((ctx) => {
-    let msg = vscode_helpers.toStringSafe(ctx.message);
+    let msg: string;
+    if (_.isObjectLike(ctx.message)) {
+        msg = JSON.stringify(ctx.message, null, 2);
+    } else {
+        msg = ego_helpers.toStringSafe(ctx.message);
+    }
 
     let func: (message?: any, ...optionalParams: any[]) => void = console.log;
 
-    if (ctx.type <= vscode_helpers.LogType.Err) {
+    if (ctx.type <= ego_helpers.LogType.Err) {
         func = console.error;
     } else {
         switch (ctx.type) {
-            case vscode_helpers.LogType.Info:
-            case vscode_helpers.LogType.Notice:
+            case ego_helpers.LogType.Info:
+            case ego_helpers.LogType.Notice:
                 func = console.info;
                 break;
 
-            case vscode_helpers.LogType.Trace:
+            case ego_helpers.LogType.Trace:
                 func = console.trace;
                 break;
 
-            case vscode_helpers.LogType.Warn:
+            case ego_helpers.LogType.Warn:
                 func = console.warn;
                 break;
         }
@@ -53,8 +57,8 @@ NEW_CONSOLE_LOGGER.addAction((ctx) => {
     let typePrefix = '';
 
     let tagPrefix = '';
-    if (!vscode_helpers.isEmptyString(ctx.tag)) {
-        tagPrefix = ' :: ' + vscode_helpers.normalizeString(ctx.tag);
+    if (!ego_helpers.isEmptyString(ctx.tag)) {
+        tagPrefix = ' :: ' + ego_helpers.normalizeString(ctx.tag);
     }
 
     msg = `[vscode-powertools]\n[${ ctx.time.format('YYYY-MM-DD HH:mm:ss') }${ typePrefix }${ tagPrefix }] => ${ msg }\n`;
@@ -72,22 +76,22 @@ NEW_CONSOLE_LOGGER.addAction((ctx) => {
 
     let logType = ctx.type;
     if (_.isNil(logType)) {
-        logType = vscode_helpers.LogType.Debug;
+        logType = ego_helpers.LogType.Debug;
     }
 
-    const TIME = vscode_helpers.asUTC(ctx.time);
+    const TIME = ego_helpers.asUTC(ctx.time);
 
-    if (vscode_helpers.LogType.Trace !== ctx.type) {
-        if (ctx.type > vscode_helpers.LogType.Info) {
+    if (ego_helpers.LogType.Trace !== ctx.type) {
+        if (ctx.type > ego_helpers.LogType.Info) {
             return;
         }
     }
 
-    let msg = `${ vscode_helpers.LogType[logType].toUpperCase().trim() }`;
+    let msg = `${ ego_helpers.LogType[logType].toUpperCase().trim() }`;
 
-    const TAG = vscode_helpers.normalizeString(
+    const TAG = ego_helpers.normalizeString(
         _.replace(
-            vscode_helpers.normalizeString(ctx.tag),
+            ego_helpers.normalizeString(ctx.tag),
             /\s/ig,
             '_'
         )
@@ -96,9 +100,9 @@ NEW_CONSOLE_LOGGER.addAction((ctx) => {
         msg += ' ' + TAG;
     }
 
-    let logMsg = vscode_helpers.toStringSafe(ctx.message);
-    if (vscode_helpers.LogType.Trace === ctx.type) {
-        const STACK = vscode_helpers.toStringSafe(
+    let logMsg = ego_helpers.toStringSafe(ctx.message);
+    if (ego_helpers.LogType.Trace === ctx.type) {
+        const STACK = ego_helpers.toStringSafe(
             (new Error()).stack
         ).split("\n").filter(l => {
             return l.toLowerCase()
@@ -128,19 +132,19 @@ NEW_CONSOLE_LOGGER.addAction((ctx) => {
 /**
  * The global console logger.
  */
-export const CONSOLE: vscode_helpers.Logger = NEW_CONSOLE_LOGGER;
+export const CONSOLE: ego_helpers.Logger = NEW_CONSOLE_LOGGER;
 
 /**
  * List of log icons.
  */
 export const LOG_ICONS: { [type: number]: string } = {
 };
-LOG_ICONS[vscode_helpers.LogType.Emerg] = '🚑';
-LOG_ICONS[vscode_helpers.LogType.Alert] = '🚨';
-LOG_ICONS[vscode_helpers.LogType.Crit] = '🌡';
-LOG_ICONS[vscode_helpers.LogType.Err] = '❌';
-LOG_ICONS[vscode_helpers.LogType.Warn] = '⚠️';
-LOG_ICONS[vscode_helpers.LogType.Notice] = '📢';
+LOG_ICONS[ego_helpers.LogType.Emerg] = '🚑';
+LOG_ICONS[ego_helpers.LogType.Alert] = '🚨';
+LOG_ICONS[ego_helpers.LogType.Crit] = '🌡';
+LOG_ICONS[ego_helpers.LogType.Err] = '❌';
+LOG_ICONS[ego_helpers.LogType.Warn] = '⚠️';
+LOG_ICONS[ego_helpers.LogType.Notice] = '📢';
 // LOG_ICONS[vscode_helpers.LogType.Info] = 'ℹ️';
-LOG_ICONS[vscode_helpers.LogType.Debug] = '🐞';
-LOG_ICONS[vscode_helpers.LogType.Trace] = '🧾';
+LOG_ICONS[ego_helpers.LogType.Debug] = '🐞';
+LOG_ICONS[ego_helpers.LogType.Trace] = '🧾';

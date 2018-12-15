@@ -1,3 +1,8 @@
 
-/icon.png
-    - David Cross (http://webhostingmedia.net/)
+- /icon.png
+  - David Cross (http://webhostingmedia.net/)
+
+- /src/res/img/ego_digital.svg
+  - e.GO Digital GmbH (https://www.e-go-digital.com/)
+
+- Webview make use [MD Bootstrap free](https://mdbootstrap.com/)

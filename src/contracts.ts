@@ -15,6 +15,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as vscode from 'vscode';
+
+
+/**
+ * A message item for a popup with an action.
+ */
+export interface ActionMessageItem extends vscode.MessageItem {
+    /**
+     * The (optional) action to invoke.
+     */
+    action?: () => any;
+}
 
 /**
  * Extension configuration.
@@ -92,6 +104,30 @@ export interface ValueItem {
      * The value type.
      */
     type?: string;
+}
+
+/**
+ * A message from and for a WebView.
+ */
+export interface WebViewMessage<TData = any> {
+    /**
+     * The command.
+     */
+    command: string;
+    /**
+     * The data.
+     */
+    data?: TData;
+}
+
+/**
+ * Data of log message from a web view.
+ */
+export interface WebViewLogMessageData {
+    /**
+     * The message as serialized data.
+     */
+    message: string;
 }
 
 /**

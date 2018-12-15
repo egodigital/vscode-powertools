@@ -18,8 +18,8 @@
 import * as _ from 'lodash';
 import * as childProcess from 'child_process';
 import * as ego_contracts from '../contracts';
+import * as ego_helpers from '../helpers';
 import * as ego_workspace from '../workspace';
-import * as vscode_helpers from 'vscode-helpers';
 
 
 /**
@@ -39,7 +39,7 @@ export async function onStartup() {
         return;
     }
 
-    const STARTUPS = vscode_helpers.asArray(
+    const STARTUPS = ego_helpers.asArray(
         SETTINGS.startup
     );
 
@@ -53,11 +53,11 @@ export async function onStartup() {
             entry = <ego_contracts.StartupItem>S;
         } else {
             entry = <ego_contracts.ShellCommandStartupItem>{
-                command: vscode_helpers.toStringSafe(S),
+                command: ego_helpers.toStringSafe(S),
             };
         }
 
-        switch (vscode_helpers.normalizeString(entry.type)) {
+        switch (ego_helpers.normalizeString(entry.type)) {
             case '':
             case 'shell':
                 {
@@ -68,7 +68,7 @@ export async function onStartup() {
                         continue;
                     }
 
-                    const SILENT = vscode_helpers.toBooleanSafe(SHELL_ITEM.silent, true);
+                    const SILENT = ego_helpers.toBooleanSafe(SHELL_ITEM.silent, true);
 
                     try {
                         WORKSPACE.logger
