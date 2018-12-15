@@ -119,6 +119,8 @@ function ego_to_string(val) {
     return '' + val;
 }
 
+
+// default options for Markdown parser
 $(() => {
     showdown.setFlavor('github');
 
@@ -135,5 +137,31 @@ $(() => {
     showdown.setOption('tasklists', true);
 });
 
+// message from extension
 $(() => {
+    window.addEventListener('message', (e) => {
+        if (!e) {
+            return;
+        }
+
+        const MESSAGE = e.data;
+        if (!MESSAGE) {
+            return;
+        }
+
+        const COMMAND = ego_to_string(MESSAGE.command)
+            .trim();
+        if ('' === COMMAND) {
+            return;
+        }
+
+        if (ego_on_message) {
+            Promise.resolve(
+                ego_on_message(COMMAND, MESSAGE.data)
+            ).then(() => {
+            }).catch((err) => {
+                ego_log(err);
+            });
+        }
+    });
 });
