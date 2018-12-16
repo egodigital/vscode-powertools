@@ -148,11 +148,10 @@ export function toValues(obj: ego_contracts.WithValues): ego_contracts.Value[] {
                     }
                 }
 
-                if (false !== valueItem) {
+                if (false !== valueItem && ego_helpers.doesMatchFilterCondition(valueItem)) {
                     switch (ego_helpers.normalizeString(valueItem.type)) {
                         case '':
                         case 'static':
-                        case 'string':
                             {
                                 const STATIC_ITEM = <ego_contracts.StaticValueItem>valueItem;
 

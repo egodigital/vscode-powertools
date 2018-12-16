@@ -80,6 +80,10 @@ export async function reloadCommands() {
                 return;
             }
 
+            if (!ego_helpers.doesMatchFilterCondition(item)) {
+                return;
+            }
+
             let title = ego_helpers.toStringSafe(
                 item.title
             ).trim();

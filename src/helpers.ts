@@ -15,16 +15,65 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as ego_code from './code';
 import * as ego_contracts from './contracts';
+import * as ego_log from './log';
 import * as path from 'path';
 import * as os from 'os';
 import * as vscode from 'vscode';
 import {
+    asArray,
+    toBooleanSafe,
     toStringSafe
 } from 'vscode-helpers';
 
 export * from 'vscode-helpers';
 
+
+/**
+ * Checks if a conditional obj does match items condition.
+ *
+ * @param {ego_contracts.Conditional} obj The object to check.
+ *
+ * @return {boolean} Matches condition or not.
+ */
+export function doesMatchFilterCondition(obj: ego_contracts.Conditional): boolean {
+    return filterConditionals(
+        obj
+    ).length > 0;
+}
+
+/**
+ * Filters "conditional" items.
+ *
+ * @param {TObj|TObj[]} objs The objects to check.
+ *
+ * @return {TObj[]} The filtered items.
+ */
+export function filterConditionals<TObj extends ego_contracts.Conditional = ego_contracts.Conditional>(
+    objs: TObj | TObj[]
+): TObj[] {
+    return asArray(objs).filter(o => {
+        try {
+            const IF = toStringSafe(o.if);
+            if ('' !== IF.trim()) {
+                return toBooleanSafe(
+                    ego_code.run({
+                        code: IF,
+                    }),
+                    true
+                );
+            }
+
+            return true;
+        } catch (e) {
+            ego_log.CONSOLE
+                .trace(e, 'helpers.filterConditionals(1)');
+
+            return false;
+        }
+    });
+}
 
 /**
  * Returns the (possible path) of the extension's sub folder inside the home directory.

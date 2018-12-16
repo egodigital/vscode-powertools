@@ -57,6 +57,10 @@ export async function onStartup() {
             };
         }
 
+        if (!ego_helpers.doesMatchFilterCondition(entry)) {
+            continue;
+        }
+
         switch (ego_helpers.normalizeString(entry.type)) {
             case '':
             case 'shell':

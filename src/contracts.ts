@@ -17,6 +17,7 @@
 
 import * as vscode from 'vscode';
 
+
 /**
  * A message item for a popup with an action.
  */
@@ -45,7 +46,7 @@ export type CommandEntry = CommandItem;
 /**
  * A command item.
  */
-export interface CommandItem {
+export interface CommandItem extends Conditional {
     /**
      * The path to the script that should be executed.
      */
@@ -54,6 +55,16 @@ export interface CommandItem {
      * The title for display.
      */
     title?: string;
+}
+
+/**
+ * An item that uses optional JavaScript code, to check if it is available or not.
+ */
+export interface Conditional {
+    /**
+     * The JavaScript code that checks the avaibility.
+     */
+    'if'?: string;
 }
 
 /**
@@ -106,7 +117,7 @@ export type StartupEntry = string | StartupItem;
 /**
  * A startup item.
  */
-export interface StartupItem {
+export interface StartupItem extends Conditional {
     /**
      * The type.
      */
@@ -145,7 +156,7 @@ export type ValueEntry = string | ValueItem;
 /**
  * A value item.
  */
-export interface ValueItem {
+export interface ValueItem extends Conditional {
     /**
      * The value type.
      */
