@@ -17,7 +17,6 @@
 
 import * as vscode from 'vscode';
 
-
 /**
  * A message item for a popup with an action.
  */
@@ -29,13 +28,60 @@ export interface ActionMessageItem extends vscode.MessageItem {
 }
 
 /**
+ * A quick pick item with an action.
+ */
+export interface ActionQuickPickItem extends vscode.QuickPickItem {
+    /**
+     * The (optional) action to invoke.
+     */
+    action?: () => any;
+}
+
+/**
+ * A possible value for a command entry.
+ */
+export type CommandEntry = CommandItem;
+
+/**
+ * A command item.
+ */
+export interface CommandItem {
+    /**
+     * The path to the script that should be executed.
+     */
+    script: string;
+    /**
+     * The title for display.
+     */
+    title?: string;
+}
+
+/**
  * Extension configuration.
  */
 export interface ExtensionConfiguration extends WithValues {
     /**
+     * One or more commands to register.
+     */
+    commands?: { [id: string]: CommandEntry };
+    /**
      * One or more things to run at startup.
      */
     startup?: StartupEntry[];
+}
+
+/**
+ * Arguments for a script.
+ */
+export interface ScriptArguments {
+    /**
+     * Imports a module from the extension's context.
+     *
+     * @param {string} id The ID of the module.
+     *
+     * @return {any} The module.
+     */
+    readonly require: (id: string) => any;
 }
 
 /**
@@ -138,6 +184,54 @@ export interface WithValues {
      * One or more values.
      */
     values?: { [name: string]: ValueEntry };
+}
+
+/**
+ * A workspace command.
+ */
+export interface WorkspaceCommand extends vscode.Disposable {
+    /**
+     * The command instance.
+     */
+    readonly command: vscode.Disposable;
+    /**
+     * Executes the command.
+     *
+     * @param {any[]} [args] One or more argument for the execution.
+     *
+     * @return {any} The result of the execution.
+     */
+    readonly execute: (...args: any[]) => any;
+    /**
+     * The ID of the command.
+     */
+    readonly id: string;
+    /**
+     * The item from the settings.
+     */
+    readonly item: CommandItem;
+    /**
+     * The title for display.
+     */
+    readonly title: string;
+}
+
+/**
+ * Arguments for a workspace command script.
+ */
+export interface WorkspaceCommandScriptArguments extends ScriptArguments {
+}
+
+/**
+ * A workspace command script module.
+ */
+export interface WorkspaceCommandScriptModule {
+    /**
+     * Executes the script.
+     *
+     * @param {WorkspaceCommandScriptArguments} args Arguments for the execution.
+     */
+    readonly execute: (args: WorkspaceCommandScriptArguments) => any;
 }
 
 

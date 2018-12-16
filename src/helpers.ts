@@ -39,6 +39,19 @@ export function getExtensionDirInHome() {
 }
 
 /**
+ * Imports a module from the extension's context.
+ *
+ * @param {string} id The ID of the module.
+ *
+ * @return {TModule} The module.
+ */
+export function requireModule<TModule = any>(id: string): TModule {
+    return require(
+        toStringSafe(id)
+    );
+}
+
+/**
  * Shows an error message.
  *
  * @param {any} err The message to show.

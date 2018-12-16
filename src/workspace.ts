@@ -18,7 +18,10 @@
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_values from './values';
+import * as ego_workspaces_commands from './workspaces/commands';
 import * as ego_workspaces_startup from './workspaces/startup';
+import * as fsExtra from 'fs-extra';
+import * as os from 'os';
 import * as path from 'path';
 import * as pQueue from 'p-queue';
 import * as vscode from 'vscode';
@@ -99,6 +102,67 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     }
 
     /**
+     * Returns all commands of that workspace.
+     *
+     * @return {ego_contracts.WorkspaceCommand[]} The list of commands.
+     */
+    public getCommands(): ego_contracts.WorkspaceCommand[] {
+        return ego_helpers.asArray(
+            this.instanceState[
+                ego_workspaces_commands.KEY_COMMANDS
+            ]
+        );
+    }
+
+    /**
+     * Returns the full path of an existing file.
+     *
+     * @param {string} p The input path value.
+     *
+     * @return {string|false} The full path or (false) if not found.
+     */
+    public getExistingFullPath(p: string): string | false {
+        p = ego_helpers.toStringSafe(p);
+        if (path.isAbsolute(p)) {
+            return fsExtra.existsSync(p) ? path.resolve(
+                p
+            ) : false;
+        }
+
+        const LOOKUPS = [
+            // '.vscode' sub folder
+            // insode workspace
+            path.resolve(
+                path.join(
+                    this.rootPath, '.vscode'
+                )
+            ),
+
+            // extension's suf folder
+            // inside user's home directory
+            path.resolve(
+                path.join(
+                    os.homedir(), ego_contracts.HOMEDIR_SUBFOLDER
+                )
+            ),
+        ];
+
+        for (const LU of LOOKUPS) {
+            const FULL_PATH = path.resolve(
+                path.join(
+                    LU, p
+                )
+            );
+
+            if (fsExtra.existsSync(FULL_PATH)) {
+                return FULL_PATH;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Initializes the workspace.
      */
     public async initialize() {
@@ -107,6 +171,10 @@ export class Workspace extends ego_helpers.WorkspaceBase {
             resource: vscode.Uri.file(path.join(this.rootPath,
                                                 '.vscode/settings.json') ),
         };
+
+        this.instanceState[
+            ego_workspaces_commands.KEY_COMMANDS
+        ] = [];
 
         // file change events
         {
@@ -143,6 +211,11 @@ export class Workspace extends ego_helpers.WorkspaceBase {
 
         return true;
     }
+
+    /**
+     * A key/value pair for data for that instance.
+     */
+    public readonly instanceState: { [key: string]: any } = {};
 
     /**
      * Gets if workspace has been initialized or not.
@@ -200,6 +273,10 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         }
 
         ego_helpers.tryDispose(this.context.fileWatcher);
+
+        ego_workspaces_commands.disposeCommands.apply(
+            this
+        );
     }
 
     private async onFileChange(type: ego_contracts.FileChangeType, file: vscode.Uri) {
@@ -229,6 +306,9 @@ export class Workspace extends ego_helpers.WorkspaceBase {
 
             this._settings = loadedSettings;
 
+            await ego_workspaces_commands.reloadCommands.apply(
+                this
+            );
             await ego_workspaces_startup.onStartup.apply(
                 this
             );

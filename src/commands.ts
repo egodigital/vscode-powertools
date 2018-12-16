@@ -15,8 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_settings_global from './settings/global';
+import * as ego_workspace from './workspace';
 import * as vscode from 'vscode';
 
 
@@ -27,6 +29,44 @@ import * as vscode from 'vscode';
  */
 export function registerCommands(context: vscode.ExtensionContext) {
     context.subscriptions.push(
+        // commands
+        vscode.commands.registerCommand('ego.power-tools.commands', async () => {
+            try {
+                const ALL_WORKSPACES = ego_workspace.getAllWorkspaces();
+
+                const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = ego_helpers.from(
+                    ALL_WORKSPACES
+                ).selectMany(ws => {
+                    return ws.getCommands();
+                }).select(cmd => {
+                    return {
+                        action: () => {
+                            return cmd.execute();
+                        },
+                        label: cmd.title,
+                    };
+                }).orderBy(qp => {
+                    return ego_helpers.normalizeString(qp.label);
+                }).toArray();
+
+                const SELECT_ITEM = await vscode.window.showQuickPick(
+                    QUICK_PICKS,
+                    {
+                        placeHolder: 'Select the command, you would like to execute ...',
+                    }
+                );
+
+                if (SELECT_ITEM) {
+                    await Promise.resolve(
+                        SELECT_ITEM.action()
+                    );
+                }
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }),
+
+        // openGlobalSettings
         vscode.commands.registerCommand('ego.power-tools.openGlobalSettings', async () => {
             try {
                 await ego_settings_global.openGlobalSettings(context);

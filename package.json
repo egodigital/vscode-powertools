@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -14,11 +14,18 @@
     ],
     "main": "./out/extension",
     "contributes": {
-        "commands": [{
-            "command": "ego.power-tools.openGlobalSettings",
-            "title": "Global Settings",
-            "category": "Power Tools"
-        }],
+        "commands": [
+            {
+                "command": "ego.power-tools.commands",
+                "title": "Commands",
+                "category": "Power Tools"
+            },
+            {
+                "command": "ego.power-tools.openGlobalSettings",
+                "title": "Global Settings",
+                "category": "Power Tools"
+            }
+        ],
         "configuration": {
             "properties": {
                 "ego.power-tools": {
@@ -26,6 +33,29 @@
                     "type": "object",
                     "scope": "resource",
                     "properties": {
+                        "commands": {
+                            "description": "Defines one or more commands to register.",
+                            "type": "object",
+                            "patternProperties": {
+                                "(.*)": {
+                                    "description": "A command to register.",
+                                    "type": "object",
+                                    "properties": {
+                                        "script": {
+                                            "description": "The path to the script that should be executed.",
+                                            "type": "string"
+                                        },
+                                        "title": {
+                                            "description": "The title for display.",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "script"
+                                    ]
+                                }
+                            }
+                        },
                         "startup": {
                             "description": "An or more things to execute at startup.",
                             "type": "array",
