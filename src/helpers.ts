@@ -68,8 +68,6 @@ export function buildButtonSync<TButton extends ego_contracts.Button = ego_contr
     ).trim();
     if ('' === color) {
         color = new vscode.ThemeColor('button.foreground');
-    } else {
-        color = '#' + color;
     }
 
     let text = toStringSafe(
