@@ -179,6 +179,7 @@ export async function reloadCommands() {
                             newBtn.text = WORKSPACE.replaceValues(newBtn.text);
                             newBtn.tooltip = WORKSPACE.replaceValues(newBtn.tooltip);
                             newBtn.color = WORKSPACE.replaceValues(newBtn.color);
+                            newBtn.command = ID;
                         }
                     );
                 }
