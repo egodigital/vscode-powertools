@@ -57,6 +57,9 @@ export async function onStartup() {
             };
         }
 
+        if (!ego_helpers.doesMatchPlatformCondition(entry)) {
+            continue;
+        }
         if (!ego_helpers.doesMatchFilterCondition(entry)) {
             continue;
         }

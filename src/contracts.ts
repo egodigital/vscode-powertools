@@ -72,7 +72,7 @@ export type CommandEntry = CommandItem;
 /**
  * A command item.
  */
-export interface CommandItem extends Conditional {
+export interface CommandItem extends Conditional, ForPlatforms {
     /**
      * Settings for an optional button.
      */
@@ -109,6 +109,16 @@ export interface ExtensionConfiguration extends WithValues {
      * One or more things to run at startup.
      */
     startup?: StartupEntry[];
+}
+
+/**
+ * An object for specific platforms.
+ */
+export interface ForPlatforms {
+    /**
+     * One or more platform names, the object is for.
+     */
+    platforms?: string[];
 }
 
 /**
@@ -155,7 +165,7 @@ export type StartupEntry = string | StartupItem;
 /**
  * A startup item.
  */
-export interface StartupItem extends Conditional {
+export interface StartupItem extends Conditional, ForPlatforms {
     /**
      * The type.
      */
@@ -194,7 +204,7 @@ export type ValueEntry = string | ValueItem;
 /**
  * A value item.
  */
-export interface ValueItem extends Conditional {
+export interface ValueItem extends Conditional, ForPlatforms {
     /**
      * The value type.
      */

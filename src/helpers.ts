@@ -104,7 +104,7 @@ export function buildButtonSync<TButton extends ego_contracts.Button = ego_contr
 }
 
 /**
- * Checks if a conditional obj does match items condition.
+ * Checks if a conditional object does match items condition.
  *
  * @param {ego_contracts.Conditional} obj The object to check.
  *
@@ -115,6 +115,20 @@ export function doesMatchFilterCondition(obj: ego_contracts.Conditional): boolea
         obj
     ).length > 0;
 }
+
+/**
+ * Checks if a platform object does match the (current) platform.
+ *
+ * @param {ego_contracts.Conditional} obj The object to check.
+ *
+ * @return {boolean} Matches condition or not.
+ */
+export function doesMatchPlatformCondition(obj: ego_contracts.ForPlatforms): boolean {
+    return filterForPlatform(
+        obj
+    ).length > 0;
+}
+
 
 /**
  * Filters "conditional" items.
@@ -145,6 +159,26 @@ export function filterConditionals<TObj extends ego_contracts.Conditional = ego_
 
             return false;
         }
+    });
+}
+
+/**
+ * Filters "platform" items.
+ *
+ * @param {TObj|TObj[]} objs The objects to check.
+ *
+ * @return {TObj[]} The filtered items.
+ */
+export function filterForPlatform<TObj extends ego_contracts.ForPlatforms>(
+    objs: TObj | TObj[]
+): TObj[] {
+    return asArray(objs).filter(o => {
+        const OBJ_PLATFORMS = asArray(o.platforms).map(p => {
+            return normalizeString(p);
+        });
+
+        return OBJ_PLATFORMS.length < 1 ? true
+            : OBJ_PLATFORMS.indexOf(process.platform) > -1;
     });
 }
 

@@ -148,20 +148,24 @@ export function toValues(obj: ego_contracts.WithValues): ego_contracts.Value[] {
                     }
                 }
 
-                if (false !== valueItem && ego_helpers.doesMatchFilterCondition(valueItem)) {
-                    switch (ego_helpers.normalizeString(valueItem.type)) {
-                        case '':
-                        case 'static':
-                            {
-                                const STATIC_ITEM = <ego_contracts.StaticValueItem>valueItem;
+                if (false !== valueItem) {
+                    if (ego_helpers.doesMatchPlatformCondition(valueItem)) {
+                        if (ego_helpers.doesMatchFilterCondition(valueItem)) {
+                            switch (ego_helpers.normalizeString(valueItem.type)) {
+                                case '':
+                                case 'static':
+                                    {
+                                        const STATIC_ITEM = <ego_contracts.StaticValueItem>valueItem;
 
-                                VALUES.push(
-                                    new StaticValue(
-                                        STATIC_ITEM.value, NAME
-                                    )
-                                );
+                                        VALUES.push(
+                                            new StaticValue(
+                                                STATIC_ITEM.value, NAME
+                                            )
+                                        );
+                                    }
+                                    break;
                             }
-                            break;
+                        }
                     }
                 }
             }

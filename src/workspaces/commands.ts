@@ -80,6 +80,9 @@ export async function reloadCommands() {
                 return;
             }
 
+            if (!ego_helpers.doesMatchPlatformCondition(item)) {
+                return;
+            }
             if (!ego_helpers.doesMatchFilterCondition(item)) {
                 return;
             }
