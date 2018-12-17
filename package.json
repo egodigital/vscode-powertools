@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -41,6 +41,33 @@
                                     "description": "A command to register.",
                                     "type": "object",
                                     "properties": {
+                                        "button": {
+                                            "description": "Settings for an optional button.",
+                                            "type": "object",
+                                            "properties": {
+                                                "color": {
+                                                    "description": "The color.",
+                                                    "type": "string"
+                                                },
+                                                "isRight": {
+                                                    "description": "Display button on the right side or not.",
+                                                    "type": "boolean",
+                                                    "default": false
+                                                },
+                                                "priority": {
+                                                    "description": "The priority.",
+                                                    "type": "number"
+                                                },
+                                                "title": {
+                                                    "description": "The label / title.",
+                                                    "type": "string"
+                                                },
+                                                "tooltip": {
+                                                    "description": "The tooltip.",
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
                                         "if": {
                                             "description": "The JavaScript code that checks the avaibility of that command.",
                                             "type": "string"

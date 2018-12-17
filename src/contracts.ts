@@ -39,6 +39,32 @@ export interface ActionQuickPickItem extends vscode.QuickPickItem {
 }
 
 /**
+ * Settings for a button in the status bar.
+ */
+export interface Button {
+    /**
+     * The color.
+     */
+    color?: string;
+    /**
+     * Display button on the right side or not.
+     */
+    isRight?: boolean;
+    /**
+     * The priority.
+     */
+    priority?: number;
+    /**
+     * The label / title.
+     */
+    title?: string;
+    /**
+     * The tooltip.
+     */
+    tooltip?: string;
+}
+
+/**
  * A possible value for a command entry.
  */
 export type CommandEntry = CommandItem;
@@ -47,6 +73,10 @@ export type CommandEntry = CommandItem;
  * A command item.
  */
 export interface CommandItem extends Conditional {
+    /**
+     * Settings for an optional button.
+     */
+    button?: Button;
     /**
      * The path to the script that should be executed.
      */
@@ -85,6 +115,14 @@ export interface ExtensionConfiguration extends WithValues {
  * Arguments for a script.
  */
 export interface ScriptArguments {
+    /**
+     * Handles a value as string and replaces placeholders.
+     *
+     * @param {any} val The input value.
+     *
+     * @return {string} The output value.
+     */
+    readonly replaceValues: (val: any) => string;
     /**
      * Imports a module from the extension's context.
      *
@@ -202,6 +240,10 @@ export interface WithValues {
  */
 export interface WorkspaceCommand extends vscode.Disposable {
     /**
+     * The optional button.
+     */
+    readonly button?: vscode.StatusBarItem;
+    /**
      * The command instance.
      */
     readonly command: vscode.Disposable;
@@ -230,7 +272,11 @@ export interface WorkspaceCommand extends vscode.Disposable {
 /**
  * Arguments for a workspace command script.
  */
-export interface WorkspaceCommandScriptArguments extends ScriptArguments {
+export interface WorkspaceCommandScriptArguments extends WorkspaceScriptArguments {
+    /**
+     * The ID of the command.
+     */
+    readonly command: string;
 }
 
 /**
@@ -243,6 +289,12 @@ export interface WorkspaceCommandScriptModule {
      * @param {WorkspaceCommandScriptArguments} args Arguments for the execution.
      */
     readonly execute: (args: WorkspaceCommandScriptArguments) => any;
+}
+
+/**
+ * Arguments for a workspace based script.
+ */
+export interface WorkspaceScriptArguments extends ScriptArguments {
 }
 
 

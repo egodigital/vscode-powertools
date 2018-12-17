@@ -91,6 +91,7 @@ export async function reloadCommands() {
                 title = key;
             }
 
+            let newButton: vscode.StatusBarItem;
             let newCommand: vscode.Disposable;
             try {
                 const SCRIPT_PATH = ego_helpers.toStringSafe(
@@ -113,6 +114,10 @@ export async function reloadCommands() {
                         if (SCRIPT_MODULE) {
                             if (SCRIPT_MODULE.execute) {
                                 const ARGS: ego_contracts.WorkspaceCommandScriptArguments = {
+                                    command: key,
+                                    replaceValues: (val) => {
+                                        return WORKSPACE.replaceValues(val);
+                                    },
                                     require: (id) => {
                                         return ego_helpers.requireModule(id);
                                     }
@@ -126,7 +131,7 @@ export async function reloadCommands() {
                         }
                     } catch (e) {
                         ego_log.CONSOLE.trace(
-                            e, `workspaces.reloadCommands.execute(${ ID })`
+                            e, `workspaces.reloadCommands.execute(${ key })`
                         );
 
                         ego_helpers.showErrorMessage(
@@ -136,8 +141,10 @@ export async function reloadCommands() {
                 });
 
                 const NEW_WORKSPACE_CMD: ego_contracts.WorkspaceCommand = {
+                    button: undefined,
                     command: newCommand,
                     dispose: function() {
+                        ego_helpers.tryDispose(this.button);
                         ego_helpers.tryDispose(this.command);
                     },
                     execute: function () {
@@ -149,10 +156,42 @@ export async function reloadCommands() {
                     title: title,
                 };
 
+                // NEW_WORKSPACE_CMD.button
+                Object.defineProperty(NEW_WORKSPACE_CMD, 'button', {
+                    enumerable: true,
+                    get: () => {
+                        return newButton;
+                    }
+                });
+
+                if (item.button) {
+                    newButton = ego_helpers.buildButtonSync(
+                        item.button,
+                        (newBtn) => {
+                            if (_.isNil(newBtn.text)) {
+                                newBtn.text = title;
+                            }
+
+                            if (_.isNil(newBtn.tooltip)) {
+                                newBtn.tooltip = key;
+                            }
+
+                            newBtn.text = WORKSPACE.replaceValues(newBtn.text);
+                            newBtn.tooltip = WORKSPACE.replaceValues(newBtn.tooltip);
+                            newBtn.color = WORKSPACE.replaceValues(newBtn.color);
+                        }
+                    );
+                }
+
                 COMMAND_LIST.push(
                     NEW_WORKSPACE_CMD
                 );
+
+                if (newButton) {
+                    newButton.show();
+                }
             } catch (e) {
+                ego_helpers.tryDispose(newButton);
                 ego_helpers.tryDispose(newCommand);
             }
         });

@@ -320,7 +320,6 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     /**
      * Handles a value as string and replaces placeholders.
      *
-     * @param {ego_contracts.WithValues} obj The object with value entries.
      * @param {any} val The input value.
      *
      * @return {string} The output value.

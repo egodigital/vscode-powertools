@@ -15,20 +15,95 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as _ from 'lodash';
 import * as ego_code from './code';
 import * as ego_contracts from './contracts';
-import * as ego_log from './log';
 import * as path from 'path';
 import * as os from 'os';
 import * as vscode from 'vscode';
 import {
     asArray,
+    normalizeString,
     toBooleanSafe,
     toStringSafe
 } from 'vscode-helpers';
 
 export * from 'vscode-helpers';
 
+
+/**
+ * Builds a button for the status bar.
+ *
+ * @param {TButton} button The button (settings).
+ * @param {Function} [setup] The setup function.
+ *
+ * @return {vscode.StatusBarItem} The new status bar item.
+ */
+export function buildButtonSync<TButton extends ego_contracts.Button = ego_contracts.Button>(
+    button: TButton,
+    setup?: (newStatusBarItem: vscode.StatusBarItem, button: TButton) => void
+): vscode.StatusBarItem {
+    if (_.isNil(button)) {
+        return null;
+    }
+
+    const ALIGNMENT = toBooleanSafe(
+        button.isRight
+    ) ? vscode.StatusBarAlignment.Right : vscode.StatusBarAlignment.Left;
+
+    let priority = parseInt(
+        toStringSafe(button.priority)
+            .trim()
+    );
+    if (isNaN(priority)) {
+        priority = undefined;
+    }
+
+    const NEW_BUTTON = vscode.window.createStatusBarItem(
+        ALIGNMENT, priority
+    );
+
+    let color: string | vscode.ThemeColor = normalizeString(
+        button.color
+    ).trim();
+    if ('' === color) {
+        color = new vscode.ThemeColor('button.foreground');
+    } else {
+        color = '#' + color;
+    }
+
+    let text = toStringSafe(
+        button.title
+    ).trim();
+    if ('' === text) {
+        text = undefined;
+    }
+
+    let tooltip = toStringSafe(
+        button.tooltip
+    ).trim();
+    if ('' === tooltip) {
+        tooltip = undefined;
+    }
+
+    NEW_BUTTON.color = color;
+    NEW_BUTTON.text = text;
+    NEW_BUTTON.tooltip = tooltip;
+
+    if (setup) {
+        setup(
+            NEW_BUTTON, button
+        );
+    }
+
+    if (_.isString(NEW_BUTTON.color)) {
+        if (!NEW_BUTTON.color.startsWith('#')) {
+            NEW_BUTTON.color = '#' + NEW_BUTTON.color;
+        }
+    }
+
+    return NEW_BUTTON;
+}
 
 /**
  * Checks if a conditional obj does match items condition.
@@ -67,7 +142,7 @@ export function filterConditionals<TObj extends ego_contracts.Conditional = ego_
 
             return true;
         } catch (e) {
-            ego_log.CONSOLE
+            require('./log').CONSOLE
                 .trace(e, 'helpers.filterConditionals(1)');
 
             return false;

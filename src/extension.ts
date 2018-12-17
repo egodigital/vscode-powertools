@@ -105,6 +105,19 @@ async function createNewWorkspace(folder: vscode.WorkspaceFolder): Promise<ego_w
     return newWorkspace;
 }
 
+async function onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
+    for (const WS of ego_workspace.getAllWorkspaces()) {
+        try {
+            if (e.affectsConfiguration(WS.configSource.section, WS.configSource.resource)) {
+                await WS.onDidChangeConfiguration(e);
+            }
+        } catch (e) {
+            ego_log.CONSOLE
+                   .trace(e, 'extension.onDidChangeConfiguration(1)');
+        }
+    }
+}
+
 async function onDidSaveTextDocument(doc: vscode.TextDocument) {
     await withTextDocument(doc, async (ws, d) => {
         await ws.onDidSaveTextDocument(d);
@@ -221,6 +234,15 @@ export async function activate(context: vscode.ExtensionContext) {
                 }).catch((err) => {
                     ego_log.CONSOLE
                            .trace(err, 'vscode.workspace.onDidSaveTextDocument');
+                });
+            }),
+
+            // onDidChangeConfiguration
+            vscode.workspace.onDidChangeConfiguration((e) => {
+                onDidChangeConfiguration(e).then(() => {
+                }).catch((err) => {
+                    ego_log.CONSOLE
+                           .trace(err, 'vscode.workspace.onDidChangeConfiguration');
                 });
             }),
         );
