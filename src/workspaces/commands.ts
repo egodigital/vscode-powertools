@@ -194,6 +194,9 @@ export async function reloadCommands() {
             } catch (e) {
                 ego_helpers.tryDispose(newButton);
                 ego_helpers.tryDispose(newCommand);
+
+                ego_log.CONSOLE
+                       .trace(e, `commands.reloadCommands(${ key })`);
             }
         });
     }
