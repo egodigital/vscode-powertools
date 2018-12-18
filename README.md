@@ -64,7 +64,7 @@ To work with the code:
 * create and change to a new branch, like `git checkout -b my_new_feature`
 * run `npm install` from your project folder
 * open that project folder in Visual Studio Code
-* select command `Deploy Reloaded: Deploy ...` and execute `Package ...` to copy all web view resources files from `/src/res` to `/out/res` ... also do this after you have reset your `/out` folder
+* select command `Deploy Reloaded: Deploy ...` (by pressing `F1`) and execute `Package ...` to copy all web view resources files from `/src/res` to `/out/res` ... also do this after you have reset your `/out` folder
 * now you can edit and debug there
 * commit your changes to your new branch and sync it with your forked GitHub repo
 * make a [pull request](https://github.com/egodigital/vscode-powertools/pulls)
