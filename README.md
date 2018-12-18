@@ -1,65 +1,76 @@
-# vscode-powertools README
+# vscode-powertools
 
-This is the README for your extension "vscode-powertools". After writing up a brief description, we recommend including the following sections.
+[![Share via Facebook](https://raw.githubusercontent.com/egodigital/vscode-powertools/master/img/share/Facebook.png)](https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fmarketplace.visualstudio.com%2Fitems%3FitemName%3Degodigital.vscode-powertools&quote=VSCode%20Kanban) [![Share via Twitter](https://raw.githubusercontent.com/egodigital/vscode-powertools/master/img/share/Twitter.png)](https://twitter.com/intent/tweet?source=https%3A%2F%2Fmarketplace.visualstudio.com%2Fitems%3FitemName%3Degodigital.vscode-powertools&text=VSCode%20Kanban:%20https%3A%2F%2Fmarketplace.visualstudio.com%2Fitems%3FitemName%3Degodigital.vscode-powertools&via=mjkloubert) [![Share via Google+](https://raw.githubusercontent.com/egodigital/vscode-powertools/master/img/share/Google+.png)](https://plus.google.com/share?url=https%3A%2F%2Fmarketplace.visualstudio.com%2Fitems%3FitemName%3Degodigital.vscode-powertools) [![Share via Pinterest](https://raw.githubusercontent.com/egodigital/vscode-powertools/master/img/share/Pinterest.png)](http://pinterest.com/pin/create/button/?url=https%3A%2F%2Fmarketplace.visualstudio.com%2Fitems%3FitemName%3Degodigital.vscode-powertools&description=Visual%20Studio%20Code%20extension%2C%20which%20receives%20and%20shows%20git%20events%20from%20webhooks.) [![Share via Reddit](https://raw.githubusercontent.com/egodigital/vscode-powertools/master/img/share/Reddit.png)](http://www.reddit.com/submit?url=https%3A%2F%2Fmarketplace.visualstudio.com%2Fitems%3FitemName%3Degodigital.vscode-powertools&title=VSCode%20Kanban) [![Share via LinkedIn](https://raw.githubusercontent.com/egodigital/vscode-powertools/master/img/share/LinkedIn.png)](http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fmarketplace.visualstudio.com%2Fitems%3FitemName%3Degodigital.vscode-powertools&title=VSCode%20Kanban&summary=Visual%20Studio%20Code%20extension%2C%20which%20receives%20and%20shows%20git%20events%20from%20webhooks.&source=https%3A%2F%2Fmarketplace.visualstudio.com%2Fitems%3FitemName%3Degodigital.vscode-powertools) [![Share via Wordpress](https://raw.githubusercontent.com/egodigital/vscode-powertools/master/img/share/Wordpress.png)](http://wordpress.com/press-this.php?u=https%3A%2F%2Fmarketplace.visualstudio.com%2Fitems%3FitemName%3Degodigital.vscode-powertools&quote=VSCode%20Kanban&s=Visual%20Studio%20Code%20extension%2C%20which%20receives%20and%20shows%20git%20events%20from%20webhooks.) [![Share via Email](https://raw.githubusercontent.com/egodigital/vscode-powertools/master/img/share/Email.png)](mailto:?subject=VSCode%20Kanban&body=Visual%20Studio%20Code%20extension%2C%20which%20receives%20and%20shows%20git%20events%20from%20webhooks.:%20https%3A%2F%2Fmarketplace.visualstudio.com%2Fitems%3FitemName%3Degodigital.vscode-powertools)
 
-## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+[![Latest Release](https://vsmarketplacebadge.apphb.com/version-short/egodigital.vscode-powertools.svg)](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs/egodigital.vscode-powertools.svg)](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools)
+[![Rating](https://vsmarketplacebadge.apphb.com/rating-short/egodigital.vscode-powertools.svg)](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools#review-details)
 
-For example if there is an image subfolder under your extension project workspace:
+A swiss army knife with lots of tools, extensions and (scriptable) enhancements for [Visual Studio Code](https://code.visualstudio.com/).
 
-\!\[feature X\]\(images/feature-x.png\)
+## Table of contents
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+1. [Install](#install-)
+2. [How to use](#how-to-use-)
+   * [Settings](#settings-)
+     * [Apps](#apps-)
+     * [Commands](#commands-)
+     * [Jobs](#jobs-)
+     * [Values](#values-)
+3. [Support and contribute](#support-and-contribute-)
+   * [Contributors](#contributors-)
+4. [Related projects](#related-projects-)
+   * [vscode-helpers](#vscode-helpers-)
 
-## Requirements
+## Install [[&uarr;](#table-of-contents)]
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+Launch VS Code Quick Open (`Ctrl + P`), paste the following command, and press enter:
 
-## Extension Settings
+```bash
+ext install vscode-powertools
+```
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+Or search for things like `vscode-powertools` in your editor.
 
-For example:
+## How to use [[&uarr;](#table-of-contents)]
 
-This extension contributes the following settings:
+### Settings [[&uarr;](#how-to-use-)]
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+#### Apps [[&uarr;](#settings-)]
 
-## Known Issues
+@TODO
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+#### Commands [[&uarr;](#settings-)]
 
-## Release Notes
+@TODO
 
-Users appreciate release notes as you update your extension.
+#### Jobs [[&uarr;](#settings-)]
 
-### 1.0.0
+@TODO
 
-Initial release of ...
+#### Values [[&uarr;](#settings-)]
 
-### 1.0.1
+@TODO
 
-Fixed issue #.
+## Support and contribute [[&uarr;](#table-of-contents)]
 
-### 1.1.0
+If you like the extension, you are welcome to contribute, by [opening an issue](https://github.com/egodigital/vscode-powertools/issues) and/or fork this repository.
 
-Added features X, Y, and Z.
+To work with the code:
 
------------------------------------------------------------------------------------------------------------
+* install [vscode-deploy-reloaded](https://marketplace.visualstudio.com/items?itemName=mkloubert.vscode-deploy-reloaded) extension
+* clone [this repository](https://github.com/egodigital/vscode-powertools)
+* create and change to a new branch, like `git checkout -b my_new_feature`
+* run `npm install` from your project folder
+* open that project folder in Visual Studio Code
+* select command `Deploy Reloaded: Deploy ...` and execute `Package ...` to copy all web view resources files from `/src/res` to `/out/res` ... also do this after you have reset your `/out` folder
+* now you can edit and debug there
+* commit your changes to your new branch and sync it with your forked GitHub repo
+* make a [pull request](https://github.com/egodigital/vscode-powertools/pulls)
 
-## Working with Markdown
+## Related projects [[&uarr;](#table-of-contents)]
 
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+### vscode-helpers [[&uarr;](#related-projects-)]
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+[vscode-helpers](https://github.com/mkloubert/vscode-helpers) is a NPM module, which you can use in your own [VSCode extension](https://code.visualstudio.com/docs/extensions/overview) and contains a lot of helpful classes and functions.

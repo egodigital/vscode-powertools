@@ -2,6 +2,9 @@
 - /icon.png
   - David Cross (http://webhostingmedia.net/)
 
+- /img/share/*
+  - https://simplesharingbuttons.com
+
 - /src/res/img/ego_digital.svg
   - e.GO Digital GmbH (https://www.e-go-digital.com/)
 
