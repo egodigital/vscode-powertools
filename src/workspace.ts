@@ -18,6 +18,7 @@
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_values from './values';
+import * as ego_workspaces_apps from './workspaces/apps';
 import * as ego_workspaces_commands from './workspaces/commands';
 import * as ego_workspaces_jobs from './workspaces/jobs';
 import * as ego_workspaces_startup from './workspaces/startup';
@@ -103,6 +104,19 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     }
 
     /**
+     * Returns all apps of that workspace.
+     *
+     * @return {ego_contracts.WorkspaceApp[]} The list of apps.
+     */
+    public getApps(): ego_contracts.WorkspaceApp[] {
+        return ego_helpers.asArray(
+            this.instanceState[
+                ego_workspaces_apps.KEY_APPS
+            ]
+        );
+    }
+
+    /**
      * Returns all commands of that workspace.
      *
      * @return {ego_contracts.WorkspaceCommand[]} The list of commands.
@@ -178,6 +192,9 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         ] = [];
         this.instanceState[
             ego_workspaces_jobs.KEY_JOBS
+        ] = [];
+        this.instanceState[
+            ego_workspaces_apps.KEY_APPS
         ] = [];
 
         // file change events
@@ -278,6 +295,15 @@ export class Workspace extends ego_helpers.WorkspaceBase {
 
         ego_helpers.tryDispose(this.context.fileWatcher);
 
+        // apps
+        ego_workspaces_apps.disposeApps.apply(
+            this
+        );
+        // jobs
+        ego_workspaces_jobs.disposeJobs.apply(
+            this
+        );
+        // commands
         ego_workspaces_commands.disposeCommands.apply(
             this
         );
@@ -316,6 +342,10 @@ export class Workspace extends ego_helpers.WorkspaceBase {
             );
             // startups
             await ego_workspaces_startup.onStartup.apply(
+                this
+            );
+            // apps
+            await ego_workspaces_apps.reloadApps.apply(
                 this
             );
             // jobs

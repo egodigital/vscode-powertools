@@ -94,6 +94,20 @@ export async function reloadCommands() {
                 title = key;
             }
 
+            let description = ego_helpers.toStringSafe(
+                item.description
+            ).trim();
+            if ('' === description) {
+                description = undefined;
+            }
+
+            let detail = ego_helpers.toStringSafe(
+                item.detail
+            ).trim();
+            if ('' === detail) {
+                detail = undefined;
+            }
+
             let newButton: vscode.StatusBarItem;
             let newCommand: vscode.Disposable;
             try {
@@ -149,6 +163,8 @@ export async function reloadCommands() {
                 const NEW_WORKSPACE_CMD: ego_contracts.WorkspaceCommand = {
                     button: undefined,
                     command: newCommand,
+                    description: undefined,
+                    detail: undefined,
                     dispose: function() {
                         ego_helpers.tryDispose(this.button);
                         ego_helpers.tryDispose(this.command);
@@ -159,7 +175,7 @@ export async function reloadCommands() {
                     },
                     id: ID,
                     item: item,
-                    title: title,
+                    title: undefined,
                 };
 
                 // NEW_WORKSPACE_CMD.button
@@ -167,6 +183,45 @@ export async function reloadCommands() {
                     enumerable: true,
                     get: () => {
                         return newButton;
+                    }
+                });
+
+                // NEW_WORKSPACE_CMD.description
+                Object.defineProperty(NEW_WORKSPACE_CMD, 'description', {
+                    enumerable: true,
+                    get: () => {
+                        const DESCRIPTION = WORKSPACE.replaceValues(
+                            description
+                        ).trim();
+
+                        return '' !== DESCRIPTION ? DESCRIPTION
+                                                  : undefined;
+                    }
+                });
+
+                // NEW_WORKSPACE_CMD.detail
+                Object.defineProperty(NEW_WORKSPACE_CMD, 'detail', {
+                    enumerable: true,
+                    get: () => {
+                        const DETAIL = WORKSPACE.replaceValues(
+                            detail
+                        ).trim();
+
+                        return '' !== DETAIL ? DETAIL
+                                             : undefined;
+                    }
+                });
+
+                // NEW_WORKSPACE_CMD.title
+                Object.defineProperty(NEW_WORKSPACE_CMD, 'title', {
+                    enumerable: true,
+                    get: () => {
+                        const TITLE = WORKSPACE.replaceValues(
+                            title
+                        ).trim();
+
+                        return '' !== TITLE ? TITLE
+                                            : undefined;
                     }
                 });
 

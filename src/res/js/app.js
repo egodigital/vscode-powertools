@@ -165,3 +165,16 @@ $(() => {
         }
     });
 });
+
+$(() => {
+    if (ego_on_loaded) {
+        Promise.resolve(
+            ego_on_loaded()
+        ).then(() => {
+        }).catch((err) => {
+            ego_log(err);
+        });
+    }
+
+    ego_post('onLoaded');
+});

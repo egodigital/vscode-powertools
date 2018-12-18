@@ -337,6 +337,12 @@ ${ this.generateHtmlFooter() }`;
 
                             if (!MSG_ALREADY_HANDLED) {
                                 switch (msg.command) {
+                                    case 'onLoaded':
+                                        action = async () => {
+                                            await this.onLoaded();
+                                        };
+                                        break;
+
                                     case 'log':
                                         action = async () => {
                                             await this.onLog(msg.data);
@@ -405,6 +411,12 @@ ${ this.generateHtmlFooter() }`;
 
             return true;
         });
+    }
+
+    /**
+     * Is invoked after the page inside the web view has been loaded.
+     */
+    protected async onLoaded() {
     }
 
     /**

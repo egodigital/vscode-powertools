@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.12",
+    "version": "0.0.13",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -15,6 +15,11 @@
     "main": "./out/extension",
     "contributes": {
         "commands": [
+            {
+                "command": "ego.power-tools.apps",
+                "title": "Apps",
+                "category": "Power Tools"
+            },
             {
                 "command": "ego.power-tools.commands",
                 "title": "Commands",
@@ -33,6 +38,66 @@
                     "type": "object",
                     "scope": "resource",
                     "properties": {
+                        "apps": {
+                            "description": "One or more apps to register.",
+                            "type": "array",
+                            "items": {
+                                "oneOf": [
+                                    {
+                                        "description": "The path to the app script.",
+                                        "type": "string"
+                                    },
+                                    {
+                                        "description": "Settings for the app.",
+                                        "type": "object",
+                                        "properties": {
+                                            "description": {
+                                                "description": "A description for the app.",
+                                                "type": "string"
+                                            },
+                                            "detail": {
+                                                "description": "Detail information.",
+                                                "type": "string"
+                                            },
+                                            "if": {
+                                                "description": "The JavaScript code that checks the avaibility of that app.",
+                                                "type": "string"
+                                            },
+                                            "options": {
+                                                "description": "Options for running the script."
+                                            },
+                                            "platforms": {
+                                                "description": "One or more platform names, that app is for.",
+                                                "type": "array",
+                                                "items": {
+                                                    "enum": [
+                                                        "aix",
+                                                        "darwin",
+                                                        "freebsd",
+                                                        "linux",
+                                                        "openbsd",
+                                                        "sunos",
+                                                        "win32"
+                                                    ],
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "script": {
+                                                "description": "The path to the app script.",
+                                                "type": "string"
+                                            },
+                                            "title": {
+                                                "description": "The title for display.",
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "script"
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
                         "commands": {
                             "description": "Defines one or more commands to register.",
                             "type": "object",
@@ -67,6 +132,14 @@
                                                     "type": "string"
                                                 }
                                             }
+                                        },
+                                        "description": {
+                                            "description": "A description for the command.",
+                                            "type": "string"
+                                        },
+                                        "detail": {
+                                            "description": "Detail information.",
+                                            "type": "string"
                                         },
                                         "if": {
                                             "description": "The JavaScript code that checks the avaibility of that command.",

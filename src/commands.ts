@@ -29,6 +29,45 @@ import * as vscode from 'vscode';
  */
 export function registerCommands(context: vscode.ExtensionContext) {
     context.subscriptions.push(
+        // apps
+        vscode.commands.registerCommand('ego.power-tools.apps', async () => {
+            try {
+                const ALL_WORKSPACES = ego_workspace.getAllWorkspaces();
+
+                const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = ego_helpers.from(
+                    ALL_WORKSPACES
+                ).selectMany(ws => {
+                    return ws.getApps();
+                }).select(app => {
+                    return {
+                        action: () => {
+                            return app.open();
+                        },
+                        description: app.description,
+                        detail: app.detail,
+                        label: app.title,
+                    };
+                }).orderBy(qp => {
+                    return ego_helpers.normalizeString(qp.label);
+                }).toArray();
+
+                const SELECT_ITEM = await vscode.window.showQuickPick(
+                    QUICK_PICKS,
+                    {
+                        placeHolder: 'Select the app, you would like to open ...',
+                    }
+                );
+
+                if (SELECT_ITEM) {
+                    await Promise.resolve(
+                        SELECT_ITEM.action()
+                    );
+                }
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }),
+
         // commands
         vscode.commands.registerCommand('ego.power-tools.commands', async () => {
             try {
@@ -43,6 +82,8 @@ export function registerCommands(context: vscode.ExtensionContext) {
                         action: () => {
                             return cmd.execute();
                         },
+                        description: cmd.description,
+                        detail: cmd.detail,
                         label: cmd.title,
                     };
                 }).orderBy(qp => {

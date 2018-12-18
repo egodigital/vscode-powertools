@@ -40,6 +40,107 @@ export interface ActionQuickPickItem extends vscode.QuickPickItem {
 }
 
 /**
+ * An app entry.
+ */
+export type AppEntry = AppItem | string;
+
+/**
+ * Arguments for an app script event.
+ */
+export interface AppEventScriptArguments<TData = any> extends WorkspaceScriptArguments {
+    /**
+     * The data.
+     */
+    readonly data?: TData;
+    /**
+     * The name of the event.
+     */
+    readonly event: string;
+    /**
+     * Returns an URI from the 'resources' directory.
+     *
+     * @param {string} path The (relative) path.
+     * @param {boolean} [asString] Return as string or object. Default: (true)
+     *
+     * @return {vscode.Uri} The URI.
+     */
+    readonly getFileResourceUri: (path: string, asString?: boolean) => vscode.Uri | string;
+    /**
+     * Posts a command to the web view.
+     *
+     * @param {string} command The name of the command.
+     * @param {any} [data] The data for the command.
+     *
+     * @return {Promise<boolean>} A promise that indicates if operation was successful or not.
+     */
+    readonly post: (command: string, data?: any) => Promise<boolean>;
+}
+
+/**
+ * An app item.
+ */
+export interface AppItem extends Conditional, ForPlatforms {
+    /**
+     * A description for the app.
+     */
+    description?: string;
+    /**
+     * Detail information.
+     */
+    detail?: string;
+    /**
+     * Options for the script execution.
+     */
+    options?: any;
+    /**
+     * The path to the script, that should be invoked.
+     */
+    script: string;
+    /**
+     * The title for display.
+     */
+    title?: string;
+}
+
+/**
+ * An app module.
+ */
+export interface AppModule {
+    /**
+     * Returns the HTML content for the app.
+     *
+     * @param {AppEventScriptArguments} args Arguments for the event.
+     *
+     * @return {string} The HTML (body) content.
+     */
+    readonly getHtml: (args: AppEventScriptArguments) => string;
+    /**
+     * Returns the title of the app (view).
+     *
+     * @param {AppEventScriptArguments} args Arguments for the event.
+     *
+     * @return {string} The title.
+     */
+    readonly getTitle: (args: AppEventScriptArguments) => string;
+    /**
+     * Is invoked on an app event.
+     *
+     * @param {AppEventScriptArguments} args Arguments for the event.
+     */
+    readonly onEvent?: (args: AppEventScriptArguments) => any;
+    /**
+     * Is invoked after web page inside view has been loaded.
+     *
+     * @param {AppEventScriptArguments} args Arguments for the event.
+     */
+    readonly onLoaded?: (args: AppEventScriptArguments) => any;
+    /**
+     * Is invoked when a message received from the web view.
+     */
+    readonly onMessage?: (args: AppEventScriptArguments) => any;
+}
+
+/**
  * Settings for a button in the status bar.
  */
 export interface Button {
@@ -89,6 +190,14 @@ export interface CommandItem extends Conditional, ForPlatforms {
      */
     button?: Button;
     /**
+     * A description for the command.
+     */
+    description?: string;
+    /**
+     * Detail information.
+     */
+    detail?: string;
+    /**
      * Options for running the script.
      */
     options?: any;
@@ -134,6 +243,10 @@ export interface CronJobItem extends JobItem {
  * Extension configuration.
  */
 export interface ExtensionConfiguration extends WithValues {
+    /**
+     * One or more apps to register.
+     */
+    apps?: AppEntry[];
     /**
      * One or more commands to register.
      */
@@ -406,6 +519,34 @@ export interface WithValues {
 }
 
 /**
+ * A workspace app.
+ */
+export interface WorkspaceApp extends vscode.Disposable {
+    /**
+     * A description of the app.
+     */
+    readonly description: string;
+    /**
+     * Detail information.
+     */
+    readonly detail: string;
+    /**
+     * Opens the app.
+     *
+     * @return {Promise<vscode.Disposable | false>} The promise that stores the new web view instance or (false) if operation failed.
+     */
+    readonly open: () => Promise<vscode.Disposable | false>;
+    /**
+     * The title for display.
+     */
+    readonly title: string;
+    /**
+     * Gets the current web view instance.
+     */
+    readonly view: vscode.Disposable;
+}
+
+/**
  * A workspace command.
  */
 export interface WorkspaceCommand extends vscode.Disposable {
@@ -417,6 +558,14 @@ export interface WorkspaceCommand extends vscode.Disposable {
      * The command instance.
      */
     readonly command: vscode.Disposable;
+    /**
+     * A description of the command.
+     */
+    readonly description: string;
+    /**
+     * Detail information.
+     */
+    readonly detail: string;
     /**
      * Executes the command.
      *
