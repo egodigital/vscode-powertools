@@ -97,12 +97,12 @@ export async function reloadCommands() {
             let newButton: vscode.StatusBarItem;
             let newCommand: vscode.Disposable;
             try {
-                const SCRIPT_PATH = ego_helpers.toStringSafe(
-                    item.script
-                );
-
                 newCommand = vscode.commands.registerCommand(ID, async function() {
                     try {
+                        const SCRIPT_PATH = WORKSPACE.replaceValues(
+                            item.script
+                        );
+
                         const FULL_SCRIPT_PATH = WORKSPACE.getExistingFullPath(
                             SCRIPT_PATH
                         );
@@ -118,6 +118,7 @@ export async function reloadCommands() {
                             if (SCRIPT_MODULE.execute) {
                                 const ARGS: ego_contracts.WorkspaceCommandScriptArguments = {
                                     command: key,
+                                    options: ego_helpers.cloneObject(item.options),
                                     replaceValues: (val) => {
                                         return WORKSPACE.replaceValues(val);
                                     },

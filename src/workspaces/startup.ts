@@ -20,6 +20,7 @@ import * as childProcess from 'child_process';
 import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
 import * as ego_workspace from '../workspace';
+import * as path from 'path';
 
 
 /**
@@ -75,6 +76,16 @@ export async function onStartup() {
                         continue;
                     }
 
+                    let currentWorkDirectory = WORKSPACE.replaceValues(SHELL_ITEM.cwd);
+                    if ('' === currentWorkDirectory.trim()) {
+                        currentWorkDirectory = WORKSPACE.rootPath;
+                    }
+                    if (!path.isAbsolute(currentWorkDirectory)) {
+                        currentWorkDirectory = path.join(
+                            WORKSPACE.rootPath, currentWorkDirectory
+                        );
+                    }
+
                     const SILENT = ego_helpers.toBooleanSafe(SHELL_ITEM.silent, true);
 
                     try {
@@ -82,7 +93,9 @@ export async function onStartup() {
                                  .info(`Executing '${ CMD }' in shell ...`);
 
                         const RESULT = childProcess.execSync(CMD, {
-                            cwd: WORKSPACE.rootPath,
+                            cwd: path.resolve(
+                                currentWorkDirectory
+                            ),
                         });
 
                         if (!SILENT) {

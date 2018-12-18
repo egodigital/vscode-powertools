@@ -78,6 +78,10 @@ export interface CommandItem extends Conditional, ForPlatforms {
      */
     button?: Button;
     /**
+     * Options for running the script.
+     */
+    options?: any;
+    /**
      * The path to the script that should be executed.
      */
     script: string;
@@ -98,6 +102,24 @@ export interface Conditional {
 }
 
 /**
+ * A cron job.
+ */
+export interface CronJobItem extends JobItem {
+    /**
+     * Run on startup or not.
+     */
+    autoStart?: boolean;
+    /**
+     * The format of the value in 'time'.
+     */
+    format?: string;
+    /**
+     * The pattern.
+     */
+    time?: string;
+}
+
+/**
  * Extension configuration.
  */
 export interface ExtensionConfiguration extends WithValues {
@@ -105,6 +127,10 @@ export interface ExtensionConfiguration extends WithValues {
      * One or more commands to register.
      */
     commands?: { [id: string]: CommandEntry };
+    /**
+     * One or more jobs to run.
+     */
+    jobs?: JobEntry[];
     /**
      * One or more things to run at startup.
      */
@@ -122,9 +148,88 @@ export interface ForPlatforms {
 }
 
 /**
+ * A possible value for a job entry.
+ */
+export type JobEntry = JobItem;
+
+/**
+ * A job item.
+ */
+export interface JobItem extends Conditional, ForPlatforms {
+    /**
+     * The action to invoke.
+     */
+    action: string | JobItemAction;
+    /**
+     * The type of the job item.
+     */
+    type?: string;
+}
+
+/**
+ * A job item action.
+ */
+export interface JobItemAction {
+    /**
+     * The type.
+     */
+    type?: string;
+}
+
+/**
+ * A job item action running a script.
+ */
+export interface JobItemScriptAction extends JobItemAction {
+    /**
+     * Options for running the script.
+     */
+    options?: any;
+    /**
+     * The path to the script to invoke.
+     */
+    script: string;
+}
+
+/**
+ * Arguments for a job item script.
+ */
+export interface JobItemScriptActionArguments extends WorkspaceScriptArguments {
+}
+
+/**
+ * Job item script module.
+ */
+export interface JobItemScriptActionModule {
+    /**
+     * Executes the module.
+     *
+     * @param {JobItemScriptArguments} args Arguments for the execution.
+     */
+    readonly execute: (args: JobItemScriptActionArguments) => any;
+}
+
+/**
+ * A job item action running a shell command.
+ */
+export interface JobItemShellCommandAction extends JobItemAction {
+    /**
+     * The custom working directory.
+     */
+    cwd?: string;
+    /**
+     * The shell command to execute.
+     */
+    command: string;
+}
+
+/**
  * Arguments for a script.
  */
 export interface ScriptArguments {
+    /**
+     * Options for running the script.
+     */
+    readonly options: any;
     /**
      * Handles a value as string and replaces placeholders.
      *
@@ -148,9 +253,13 @@ export interface ScriptArguments {
  */
 export interface ShellCommandStartupItem extends StartupItem {
     /**
+     * The custom working directory.
+     */
+    cwd?: string;
+    /**
      * The command to execute.
      */
-    command?: string;
+    command: string;
     /**
      * Do not write result to output.
      */
@@ -299,6 +408,28 @@ export interface WorkspaceCommandScriptModule {
      * @param {WorkspaceCommandScriptArguments} args Arguments for the execution.
      */
     readonly execute: (args: WorkspaceCommandScriptArguments) => any;
+}
+
+/**
+ * A workspace job.
+ */
+export interface WorkspaceJob extends vscode.Disposable {
+    /**
+     * Gets if the job is currently running or not.
+     */
+    readonly isRunning: boolean;
+    /**
+     * Starts the job.
+     *
+     * @return {boolean} Operation was successful or not.
+     */
+    readonly start: () => boolean;
+    /**
+     * Stops the job.
+     *
+     * @return {boolean} Operation was successful or not.
+     */
+    readonly stop: () => boolean;
 }
 
 /**

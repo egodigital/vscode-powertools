@@ -19,6 +19,7 @@ import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_values from './values';
 import * as ego_workspaces_commands from './workspaces/commands';
+import * as ego_workspaces_jobs from './workspaces/jobs';
 import * as ego_workspaces_startup from './workspaces/startup';
 import * as fsExtra from 'fs-extra';
 import * as os from 'os';
@@ -175,6 +176,9 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         this.instanceState[
             ego_workspaces_commands.KEY_COMMANDS
         ] = [];
+        this.instanceState[
+            ego_workspaces_jobs.KEY_JOBS
+        ] = [];
 
         // file change events
         {
@@ -306,10 +310,16 @@ export class Workspace extends ego_helpers.WorkspaceBase {
 
             this._settings = loadedSettings;
 
+            // commands
             await ego_workspaces_commands.reloadCommands.apply(
                 this
             );
+            // startups
             await ego_workspaces_startup.onStartup.apply(
+                this
+            );
+            // jobs
+            await ego_workspaces_jobs.reloadJobs.apply(
                 this
             );
         } finally {

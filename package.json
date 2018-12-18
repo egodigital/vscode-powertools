@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -72,6 +72,9 @@
                                             "description": "The JavaScript code that checks the avaibility of that command.",
                                             "type": "string"
                                         },
+                                        "options": {
+                                            "description": "Options for running the script."
+                                        },
                                         "platforms": {
                                             "description": "One or more platform names, that command is for.",
                                             "type": "array",
@@ -103,8 +106,108 @@
                                 }
                             }
                         },
+                        "jobs": {
+                            "description": "One or more jobs to run.",
+                            "type": "array",
+                            "items": {
+                                "oneOf": [
+                                    {
+                                        "description": "A scheduled job.",
+                                        "type": "object",
+                                        "properties": {
+                                            "action": {
+                                                "oneOf": [
+                                                    {
+                                                        "description": "The (shell) command to execute.",
+                                                        "type": "string"
+                                                    },
+                                                    {
+                                                        "description": "An action running a script.",
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "options": {
+                                                                "description": "Options for running the script."
+                                                            },
+                                                            "script": {
+                                                                "description": "The path of the script to execute.",
+                                                                "type": "string"
+                                                            },
+                                                            "type": {
+                                                                "enum": [
+                                                                    "script"
+                                                                ],
+                                                                "description": "The type of the action.",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "script"
+                                                        ]
+                                                    },
+                                                    {
+                                                        "description": "An action running a shell command.",
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "command": {
+                                                                "description": "The shell command to execute.",
+                                                                "type": "string"
+                                                            },
+                                                            "cwd": {
+                                                                "description": "The custom working directory.",
+                                                                "type": "string"
+                                                            },
+                                                            "type": {
+                                                                "enum": [
+                                                                    "",
+                                                                    "shell"
+                                                                ],
+                                                                "description": "The type of the action.",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "command"
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "autoStart": {
+                                                "description": "Run on startup or not.",
+                                                "type": "boolean",
+                                                "default": true
+                                            },
+                                            "format": {
+                                                "description": "The format of 'time' value.",
+                                                "enum": [
+                                                    "",
+                                                    "crontab"
+                                                ],
+                                                "type": "string"
+                                            },
+                                            "time": {
+                                                "description": "The time pattern.",
+                                                "type": "string",
+                                                "default": "* * * * * 0"
+                                            },
+                                            "type": {
+                                                "enum": [
+                                                    "",
+                                                    "cron",
+                                                    "scheduled"
+                                                ],
+                                                "description": "The type of the job.",
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "action"
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
                         "startup": {
-                            "description": "An or more things to execute at startup.",
+                            "description": "One or more things to execute at startup.",
                             "type": "array",
                             "items": {
                                 "oneOf": [
@@ -118,6 +221,10 @@
                                         "properties": {
                                             "command": {
                                                 "description": "The command to execute.",
+                                                "type": "string"
+                                            },
+                                            "cwd": {
+                                                "description": "The custom working directory.",
                                                 "type": "string"
                                             },
                                             "if": {
@@ -153,7 +260,10 @@
                                                 ],
                                                 "type": "string"
                                             }
-                                        }
+                                        },
+                                        "required": [
+                                            "command"
+                                        ]
                                     }
                                 ]
                             }
@@ -223,6 +333,7 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
+        "@types/cron": "^1.3.0",
         "@types/fs-extra": "^5.0.4",
         "@types/html-entities": "^1.2.16",
         "@types/lodash": "^4.14.119",
@@ -249,6 +360,7 @@
         "url": "https://github.com/egodigital/vscode-powertools.git"
     },
     "dependencies": {
+        "cron": "^1.6.0",
         "fs-extra": "^7.0.1",
         "html-entities": "^1.2.1",
         "lodash": "^4.17.11",
