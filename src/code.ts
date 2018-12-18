@@ -37,6 +37,9 @@ export function run<TResult = any>(_749b18b8162b474388f9d39d173483fa_tmmk: RunOp
     // @ts-ignore
     const $h = require('./helpers');
     // @ts-ignore
+    const $m = require('moment');
+    require('moment-timezone');
+    // @ts-ignore
     const $vs = require('vscode');
 
     // @ts-ignore

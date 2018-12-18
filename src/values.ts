@@ -16,6 +16,7 @@
  */
 
 import * as _ from 'lodash';
+import * as ego_code from './code';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 
@@ -30,6 +31,31 @@ export interface ReplaceValuesOptions {
     buildInValues?: ego_contracts.Value | ego_contracts.Value[];
 }
 
+
+/**
+ * A value running code.
+ */
+export class CodeValue implements ego_contracts.Value {
+    /**
+     * Initializes a new instance of that class.
+     *
+     * @param {string} code The code to execute.
+     * @param {string} [name] The optional name.
+     */
+    constructor(
+        public readonly code: string,
+        public readonly name?: string,
+    ) { }
+
+    /**
+     * @inheritdoc
+     */
+    public get value(): any {
+        return ego_code.run({
+            code: this.code,
+        });
+    }
+}
 
 /**
  * A value that uses a function.
@@ -160,6 +186,18 @@ export function toValues(obj: ego_contracts.WithValues): ego_contracts.Value[] {
                                         VALUES.push(
                                             new StaticValue(
                                                 STATIC_ITEM.value, NAME
+                                            )
+                                        );
+                                    }
+                                    break;
+
+                                case 'code':
+                                    {
+                                        const CODE_ITEM = <ego_contracts.CodeValueItem>valueItem;
+
+                                        VALUES.push(
+                                            new CodeValue(
+                                                CODE_ITEM.code, NAME
                                             )
                                         );
                                     }

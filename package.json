@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.11",
+    "version": "0.0.12",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -323,6 +323,43 @@
                                             "description": "A static value.",
                                             "type": "object",
                                             "properties": {
+                                                "code": {
+                                                    "description": "The code to execute.",
+                                                    "type": "string"
+                                                },
+                                                "if": {
+                                                    "description": "The JavaScript code that checks the avaibility of that value.",
+                                                    "type": "string"
+                                                },
+                                                "platforms": {
+                                                    "description": "One or more platform names, that value is for.",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "enum": [
+                                                            "aix",
+                                                            "darwin",
+                                                            "freebsd",
+                                                            "linux",
+                                                            "openbsd",
+                                                            "sunos",
+                                                            "win32"
+                                                        ],
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": {
+                                                    "description": "The type.",
+                                                    "enum": [
+                                                        "code"
+                                                    ],
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "description": "A static value.",
+                                            "type": "object",
+                                            "properties": {
                                                 "if": {
                                                     "description": "The JavaScript code that checks the avaibility of that value.",
                                                     "type": "string"
@@ -378,6 +415,7 @@
         "@types/html-entities": "^1.2.16",
         "@types/lodash": "^4.14.119",
         "@types/mocha": "^2.2.42",
+        "@types/moment-timezone": "^0.5.9",
         "@types/node": "^8.10.25",
         "@types/opn": "^5.1.0",
         "@types/p-queue": "^2.3.1",
@@ -404,6 +442,8 @@
         "fs-extra": "^7.0.1",
         "html-entities": "^1.2.1",
         "lodash": "^4.17.11",
+        "moment": "^2.23.0",
+        "moment-timezone": "^0.5.23",
         "opn": "^5.4.0",
         "vscode-helpers": "^3.0.0"
     }

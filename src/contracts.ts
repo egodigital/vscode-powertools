@@ -66,6 +66,16 @@ export interface Button {
 }
 
 /**
+ * A value item running (JavaScript) code.
+ */
+export interface CodeValueItem extends ValueItem {
+    /**
+     * The code to execute.
+     */
+    code: string;
+}
+
+/**
  * A possible value for a command entry.
  */
 export type CommandEntry = CommandItem;
