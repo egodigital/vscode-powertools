@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as ego_helpers from './helpers';
 import * as vscode from 'vscode';
 
 
@@ -227,9 +228,17 @@ export interface JobItemShellCommandAction extends JobItemAction {
  */
 export interface ScriptArguments {
     /**
+     * The logger.
+     */
+    readonly logger: ego_helpers.Logger;
+    /**
      * Options for running the script.
      */
     readonly options: any;
+    /**
+     * The output channel.
+     */
+    readonly output: vscode.OutputChannel;
     /**
      * Handles a value as string and replaces placeholders.
      *
@@ -246,6 +255,38 @@ export interface ScriptArguments {
      * @return {any} The module.
      */
     readonly require: (id: string) => any;
+}
+
+/**
+ * Arguments for a startup script.
+ */
+export interface ScriptCommandStartupArguments extends WorkspaceScriptArguments {
+}
+
+/**
+ * A startup item running a script.
+ */
+export interface ScriptCommandStartupItem extends StartupItem {
+    /**
+     * Options for running the script.
+     */
+    options?: any;
+    /**
+     * The path to the script to invoke.
+     */
+    script: string;
+}
+
+/**
+ * A startup script module.
+ */
+export interface ScriptCommandStartupModule {
+    /**
+     * Executes the module.
+     *
+     * @param {ScriptCommandStartupArguments} args Arguments for the execution.
+     */
+    readonly execute: (args: ScriptCommandStartupArguments) => any;
 }
 
 /**

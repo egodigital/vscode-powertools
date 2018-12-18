@@ -195,7 +195,9 @@ function createActionFunction(
                             if (SCRIPT_MODULE) {
                                 if (SCRIPT_MODULE.execute) {
                                     const ARGS: ego_contracts.JobItemScriptActionArguments = {
+                                        logger: WORKSPACE.logger,
                                         options: ego_helpers.cloneObject(SCRIPT_ACTION.options),
+                                        output: WORKSPACE.output,
                                         replaceValues: (val) => {
                                             return WORKSPACE.replaceValues(val);
                                         },

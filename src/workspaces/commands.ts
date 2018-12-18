@@ -118,10 +118,12 @@ export async function reloadCommands() {
                             if (SCRIPT_MODULE.execute) {
                                 const ARGS: ego_contracts.WorkspaceCommandScriptArguments = {
                                     command: key,
+                                    logger: WORKSPACE.logger,
                                     options: ego_helpers.cloneObject(item.options),
                                     replaceValues: (val) => {
                                         return WORKSPACE.replaceValues(val);
                                     },
+                                    output: WORKSPACE.output,
                                     require: (id) => {
                                         return ego_helpers.requireModule(id);
                                     }

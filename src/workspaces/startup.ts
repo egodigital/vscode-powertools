@@ -108,6 +108,53 @@ export async function onStartup() {
                     }
                 }
                 break;
+
+            case 'script':
+                {
+                    const SCRIPT_ITEM = <ego_contracts.ScriptCommandStartupItem>entry;
+
+                    try {
+                        const SCRIPT_PATH = WORKSPACE.replaceValues(
+                            SCRIPT_ITEM.script
+                        );
+
+                        const FULL_SCRIPT_PATH = WORKSPACE.getExistingFullPath(
+                            SCRIPT_PATH
+                        );
+
+                        if (false === FULL_SCRIPT_PATH) {
+                            throw new Error(`Script '${ SCRIPT_PATH }' not found!`);
+                        }
+
+                        const SCRIPT_MODULE = ego_helpers.loadModule<ego_contracts.ScriptCommandStartupModule>(
+                            FULL_SCRIPT_PATH
+                        );
+                        if (SCRIPT_MODULE) {
+                            if (SCRIPT_MODULE.execute) {
+                                const ARGS: ego_contracts.ScriptCommandStartupArguments = {
+                                    logger: WORKSPACE.logger,
+                                    options: ego_helpers.cloneObject(SCRIPT_ITEM.options),
+                                    output: WORKSPACE.output,
+                                    replaceValues: (val) => {
+                                        return WORKSPACE.replaceValues(val);
+                                    },
+                                    require: (id) => {
+                                        return ego_helpers.requireModule(id);
+                                    }
+                                };
+
+                                await Promise.resolve(
+                                    SCRIPT_MODULE.execute
+                                        .apply(WORKSPACE, [ ARGS ])
+                                );
+                            }
+                        }
+                    } catch (e) {
+                        WORKSPACE.logger
+                                 .err(e, 'workspaces.onStartup(2)');
+                    }
+                }
+                break;
         }
     }
 

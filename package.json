@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -264,6 +264,46 @@
                                         "required": [
                                             "command"
                                         ]
+                                    },
+                                    {
+                                        "description": "Runs a script at startup.",
+                                        "type": "object",
+                                        "properties": {
+                                            "if": {
+                                                "description": "The JavaScript code that checks the avaibility of that startup item.",
+                                                "type": "string"
+                                            },
+                                            "options": {
+                                                "description": "Options for running the script."
+                                            },
+                                            "platforms": {
+                                                "description": "One or more platform names, that startup item is for.",
+                                                "type": "array",
+                                                "items": {
+                                                    "enum": [
+                                                        "aix",
+                                                        "darwin",
+                                                        "freebsd",
+                                                        "linux",
+                                                        "openbsd",
+                                                        "sunos",
+                                                        "win32"
+                                                    ],
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "script": {
+                                                "description": "The path to the script that should be executed.",
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "description": "The type.",
+                                                "enum": [
+                                                    "script"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        }
                                     }
                                 ]
                             }
