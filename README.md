@@ -19,8 +19,7 @@ A swiss army knife with lots of tools, extensions and (scriptable) enhancements 
      * [Jobs](#jobs-)
      * [StartUps](#startups-)
      * [Values](#values-)
-3. [Support and contribute](#support-and-contribute-)
-   * [Contributors](#contributors-)
+3. [Contribute](#contribute-)
 4. [Related projects](#related-projects-)
    * [vscode-helpers](#vscode-helpers-)
 
@@ -196,7 +195,7 @@ An `apps` entry in the `settings.json` file supports the following properties:
 
 @TODO
 
-## Support and contribute [[&uarr;](#table-of-contents)]
+## Contribute [[&uarr;](#table-of-contents)]
 
 If you like the extension, you are welcome to contribute, by [opening an issue](https://github.com/egodigital/vscode-powertools/issues) and/or fork this repository.
 
