@@ -174,7 +174,7 @@ An `apps` entry in the `settings.json` file supports the following properties:
 
 | Name | Description | Required? | 
 | ---- | ----------- | :-------: |
-| `script`<sup>*</sup> | The path to the script, that should be invoked. Relative paths will be mapped to the `.vscode` sub folder inside the underlying workspace OR to the `.vscode-powettools` sub folder inside the user's home directory. | yes |
+| `script`<sup>*</sup> | The path to the script, that should be invoked. Relative paths will be mapped to the `.vscode` sub folder inside the underlying workspace OR to the `.vscode-powertools` sub folder inside the user's home directory. | yes |
 | `description`<sup>*</sup> | A description for the app. | no |
 | `name`<sup>*</sup> | The (display) name. | no |
 | `options` | Options for the script. | no |
