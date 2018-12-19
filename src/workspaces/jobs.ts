@@ -207,8 +207,7 @@ function createActionFunction(
                                     };
 
                                     await Promise.resolve(
-                                        SCRIPT_MODULE.execute
-                                            .apply(WORKSPACE, [ ARGS ])
+                                        SCRIPT_MODULE.execute(ARGS)
                                     );
                                 }
                             }

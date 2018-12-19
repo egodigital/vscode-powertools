@@ -144,8 +144,7 @@ export async function reloadCommands() {
                                 };
 
                                 return await Promise.resolve(
-                                    SCRIPT_MODULE.execute
-                                        .apply(WORKSPACE, [ ARGS ])
+                                    SCRIPT_MODULE.execute(ARGS)
                                 );
                             }
                         }
