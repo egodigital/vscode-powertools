@@ -168,7 +168,7 @@ exports.onEvent = async (args) => {
 };
 ```
 
-To execute the app, press `F1`, execute `Powet Tools: Apps` command and select the app.
+To execute the app, press `F1`, execute `Power Tools: Apps` command and select the app.
 
 An `apps` entry in the `settings.json` file supports the following properties:
 
