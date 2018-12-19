@@ -58,14 +58,10 @@ To register an app for a workspace, create an `apps` section in the `settings.js
 }
 ```
 
-For that example, create a `my-app.js` inside the `.vscode` sub folder of the workspace and use the following skeleton:
+First create a `my-app.ejs` file inside the `.vscode` sub folder of the workspace with the HTML content of your app:
 
-```javascript
-/**
- * This returns the HTML code for the body.
- */
-exports.getHtml = () => {
-    return `
+```html
+<h1><%= page_title %></h1>
 
 <pre id="myTestPre"></pre>
 
@@ -110,8 +106,21 @@ function ego_on_loaded() {
 }
 
 </script>
+```
 
-`;
+Then create a `my-app.js` file inside the same folder and use the following skeleton:
+
+```javascript
+/**
+ * This returns the HTML code for the body.
+ */
+exports.getHtml = (args) => {
+    return args.renderFile(
+        'my-app.ejs',
+        {
+            'page_title': 'My awesome app',
+        }
+    );
 };
 
 /**
