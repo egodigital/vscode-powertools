@@ -107,7 +107,7 @@ function ego_on_loaded() {
 </script>
 ```
 
-Then create a `my-app.js` file inside the same folder and use the following skeleton:
+Then create a `my-app.js` file in the same folder and use the following skeleton:
 
 ```javascript
 /**
