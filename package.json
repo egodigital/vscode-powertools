@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.13",
+    "version": "0.0.14",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -55,12 +55,12 @@
                                                 "description": "A description for the app.",
                                                 "type": "string"
                                             },
-                                            "detail": {
-                                                "description": "Detail information.",
-                                                "type": "string"
-                                            },
                                             "if": {
                                                 "description": "The JavaScript code that checks the avaibility of that app.",
+                                                "type": "string"
+                                            },
+                                            "name": {
+                                                "description": "The (display) name.",
                                                 "type": "string"
                                             },
                                             "options": {
@@ -84,10 +84,6 @@
                                             },
                                             "script": {
                                                 "description": "The path to the app script.",
-                                                "type": "string"
-                                            },
-                                            "title": {
-                                                "description": "The title for display.",
                                                 "type": "string"
                                             }
                                         },

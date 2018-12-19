@@ -45,7 +45,7 @@ export function registerCommands(context: vscode.ExtensionContext) {
                         },
                         description: app.description,
                         detail: app.detail,
-                        label: app.title,
+                        label: app.name,
                     };
                 }).orderBy(qp => {
                     return ego_helpers.normalizeString(qp.label);

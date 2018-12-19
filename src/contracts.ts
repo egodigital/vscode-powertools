@@ -85,9 +85,9 @@ export interface AppItem extends Conditional, ForPlatforms {
      */
     description?: string;
     /**
-     * Detail information.
+     * The (display) name.
      */
-    detail?: string;
+    name?: string;
     /**
      * Options for the script execution.
      */
@@ -96,10 +96,6 @@ export interface AppItem extends Conditional, ForPlatforms {
      * The path to the script, that should be invoked.
      */
     script: string;
-    /**
-     * The title for display.
-     */
-    title?: string;
 }
 
 /**
@@ -531,15 +527,15 @@ export interface WorkspaceApp extends vscode.Disposable {
      */
     readonly detail: string;
     /**
+     * The (display) name.
+     */
+    readonly name: string;
+    /**
      * Opens the app.
      *
      * @return {Promise<vscode.Disposable | false>} The promise that stores the new web view instance or (false) if operation failed.
      */
     readonly open: () => Promise<vscode.Disposable | false>;
-    /**
-     * The title for display.
-     */
-    readonly title: string;
     /**
      * Gets the current web view instance.
      */

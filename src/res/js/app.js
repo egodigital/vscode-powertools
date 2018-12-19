@@ -155,9 +155,9 @@ $(() => {
             return;
         }
 
-        if (ego_on_message) {
+        if (ego_on_command) {
             Promise.resolve(
-                ego_on_message(COMMAND, MESSAGE.data)
+                ego_on_command(COMMAND, MESSAGE.data)
             ).then(() => {
             }).catch((err) => {
                 ego_log(err);

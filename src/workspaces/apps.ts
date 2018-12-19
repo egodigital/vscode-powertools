@@ -192,13 +192,16 @@ export class AppWebView extends ego_webview.WebViewBase {
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     protected async onWebViewMessage(msg: ego_contracts.WebViewMessage): Promise<boolean> {
         const FUNC = this.getEventFunction(
             m => m.onMessage
         );
         if (FUNC) {
             const ARGS = this.createScriptArguments(
-                'on.message',
+                'on.command',
                 msg
             );
 
@@ -280,11 +283,11 @@ export async function reloadApps() {
             return;
         }
 
-        let title = ego_helpers.toStringSafe(
-            item.title
+        let name = ego_helpers.toStringSafe(
+            item.name
         ).trim();
-        if ('' === title) {
-            title = item.script;
+        if ('' === name) {
+            name = item.script;
         }
 
         let description = ego_helpers.toStringSafe(
@@ -292,13 +295,6 @@ export async function reloadApps() {
         ).trim();
         if ('' === description) {
             description = undefined;
-        }
-
-        let detail = ego_helpers.toStringSafe(
-            item.detail
-        ).trim();
-        if ('' === detail) {
-            detail = undefined;
         }
 
         let view: AppWebView;
@@ -313,6 +309,7 @@ export async function reloadApps() {
 
                 view = null;
             },
+            name: undefined,
             open: async function() {
                 if (view) {
                     return false;
@@ -329,7 +326,6 @@ export async function reloadApps() {
 
                 return NEW_VIEW;
             },
-            title: undefined,
             view: undefined,
         };
 
@@ -350,25 +346,29 @@ export async function reloadApps() {
         Object.defineProperty(newApp, 'detail', {
             enumerable: true,
             get: () => {
-                const DETAIL = WORKSPACE.replaceValues(
-                    detail
-                ).trim();
+                let detail = WORKSPACE.getExistingFullPath(
+                    item.script
+                );
+                if (false === detail) {
+                    detail = ego_helpers.toStringSafe(
+                        item.script
+                    );
+                }
 
-                return '' !== DETAIL ? DETAIL
-                                     : undefined;
+                return detail;
             }
         });
 
-        // newApp.title
-        Object.defineProperty(newApp, 'title', {
+        // newApp.name
+        Object.defineProperty(newApp, 'name', {
             enumerable: true,
             get: () => {
-                const TITLE = WORKSPACE.replaceValues(
-                    title
+                const NAME = WORKSPACE.replaceValues(
+                    name
                 ).trim();
 
-                return '' !== TITLE ? TITLE
-                                    : undefined;
+                return '' !== NAME ? NAME
+                                   : undefined;
             }
         });
 
