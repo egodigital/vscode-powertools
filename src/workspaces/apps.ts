@@ -142,7 +142,7 @@ export class AppWebView extends ego_webview.WebViewBase {
 
         const FUNC = this.getEventFunction(m => m.getHtml);
         if (FUNC) {
-            html = FUNC( ARGS );
+            html = FUNC.bind(this.workspace)(ARGS);
         }
 
         return ego_helpers.toStringSafe(
@@ -189,7 +189,7 @@ export class AppWebView extends ego_webview.WebViewBase {
 
         const FUNC = this.getEventFunction(m => m.getTitle);
         if (FUNC) {
-            title = FUNC( ARGS );
+            title = FUNC.bind(this.workspace)(ARGS);
         }
 
         return ego_helpers.toStringSafe(
@@ -218,7 +218,7 @@ export class AppWebView extends ego_webview.WebViewBase {
         const FUNC = this.getEventFunction(m => m.onLoaded);
         if (FUNC) {
             await Promise.resolve(
-                FUNC( ARGS )
+                FUNC.bind(this.workspace)(ARGS)
             );
         }
     }
@@ -238,7 +238,7 @@ export class AppWebView extends ego_webview.WebViewBase {
 
             return ego_helpers.toBooleanSafe(
                 await Promise.resolve(
-                    FUNC(ARGS)
+                    FUNC.bind(this.workspace)(ARGS)
                 ),
             );
         }
