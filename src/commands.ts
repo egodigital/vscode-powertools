@@ -107,6 +107,67 @@ export function registerCommands(context: vscode.ExtensionContext) {
             }
         }),
 
+        // jobs
+        vscode.commands.registerCommand('ego.power-tools.jobs', async () => {
+            try {
+                try {
+                    const ALL_WORKSPACES = ego_workspace.getAllWorkspaces();
+
+                    const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = ego_helpers.from(
+                        ALL_WORKSPACES
+                    ).selectMany(ws => {
+                        return ego_helpers.from(
+                            ws.getJobs()
+                        ).select(j => {
+                            return {
+                                job: j,
+                                workspace: ws,
+                            };
+                        });
+                    }).select(x => {
+                        let label = '  ' + x.job.name;
+                        if (x.job.isRunning) {
+                            label = '$(primitive-square)' + label;
+                        } else {
+                            label = '$(triangle-right)' + label;
+                        }
+
+                        return {
+                            action: () => {
+                                if (x.job.isRunning) {
+                                    x.job.stop();
+                                } else {
+                                    x.job.start();
+                                }
+                            },
+                            description: x.job.description,
+                            detail: x.workspace.rootPath,
+                            label: label,
+                        };
+                    }).orderBy(qp => {
+                        return ego_helpers.normalizeString(qp.label);
+                    }).toArray();
+
+                    const SELECT_ITEM = await vscode.window.showQuickPick(
+                        QUICK_PICKS,
+                        {
+                            placeHolder: 'Start or stop a job, by selecting it ...',
+                        }
+                    );
+
+                    if (SELECT_ITEM) {
+                        await Promise.resolve(
+                            SELECT_ITEM.action()
+                        );
+                    }
+                } catch (e) {
+                    ego_helpers.showErrorMessage(e);
+                }
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }),
+
         // openGlobalSettings
         vscode.commands.registerCommand('ego.power-tools.openGlobalSettings', async () => {
             try {

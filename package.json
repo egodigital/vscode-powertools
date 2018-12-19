@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.17",
+    "version": "0.0.18",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -23,6 +23,11 @@
             {
                 "command": "ego.power-tools.commands",
                 "title": "Commands",
+                "category": "Power Tools"
+            },
+            {
+                "command": "ego.power-tools.jobs",
+                "title": "Jobs",
                 "category": "Power Tools"
             },
             {
@@ -245,12 +250,20 @@
                                                 "type": "boolean",
                                                 "default": true
                                             },
+                                            "description": {
+                                                "description": "A description for the job.",
+                                                "type": "string"
+                                            },
                                             "format": {
                                                 "description": "The format of 'time' value.",
                                                 "enum": [
                                                     "",
                                                     "crontab"
                                                 ],
+                                                "type": "string"
+                                            },
+                                            "name": {
+                                                "description": "The (display) name.",
                                                 "type": "string"
                                             },
                                             "time": {
@@ -488,7 +501,7 @@
         "@types/moment-timezone": "^0.5.9",
         "@types/node": "^8.10.25",
         "@types/opn": "^5.1.0",
-        "@types/p-queue": "^2.3.1",
+        "@types/p-queue": "^3.0.0",
         "tslint": "^5.8.0",
         "typescript": "^3.2.2",
         "vscode": "^1.1.25"

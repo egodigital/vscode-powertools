@@ -17,6 +17,8 @@ A swiss army knife with lots of tools, extensions and (scriptable) enhancements 
      * [Apps](#apps-)
      * [Commands](#commands-)
      * [Jobs](#jobs-)
+       * [Actions](#actions-)
+         * [Scripts](#scripts-)
      * [StartUps](#startups-)
      * [Values](#values-)
 3. [Contribute](#contribute-)
@@ -187,7 +189,46 @@ An `apps` entry in the `settings.json` file supports the following properties:
 
 #### Jobs [[&uarr;](#settings-)]
 
-@TODO
+A job is a scheduled task, which runs things, like a [Node.js based script](https://nodejs.org/) periodically.
+
+##### Actions [[&uarr;](#jobs-)]
+
+An action describes, what is to do, when a job is executed.
+
+###### Scripts [[&uarr;](#actions-)]
+
+This runs a [Node.js based script](https://nodejs.org/).
+
+Add an entry to the `jobs` section in your `settings.json` file:
+
+```json
+{
+    "ego.power-tools": {
+        "jobs": [
+            {
+                "time": "*/5 * * * * *",
+                "description": "Executes a script all 5 seconds",
+                "action": {
+                    "script": "my_job.js",
+                    "type": "script"
+                }
+            }
+        ]
+    }
+}
+```
+
+Create a `my_job.js` in the `.vscode` sub folder and use the following skeleton:
+
+```javascript
+exports.execute = async (args) => {
+    const vscode = args.require('vscode');
+
+    vscode.window.showInformationMessage(
+        'Hello! It is: ' + (new Date())
+    );
+};
+```
 
 #### StartUps [[&uarr;](#settings-)]
 

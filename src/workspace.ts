@@ -178,6 +178,19 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     }
 
     /**
+     * Returns all jobs of that workspace.
+     *
+     * @return {ego_contracts.WorkspaceJob[]} The list of jobs.
+     */
+    public getJobs(): ego_contracts.WorkspaceJob[] {
+        return ego_helpers.asArray(
+            this.instanceState[
+                ego_workspaces_jobs.KEY_JOBS
+            ]
+        );
+    }
+
+    /**
      * Initializes the workspace.
      */
     public async initialize() {
@@ -246,6 +259,58 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     }
 
     /**
+     * Checks if a path is inside the '.git' folder.
+     *
+     * @param {string} p The path to check.
+     *
+     * @return {boolean} Is in '.git' folder or not.
+     */
+    public isInGit(p: string): boolean {
+        p = ego_helpers.toStringSafe(p);
+        if (!path.isAbsolute(p)) {
+            p = path.join(
+                this.rootPath, p
+            );
+        }
+        p = path.resolve(p);
+
+        const GIT_FOLDER = path.resolve(
+            path.join(
+                this.rootPath, '.git'
+            )
+        );
+
+        return p.startsWith(GIT_FOLDER + path.sep) ||
+               GIT_FOLDER === p;
+    }
+
+    /**
+     * Checks if a path is inside the '.vscode' folder.
+     *
+     * @param {string} p The path to check.
+     *
+     * @return {boolean} Is in '.vscode' folder or not.
+     */
+    public isInVscode(p: string): boolean {
+        p = ego_helpers.toStringSafe(p);
+        if (!path.isAbsolute(p)) {
+            p = path.join(
+                this.rootPath, p
+            );
+        }
+        p = path.resolve(p);
+
+        const VSCODE_FOLDER = path.resolve(
+            path.join(
+                this.rootPath, '.vscode'
+            )
+        );
+
+        return p.startsWith(VSCODE_FOLDER + path.sep) ||
+               VSCODE_FOLDER === p;
+    }
+
+    /**
      * Checks if a path is part of that workspace.
      *
      * @param {string} path The path to check.
@@ -311,6 +376,15 @@ export class Workspace extends ego_helpers.WorkspaceBase {
 
     private async onFileChange(type: ego_contracts.FileChangeType, file: vscode.Uri) {
         if (this.isInFinalizeState) {
+            return;
+        }
+
+        // do not handle items inside
+        // the following folders
+        if (this.isInGit(file.fsPath)) {
+            return;
+        }
+        if (this.isInVscode(file.fsPath)) {
             return;
         }
     }

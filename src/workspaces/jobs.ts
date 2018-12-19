@@ -243,6 +243,20 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
                 [ item ]
             );
 
+            let name = ego_helpers.toStringSafe(
+                item.name
+            ).trim();
+            if ('' === name) {
+                name = cronTime;
+            }
+
+            let description = ego_helpers.toStringSafe(
+                item.description
+            ).trim();
+            if ('' === description) {
+                description = undefined;
+            }
+
             let isExecutingJob = false;
             const NEW_CRON = new cron.CronJob(
                 cronTime,
@@ -260,8 +274,12 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
                         }
                     })().then(() => {
                         isExecutingJob = false;
-                    }).catch(() => {
+                    }).catch((err) => {
                         isExecutingJob = false;
+
+                        ego_log.CONSOLE.trace(
+                            err, `workspaces.reloadJobs(2:${ name })`
+                        );
                     });
                 },
                 null,  // onComplete()
@@ -276,13 +294,17 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
             }
 
             newJob = {
+                description: description,
                 dispose: function() {
                     this.stop();
                 },
                 isRunning: undefined,
+                name: name,
                 start: function () {
                     if (!this.isRunning) {
+                        isExecutingJob = false;
                         NEW_CRON.start();
+
                         return true;
                     }
 
@@ -291,6 +313,8 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
                 stop: function () {
                     if (this.isRunning) {
                         NEW_CRON.stop();
+                        isExecutingJob = false;
+
                         return true;
                     }
 

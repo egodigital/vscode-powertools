@@ -300,6 +300,14 @@ export interface JobItem extends Conditional, ForPlatforms {
      */
     action: string | JobItemAction;
     /**
+     * A description for the job.
+     */
+    description?: string;
+    /**
+     * A (display) name.
+     */
+    name?: string;
+    /**
      * The type of the job item.
      */
     type?: string;
@@ -630,9 +638,17 @@ export interface WorkspaceCommandScriptModule {
  */
 export interface WorkspaceJob extends vscode.Disposable {
     /**
+     * A description for the job.
+     */
+    readonly description: string;
+    /**
      * Gets if the job is currently running or not.
      */
     readonly isRunning: boolean;
+    /**
+     * The (display) name.
+     */
+    readonly name: string;
     /**
      * Starts the job.
      *
