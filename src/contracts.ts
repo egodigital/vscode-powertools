@@ -16,6 +16,7 @@
  */
 
 import * as ego_helpers from './helpers';
+import * as ejs from 'ejs';
 import * as vscode from 'vscode';
 
 
@@ -74,6 +75,24 @@ export interface AppEventScriptArguments<TData = any> extends WorkspaceScriptArg
      * @return {Promise<boolean>} A promise that indicates if operation was successful or not.
      */
     readonly post: (command: string, data?: any) => Promise<boolean>;
+    /**
+     * Renders an 'ejs' template.
+     *
+     * @param {string} source The (template) source.
+     * @param {ejs.Data} [data] The data for the template.
+     *
+     * @return string The rendered template.
+     */
+    readonly render: (source: string, data?: ejs.Data) => string;
+    /**
+     * Renders an 'ejs' template from a file.
+     *
+     * @param {string} file The path to the file with the (template) source.
+     * @param {ejs.Data} [data] The data for the template.
+     *
+     * @return string The rendered template.
+     */
+    readonly renderFile: (file: string, data?: ejs.Data) => string;
 }
 
 /**

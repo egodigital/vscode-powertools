@@ -20,6 +20,8 @@ import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
 import * as ego_webview from '../webview';
 import * as ego_workspace from '../workspace';
+import * as ejs from 'ejs';
+import * as fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -65,12 +67,15 @@ export class AppWebView extends ego_webview.WebViewBase {
         this.module = ego_helpers.loadModule<ego_contracts.AppModule>(
             FULL_SCRIPT_PATH
         );
+        this.scriptFile = FULL_SCRIPT_PATH;
     }
 
     private createScriptArguments(
         eventName: string,
         data?: any,
     ): ego_contracts.AppEventScriptArguments {
+        const ME = this;
+
         return {
             data: data,
             event: eventName,
@@ -90,6 +95,32 @@ export class AppWebView extends ego_webview.WebViewBase {
             post: (cmd, data?) => {
                 return this.postMessage(
                     cmd, data
+                );
+            },
+            render: function (source, data?) {
+                return ejs.render(
+                    ego_helpers.toStringSafe(source),
+                    data
+                );
+            },
+            renderFile: function (file, data?) {
+                file = ego_helpers.toStringSafe(
+                    file
+                );
+
+                if (!path.isAbsolute(file)) {
+                    file = path.join(
+                        path.dirname(ME.scriptFile),
+                        file
+                    );
+                }
+
+                return this.render(
+                    fsExtra.readFileSync(
+                        path.resolve( file ),
+                        'utf8'
+                    ),
+                    data
                 );
             },
             replaceValues: (val) => {
@@ -214,6 +245,11 @@ export class AppWebView extends ego_webview.WebViewBase {
 
         return false;
     }
+
+    /**
+     * The full path to the script file.
+     */
+    public readonly scriptFile: string;
 }
 
 
