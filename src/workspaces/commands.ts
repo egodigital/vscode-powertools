@@ -87,11 +87,11 @@ export async function reloadCommands() {
                 return;
             }
 
-            let title = ego_helpers.toStringSafe(
-                item.title
+            let name = ego_helpers.toStringSafe(
+                item.name
             ).trim();
-            if ('' === title) {
-                title = key;
+            if ('' === name) {
+                name = key;
             }
 
             let description = ego_helpers.toStringSafe(
@@ -99,13 +99,6 @@ export async function reloadCommands() {
             ).trim();
             if ('' === description) {
                 description = undefined;
-            }
-
-            let detail = ego_helpers.toStringSafe(
-                item.detail
-            ).trim();
-            if ('' === detail) {
-                detail = undefined;
             }
 
             let newButton: vscode.StatusBarItem;
@@ -163,7 +156,6 @@ export async function reloadCommands() {
                     button: undefined,
                     command: newCommand,
                     description: undefined,
-                    detail: undefined,
                     dispose: function() {
                         ego_helpers.tryDispose(this.button);
                         ego_helpers.tryDispose(this.command);
@@ -174,7 +166,7 @@ export async function reloadCommands() {
                     },
                     id: ID,
                     item: item,
-                    title: undefined,
+                    name: undefined,
                 };
 
                 // NEW_WORKSPACE_CMD.button
@@ -198,29 +190,16 @@ export async function reloadCommands() {
                     }
                 });
 
-                // NEW_WORKSPACE_CMD.detail
-                Object.defineProperty(NEW_WORKSPACE_CMD, 'detail', {
+                // NEW_WORKSPACE_CMD.name
+                Object.defineProperty(NEW_WORKSPACE_CMD, 'name', {
                     enumerable: true,
                     get: () => {
-                        const DETAIL = WORKSPACE.replaceValues(
-                            detail
+                        const NAME = WORKSPACE.replaceValues(
+                            name
                         ).trim();
 
-                        return '' !== DETAIL ? DETAIL
-                                             : undefined;
-                    }
-                });
-
-                // NEW_WORKSPACE_CMD.title
-                Object.defineProperty(NEW_WORKSPACE_CMD, 'title', {
-                    enumerable: true,
-                    get: () => {
-                        const TITLE = WORKSPACE.replaceValues(
-                            title
-                        ).trim();
-
-                        return '' !== TITLE ? TITLE
-                                            : undefined;
+                        return '' !== NAME ? NAME
+                                           : undefined;
                     }
                 });
 
@@ -229,7 +208,7 @@ export async function reloadCommands() {
                         item.button,
                         (newBtn) => {
                             if (_.isNil(newBtn.text)) {
-                                newBtn.text = title;
+                                newBtn.text = name;
                             }
 
                             if (_.isNil(newBtn.tooltip)) {

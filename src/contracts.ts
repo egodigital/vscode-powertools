@@ -172,9 +172,9 @@ export interface Button {
      */
     priority?: number;
     /**
-     * The label / title.
+     * The label / text.
      */
-    title?: string;
+    text?: string;
     /**
      * The tooltip.
      */
@@ -209,9 +209,9 @@ export interface CommandItem extends Conditional, ForPlatforms {
      */
     description?: string;
     /**
-     * Detail information.
+     * The name for display.
      */
-    detail?: string;
+    name?: string;
     /**
      * Options for running the script.
      */
@@ -220,10 +220,6 @@ export interface CommandItem extends Conditional, ForPlatforms {
      * The path to the script that should be executed.
      */
     script: string;
-    /**
-     * The title for display.
-     */
-    title?: string;
 }
 
 /**
@@ -586,10 +582,6 @@ export interface WorkspaceCommand extends vscode.Disposable {
      */
     readonly description: string;
     /**
-     * Detail information.
-     */
-    readonly detail: string;
-    /**
      * Executes the command.
      *
      * @param {any[]} [args] One or more argument for the execution.
@@ -606,9 +598,9 @@ export interface WorkspaceCommand extends vscode.Disposable {
      */
     readonly item: CommandItem;
     /**
-     * The title for display.
+     * The name for display.
      */
-    readonly title: string;
+    readonly name: string;
 }
 
 /**

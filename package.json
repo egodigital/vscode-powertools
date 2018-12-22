@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.18",
+    "version": "0.0.19",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -124,8 +124,8 @@
                                                     "description": "The priority.",
                                                     "type": "number"
                                                 },
-                                                "title": {
-                                                    "description": "The label / title.",
+                                                "text": {
+                                                    "description": "The label / text.",
                                                     "type": "string"
                                                 },
                                                 "tooltip": {
@@ -138,12 +138,12 @@
                                             "description": "A description for the command.",
                                             "type": "string"
                                         },
-                                        "detail": {
-                                            "description": "Detail information.",
-                                            "type": "string"
-                                        },
                                         "if": {
                                             "description": "The JavaScript code that checks the avaibility of that command.",
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "description": "The name for display.",
                                             "type": "string"
                                         },
                                         "options": {
@@ -167,10 +167,6 @@
                                         },
                                         "script": {
                                             "description": "The path to the script that should be executed.",
-                                            "type": "string"
-                                        },
-                                        "title": {
-                                            "description": "The title for display.",
                                             "type": "string"
                                         }
                                     },
@@ -499,10 +495,10 @@
         "@types/lodash": "^4.14.119",
         "@types/mocha": "^2.2.42",
         "@types/moment-timezone": "^0.5.9",
-        "@types/node": "^8.10.25",
+        "@types/node": "8.9.3",
         "@types/opn": "^5.1.0",
         "@types/p-queue": "^3.0.0",
-        "tslint": "^5.8.0",
+        "tslint": "^5.12.0",
         "typescript": "^3.2.2",
         "vscode": "^1.1.25"
     },

@@ -71,7 +71,7 @@ export function buildButtonSync<TButton extends ego_contracts.Button = ego_contr
     }
 
     let text = toStringSafe(
-        button.title
+        button.text
     ).trim();
     if ('' === text) {
         text = undefined;

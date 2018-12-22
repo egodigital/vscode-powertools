@@ -76,15 +76,23 @@ export function registerCommands(context: vscode.ExtensionContext) {
                 const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = ego_helpers.from(
                     ALL_WORKSPACES
                 ).selectMany(ws => {
-                    return ws.getCommands();
-                }).select(cmd => {
+                    return ego_helpers.from(
+                        ws.getCommands()
+                    ).select(cmd => {
+                        return {
+                            command: cmd,
+                            workspace: ws,
+                        };
+                    });
+                }).select(x => {
                     return {
                         action: () => {
-                            return cmd.execute();
+                            return x.command
+                                .execute();
                         },
-                        description: cmd.description,
-                        detail: cmd.detail,
-                        label: cmd.title,
+                        description: x.command.description,
+                        detail: x.workspace.rootPath,
+                        label: x.command.name,
                     };
                 }).orderBy(qp => {
                     return ego_helpers.normalizeString(qp.label);
