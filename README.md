@@ -51,7 +51,7 @@ To register an app for a workspace, create an `apps` section in the `settings.js
         "apps": [
             {
                 "script": "my-app.js",
-                "title": "My app",
+                "name": "My app",
                 "description": "An awesome app"
             }
         ]
@@ -207,6 +207,7 @@ Add an entry to the `jobs` section in your `settings.json` file:
         "jobs": [
             {
                 "time": "*/5 * * * * *",
+                "name": "My job",
                 "description": "Executes a script all 5 seconds",
                 "action": {
                     "script": "my_job.js",
