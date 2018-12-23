@@ -48,6 +48,8 @@ export class ScriptConsoleWebView extends ego_webview.WebViewWithContextBase {
     protected generateHtmlBody(): string {
         return `
 <div class="container-fluid">
+  <div class="alert alert-danger" role="alert" style="display: none;" id="ego-error"></div>
+
   <div class="card text-white bg-dark" id="ego-script-console">
     <div class="card-header">
         <span class="align-middle">
@@ -163,14 +165,23 @@ ${
                             );
                         })();
                     } catch (e) {
-                        err = e;
+                        if (e instanceof Error) {
+                            err = {
+                                name: ego_helpers.toStringSafe(e.name),
+                                message: ego_helpers.toStringSafe(e.message),
+                                stack: ego_helpers.toStringSafe(e.stack),
+                            };
+                        } else {
+                            err = {
+                                message: ego_helpers.toStringSafe(e),
+                            };
+                        }
                     } finally {
                         ego_helpers.tryDispose(this._cancelSource);
                         this._cancelSource = null;
 
                         await this.postMessage(
-                            'scriptFinished',
-                            ego_helpers.toStringSafe(err)
+                            'scriptFinished', err
                         );
                     }
                 }

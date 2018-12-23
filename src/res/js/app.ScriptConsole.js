@@ -27,6 +27,7 @@ function ego_on_command(command, data) {
 
         case 'scriptFinished':
             ego_change_play_button_state(false);
+            ego_show_error(data);
             break;
 
         case 'writeHtml':
@@ -63,9 +64,22 @@ function ego_change_play_button_state(isRunning) {
         BTN.off('click').on('click', function() {
             ego_post('runScript');
 
+            ego_show_error();
             ego_change_play_button_state(true);
         });
 
         BTN.html('<i class="fa fa-play" aria-hidden="true"></i>');
+    }
+}
+
+function ego_show_error(err) {
+    const ALERT = $('#ego-error');
+
+    if (err) {
+        ALERT.text(`[${ err.name }] '${ err.message }'`);
+
+        ALERT.show();
+    } else {
+        ALERT.hide();
     }
 }
