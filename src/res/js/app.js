@@ -155,7 +155,7 @@ $(() => {
             return;
         }
 
-        if (ego_on_command) {
+        if ('undefined' !== typeof ego_on_command) {
             Promise.resolve(
                 ego_on_command(COMMAND, MESSAGE.data)
             ).then(() => {
@@ -167,7 +167,7 @@ $(() => {
 });
 
 $(() => {
-    if (ego_on_loaded) {
+    if ('undefined' !== typeof ego_on_loaded) {
         Promise.resolve(
             ego_on_loaded()
         ).then(() => {

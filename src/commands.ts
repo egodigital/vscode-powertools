@@ -17,6 +17,7 @@
 
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
+import * as ego_scripts from './scripts';
 import * as ego_settings_global from './settings/global';
 import * as ego_workspace from './workspace';
 import * as vscode from 'vscode';
@@ -180,6 +181,90 @@ export function registerCommands(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('ego.power-tools.openGlobalSettings', async () => {
             try {
                 await ego_settings_global.openGlobalSettings(context);
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }),
+
+        // scripts
+        vscode.commands.registerCommand('ego.power-tools.scripts', async () => {
+            try {
+                const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [
+                    {
+                        action: async () => {
+                            const NEW_EDITOR = await ego_helpers.openAndShowTextDocument({
+                                content: '',
+                                language: 'javascript',
+                            });
+
+                            const WEB_VIEW = new ego_scripts.ScriptConsoleWebView(
+                                context, NEW_EDITOR
+                            );
+
+                            await WEB_VIEW.open();
+                        },
+                        label: 'New script ...',
+                        description: 'Opens a new editor for running a script.',
+                    },
+
+                    {
+                        action: async () => {
+                            const FILE = await vscode.window.showOpenDialog({
+                                openLabel: 'Open script ...',
+                                canSelectFiles: true,
+                                canSelectFolders: false,
+                                canSelectMany: false,
+                                filters: {
+                                    'JavaScript files (*.js)': [ 'js' ],
+                                    'All files (*.*)': [ '*' ]
+                                },
+                            });
+
+                            if (!FILE || FILE.length < 1) {
+                                return;
+                            }
+
+                            const NEW_EDITOR = await ego_helpers.openAndShowTextDocument(
+                                FILE[0].fsPath
+                            );
+
+                            const WEB_VIEW = new ego_scripts.ScriptConsoleWebView(
+                                context, NEW_EDITOR
+                            );
+
+                            await WEB_VIEW.open();
+                        },
+                        label: 'Open script ...',
+                        description: 'Opens an existing script file in a new editor.',
+                    }
+                ];
+
+                const ACTIVE_EDITOR = vscode.window.activeTextEditor;
+                if (ACTIVE_EDITOR && ACTIVE_EDITOR.document) {
+                    if ('javascript' === ego_helpers.normalizeString(ACTIVE_EDITOR.document.languageId)) {
+                        QUICK_PICKS.push({
+                            action: async () => {
+                                const WEB_VIEW = new ego_scripts.ScriptConsoleWebView(
+                                    context, ACTIVE_EDITOR
+                                );
+
+                                await WEB_VIEW.open();
+                            },
+                            label: 'Run script ...',
+                            description: 'Runs the script in the current editor.',
+                        });
+                    }
+                }
+
+                const SELECT_ITEM = await vscode.window.showQuickPick(
+                    QUICK_PICKS
+                );
+
+                if (SELECT_ITEM) {
+                    await Promise.resolve(
+                        SELECT_ITEM.action()
+                    );
+                }
             } catch (e) {
                 ego_helpers.showErrorMessage(e);
             }

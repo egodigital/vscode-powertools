@@ -504,6 +504,11 @@ export interface ValueItem extends Conditional, ForPlatforms {
 }
 
 /**
+ * Settings for view columns.
+ */
+export type ViewColumnSettings = vscode.ViewColumn | { viewColumn: vscode.ViewColumn, preserveFocus?: boolean };
+
+/**
  * A message from and for a WebView.
  */
 export interface WebViewMessage<TData = any> {
@@ -526,6 +531,11 @@ export interface WebViewLogMessageData {
      */
     message: string;
 }
+
+/**
+ * Options for a web view with a panel.
+ */
+export type WebViewWithPanelOptions = vscode.WebviewPanelOptions & vscode.WebviewOptions;
 
 /**
  * An object which contains one or more value entries.

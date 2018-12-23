@@ -26,17 +26,6 @@ import * as vscode from 'vscode';
 
 
 /**
- * Settings for view columns.
- */
-export type ViewColumnSettings = vscode.ViewColumn | { viewColumn: vscode.ViewColumn, preserveFocus?: boolean };
-
-/**
- * Options for a web view with a panel.
- */
-export type WebViewWithPanelOptions = vscode.WebviewPanelOptions & vscode.WebviewOptions;
-
-
-/**
  * A basic web view.
  */
 export abstract class WebViewBase extends ego_helpers.DisposableBase {
@@ -97,20 +86,20 @@ ${ this.generateHtmlFooter() }`;
         </main>
 
         <!-- Showdown -->
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/showdown.js') }"></script>
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/showdown.js') }" crossorigin="anonymous"></script>
         <!-- JQuery -->
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/jquery-3.3.1.js') }"></script>
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/jquery-3.3.1.js') }" crossorigin="anonymous"></script>
         <!-- highlight.js -->
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/highlight.pack.js') }"></script>
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/highlight.pack.js') }" crossorigin="anonymous"></script>
         <!-- Bootstrap tooltips -->
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/popper.min.js') }"></script>
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/popper.min.js') }" crossorigin="anonymous"></script>
         <!-- Bootstrap core JavaScript -->
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/bootstrap.js') }"></script>
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/bootstrap.js') }" crossorigin="anonymous"></script>
         <!-- MDB core JavaScript -->
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/mdb.js') }"></script>
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/mdb.js') }" crossorigin="anonymous"></script>
 
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/app.js') }"></script>
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/app.' + this.getType() + '.js') }"></script>
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/app.js') }" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/app.' + this.getType() + '.js') }" crossorigin="anonymous"></script>
     </body>
 </html>`;
     }
@@ -245,9 +234,9 @@ ${ this.generateHtmlFooter() }`;
     /**
      * Gets the options for the underlying view.
      *
-     * @return {WebViewWithPanelOptions} The options.
+     * @return {ego_contracts.WebViewWithPanelOptions} The options.
      */
-    protected getOptions(): WebViewWithPanelOptions {
+    protected getOptions(): ego_contracts.WebViewWithPanelOptions {
         return {
             enableCommandUris: true,
             enableFindWidget: true,
@@ -292,9 +281,9 @@ ${ this.generateHtmlFooter() }`;
     /**
      * Returns the settings for view columns.
      *
-     * @return {ViewColumnSettings} The settings.
+     * @return {ego_contracts.ViewColumnSettings} The settings.
      */
-    protected getViewColumns(): ViewColumnSettings {
+    protected getViewColumns(): ego_contracts.ViewColumnSettings {
         return vscode.ViewColumn.One;
     }
 
@@ -303,7 +292,7 @@ ${ this.generateHtmlFooter() }`;
      *
      * @return {Promise<boolean>} A promise that indicates if operation was successful or not.
      */
-    public open() {
+    public open(): Promise<boolean> {
         return this._QUEUE.add(async () => {
             if (this._panel) {
                 return false;
