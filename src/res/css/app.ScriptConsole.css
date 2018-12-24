@@ -20,7 +20,9 @@
     width: 100%;
 }
 
-#ego-script-console .card-body {
+#ego-script-console .card-body,
+#ego-script-console .card-body pre {
+    color: white;
     font-family: 'Courier New', Courier, monospace;
     overflow-x: none;
     overflow-y: auto;

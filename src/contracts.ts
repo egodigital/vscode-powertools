@@ -636,6 +636,24 @@ export interface WorkspaceCommandScriptModule {
 }
 
 /**
+ * Information about a workspace.
+ */
+export interface WorkspaceInfo {
+    /**
+     * The zero based index.
+     */
+    readonly index: number;
+    /**
+     * The name of the workspace.
+     */
+    readonly name: string;
+    /**
+     * The root path.
+     */
+    readonly rootPath: string;
+}
+
+/**
  * A workspace job.
  */
 export interface WorkspaceJob extends vscode.Disposable {

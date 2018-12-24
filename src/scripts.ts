@@ -19,6 +19,7 @@ import * as _ from 'lodash';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_webview from './webview';
+import * as ego_workspace from './workspace';
 import * as htmlEntities from 'html-entities';
 import * as vscode from 'vscode';
 
@@ -28,18 +29,25 @@ import * as vscode from 'vscode';
  */
 export class ScriptConsoleWebView extends ego_webview.WebViewWithContextBase {
     private _cancelSource: vscode.CancellationTokenSource;
+    private readonly _RUN_ON_OPEN: boolean;
 
     /**
      * Initializes a new instance of that class.
      *
      * @param {vscode.ExtensionContext} extension The extension context.
      * @param {vscode.TextEditor} editor The underlying editor.
+     * @param {boolean} [runOnOpen] Run script after web view has been opened.
      */
     public constructor(
         public readonly extension: vscode.ExtensionContext,
-        public readonly editor: vscode.TextEditor
+        public readonly editor: vscode.TextEditor,
+        runOnOpen?: boolean
     ) {
         super(extension);
+
+        this._RUN_ON_OPEN = ego_helpers.toBooleanSafe(
+            runOnOpen
+        );
     }
 
     /**
@@ -94,6 +102,17 @@ export class ScriptConsoleWebView extends ego_webview.WebViewWithContextBase {
     /**
      * @inheritdoc
      */
+    protected async onLoaded() {
+        if (this._RUN_ON_OPEN) {
+            await this.postMessage(
+                'startScript'
+            );
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected async onWebViewMessage(msg: ego_contracts.WebViewMessage): Promise<boolean> {
         switch (msg.command) {
             case 'cancelScript':
@@ -134,22 +153,68 @@ export class ScriptConsoleWebView extends ego_webview.WebViewWithContextBase {
                             // @ts-ignore
                             const $vscode = require('vscode');
 
+                            const $getWorkspaces = () => {
+                                return ego_helpers.from(
+                                    ego_workspace.getAllWorkspaces()
+                                ).select(ws => {
+                                    return ws.getInfo();
+                                }).orderBy(wi => {
+                                    return wi.index;
+                                }).thenBy(wi => {
+                                    return ego_helpers.normalizeString(
+                                        wi.name
+                                    );
+                                }).thenBy(wi => {
+                                    return ego_helpers.normalizeString(
+                                        wi.rootPath
+                                    );
+                                }).toArray();
+                            };
+
+                            const $workspaces: { [name: string]: ego_contracts.WorkspaceInfo | ego_contracts.WorkspaceInfo[] } = {};
+                            for (const WS of $getWorkspaces()) {
+                                if (_.isNil($workspaces[ WS.name ])) {
+                                    $workspaces[ WS.name ] = WS;
+                                } else {
+                                    $workspaces[ WS.name ] = ego_helpers.asArray(
+                                        $workspaces[ WS.name ]
+                                    );
+                                }
+                            }
+
                             // @ts-ignore
-                            const $writeHtml = (html) => {
+                            const $clear = () => {
+                                _0c44c5cd8ea84aafbf9ad2ed69c54b38
+                                    .postMessage('clear');
+                            };
+                            // @ts-ignore
+                            const $writeHtml = (html: any) => {
                                 _0c44c5cd8ea84aafbf9ad2ed69c54b38
                                     .postMessage('writeHtml', ego_helpers.toStringSafe(html));
                             };
                             // @ts-ignore
-                            const $write = (msg) => {
+                            const $write = (msg: any) => {
                                 $writeHtml(`<span>${ new htmlEntities.AllHtmlEntities().encode(
                                     ego_helpers.toStringSafe(msg)
                                 ) }</span>`);
                             };
                             // @ts-ignore
-                            const $writeLine = (msg) => {
+                            const $writeLine = (msg: any) => {
                                 $writeHtml(`<div>${ new htmlEntities.AllHtmlEntities().encode(
                                     ego_helpers.toStringSafe(msg)
                                 ) }</div>`);
+                            };
+                            // @ts-ignore
+                            const $writeMarkdown = (md: any) => {
+                                _0c44c5cd8ea84aafbf9ad2ed69c54b38
+                                    .postMessage('writeMarkdown', ego_helpers.toStringSafe(md));
+                            };
+
+                            // @ts-ignore
+                            const $dump = (val: any) => {
+                                $writeHtml(`<pre>${ new htmlEntities.AllHtmlEntities().encode(
+                                    JSON.stringify(val, null, 2)
+                                ) }</pre>`);
                             };
 
                             return await Promise.resolve(

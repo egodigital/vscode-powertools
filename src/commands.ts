@@ -242,10 +242,10 @@ export function registerCommands(context: vscode.ExtensionContext) {
                 const ACTIVE_EDITOR = vscode.window.activeTextEditor;
                 if (ACTIVE_EDITOR && ACTIVE_EDITOR.document) {
                     if ('javascript' === ego_helpers.normalizeString(ACTIVE_EDITOR.document.languageId)) {
-                        QUICK_PICKS.push({
+                        QUICK_PICKS.unshift({
                             action: async () => {
                                 const WEB_VIEW = new ego_scripts.ScriptConsoleWebView(
-                                    context, ACTIVE_EDITOR
+                                    context, ACTIVE_EDITOR, true
                                 );
 
                                 await WEB_VIEW.open();

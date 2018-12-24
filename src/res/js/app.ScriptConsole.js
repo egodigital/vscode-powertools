@@ -17,6 +17,10 @@
 
 function ego_on_command(command, data) {
     switch (command) {
+        case 'clear':
+            $('#ego-script-console .card-body').html('');
+            break;
+
         case 'scriptCancellationAborted':
             $('#ego-run-script-btn').removeClass('disabled');
             break;
@@ -30,10 +34,26 @@ function ego_on_command(command, data) {
             ego_show_error(data);
             break;
 
+        case 'startScript':
+            ego_post('runScript');
+            ego_change_play_button_state(true);
+            break;
+
         case 'writeHtml':
+            $('#ego-script-console .card-body').append(
+                ego_to_string(data)
+            );
+            break;
+
+        case 'writeMarkdown':
             {
-                $('#ego-script-console .card-body').append(
-                    ego_to_string(data)
+                const MARKDOWN = ego_from_markdown(data);
+                MARKDOWN.appendTo(
+                    $('#ego-script-console .card-body')
+                );
+
+                ego_apply_highlight(
+                    MARKDOWN
                 );
             }
             break;

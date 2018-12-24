@@ -178,6 +178,19 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     }
 
     /**
+     * Returns the information about that workspace.
+     *
+     * @return {ego_contracts.WorkspaceInfo} The workspace information.
+     */
+    public getInfo(): ego_contracts.WorkspaceInfo {
+        return {
+            index: this.folder.index,
+            name: this.folder.name,
+            rootPath: this.rootPath,
+        };
+    }
+
+    /**
      * Returns all jobs of that workspace.
      *
      * @return {ego_contracts.WorkspaceJob[]} The list of jobs.
