@@ -17,6 +17,7 @@
 
 import * as _ from 'lodash';
 import * as changeCase from 'change-case';
+import * as childProcess from 'child_process';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_log from './log';
@@ -203,6 +204,8 @@ export abstract class AppWebViewBase extends ego_webview.WebViewBase {
  * A web view for an app.
  */
 export class AppWebView extends AppWebViewBase {
+    private _module: ego_contracts.AppModule;
+
     /**
      * Initializes a new instance of that class.
      *
@@ -214,10 +217,6 @@ export class AppWebView extends AppWebViewBase {
         public readonly scriptFile: string,
     ) {
         super();
-
-        this.module = ego_helpers.loadModule<ego_contracts.AppModule>(
-            scriptFile
-        );
 
         // package.json
         const PACKAGE_JSON = path.resolve(
@@ -368,9 +367,20 @@ export class AppWebView extends AppWebViewBase {
     }
 
     /**
+     * Initializes the app (view).
+     */
+    public async initialize() {
+        this._module = ego_helpers.loadModule<ego_contracts.AppModule>(
+            this.scriptFile
+        );
+    }
+
+    /**
      * @inheritdoc
      */
-    public readonly module: ego_contracts.AppModule;
+    public get module(): ego_contracts.AppModule {
+        return this._module;
+    }
 
     /**
      * Gets the (internal) name of the app.
@@ -769,8 +779,57 @@ export async function openApp(
     );
     GLOBAL_APPS.forEach(a => {
         QUICK_PICKS.push({
-            action: () => {
-                return a.open();
+            action: async () => {
+                await vscode.window.withProgress({
+                    location: vscode.ProgressLocation.Notification,
+                    cancellable: false,
+                }, async (progress) => {
+                    progress.report({
+                        message: `Opening app '${ a.displayName }' ...`,
+                    });
+
+                    if (a.packageJSON) {
+                        if (a.packageJSON.dependencies || a.packageJSON.devDependencies) {
+                            const NODE_MODULES = path.resolve(
+                                path.join(
+                                    path.dirname(a.scriptFile), 'node_modules'
+                                )
+                            );
+
+                            if (!(await ego_helpers.exists(NODE_MODULES))) {
+                                progress.report({
+                                    message: `Installing dependencies for app '${ a.displayName }' ...`,
+                                });
+
+                                const CWD = path.resolve(
+                                    path.dirname(a.scriptFile)
+                                );
+
+                                // run 'npm install'
+                                await (() => {
+                                    return new Promise<void>((resolve, reject) => {
+                                        try {
+                                            childProcess.exec('npm install', {
+                                                cwd: CWD,
+                                            }, (err) => {
+                                                if (err) {
+                                                    reject(err);
+                                                } else {
+                                                    resolve();
+                                                }
+                                            });
+                                        } catch (e) {
+                                            reject(e);
+                                        }
+                                    });
+                                })();
+                            }
+                        }
+                    }
+                });
+
+                await a.initialize();
+                return await a.open();
             },
             description: a.description,
             detail: a.scriptFile,

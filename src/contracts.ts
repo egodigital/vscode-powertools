@@ -196,6 +196,14 @@ export interface AppPackageJSON {
         url?: string;
     };
     /**
+     * A list of one or more dependencies.
+     */
+    dependencies?: { [module: string]: string };
+    /**
+     * A list of one or more dev dependencies.
+     */
+    devDependencies?: { [module: string]: string };
+    /**
      * The description.
      */
     description?: string;
