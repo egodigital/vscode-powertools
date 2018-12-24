@@ -46,6 +46,15 @@ export interface ActionQuickPickItem extends vscode.QuickPickItem {
 export type AppEntry = AppItem | string;
 
 /**
+ * An event function for an app.
+ *
+ * @param {AppEventScriptArguments} args The arguments.
+ *
+ * @return {TResult} The result.
+ */
+export type AppEventFunction<TResult = any> = (args: AppEventScriptArguments) => TResult;
+
+/**
  * Arguments for an app script event.
  */
 export interface AppEventScriptArguments<TData = any> extends WorkspaceScriptArguments {
@@ -153,6 +162,28 @@ export interface AppModule {
      * Is invoked when a message received from the web view.
      */
     readonly onMessage?: (args: AppEventScriptArguments) => any;
+}
+
+/**
+ * The 'package.json' file of an app.
+ */
+export interface AppPackageJSON {
+    /**
+     * The description.
+     */
+    description?: string;
+    /**
+     * The display name.
+     */
+    displayName?: string;
+    /**
+     * The (internal) name.
+     */
+    name?: string;
+    /**
+     * Options for the script.
+     */
+    options?: { [key: string]: any };
 }
 
 /**

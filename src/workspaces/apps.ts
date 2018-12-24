@@ -16,18 +16,14 @@
  */
 
 import * as _ from 'lodash';
+import * as ego_apps from '../apps';
 import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
-import * as ego_webview from '../webview';
 import * as ego_workspace from '../workspace';
 import * as ejs from 'ejs';
 import * as fsExtra from 'fs-extra';
-import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
-
-
-type EventFunction<TResult = any> = (args: ego_contracts.AppEventScriptArguments) => TResult;
 
 
 /**
@@ -39,7 +35,7 @@ export const KEY_APPS = 'apps';
 /**
  * A webview for a custom (workspace) app.
  */
-export class WorkspaceAppWebView extends ego_webview.WebViewBase {
+export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
     /**
      * Initializes a new instance of that class.
      *
@@ -70,7 +66,10 @@ export class WorkspaceAppWebView extends ego_webview.WebViewBase {
         this.scriptFile = FULL_SCRIPT_PATH;
     }
 
-    private createScriptArguments(
+    /**
+     * @inheritdoc
+     */
+    protected createScriptArguments(
         eventName: string,
         data?: any,
     ): ego_contracts.AppEventScriptArguments {
@@ -135,40 +134,9 @@ export class WorkspaceAppWebView extends ego_webview.WebViewBase {
     /**
      * @inheritdoc
      */
-    protected generateHtmlBody(): string {
-        const ARGS = this.createScriptArguments('get.html');
-
-        let html: string;
-
-        const FUNC = this.getEventFunction(m => m.getHtml);
-        if (FUNC) {
-            html = FUNC(ARGS);
-        }
-
-        return ego_helpers.toStringSafe(
-            html
-        );
-    }
-
-    private getEventFunction(funcProvider: (m: ego_contracts.AppModule) => EventFunction): EventFunction {
-        const FUNC = funcProvider(this.module);
-
-        return _.isNil(FUNC) ? this.module.onEvent
-                             : FUNC;
-    }
-
-    /**
-     * @inheritdoc
-     */
     protected getResourceUris() {
         const URIs: vscode.Uri[] = super.getResourceUris();
 
-        // '.vscode-powertools' sub folder inside user's home directory
-        URIs.unshift(
-            vscode.Uri.file(path.resolve(
-                path.join(os.homedir(), ego_contracts.HOMEDIR_SUBFOLDER)
-            ))
-        );
         // '.vscode' sub folder inside workspace
         URIs.unshift(
             vscode.Uri.file(path.resolve(
@@ -182,72 +150,10 @@ export class WorkspaceAppWebView extends ego_webview.WebViewBase {
     /**
      * @inheritdoc
      */
-    protected getTitle(): string {
-        const ARGS = this.createScriptArguments('get.title');
-
-        let title: string;
-
-        const FUNC = this.getEventFunction(m => m.getTitle);
-        if (FUNC) {
-            title = FUNC(ARGS);
-        }
-
-        return ego_helpers.toStringSafe(
-            title
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected getType(): string {
-        return 'WorkspaceApp';
-    }
-
-    /**
-     * Stores the underlying module.
-     */
     public readonly module: ego_contracts.AppModule;
 
     /**
      * @inheritdoc
-     */
-    protected async onLoaded() {
-        const ARGS = this.createScriptArguments('on.loaded');
-
-        const FUNC = this.getEventFunction(m => m.onLoaded);
-        if (FUNC) {
-            await Promise.resolve(
-                FUNC(ARGS)
-            );
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected async onWebViewMessage(msg: ego_contracts.WebViewMessage): Promise<boolean> {
-        const FUNC = this.getEventFunction(
-            m => m.onMessage
-        );
-        if (FUNC) {
-            const ARGS = this.createScriptArguments(
-                'on.command',
-                msg
-            );
-
-            return ego_helpers.toBooleanSafe(
-                await Promise.resolve(
-                    FUNC(ARGS)
-                ),
-            );
-        }
-
-        return false;
-    }
-
-    /**
-     * The full path to the script file.
      */
     public readonly scriptFile: string;
 }
