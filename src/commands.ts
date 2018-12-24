@@ -40,68 +40,19 @@ export function registerCommands(
                 const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [
                     {
                         action: async () => {
-                            const APP_QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [];
-
-                            const GLOBAL_APPS: any[] = await require('./apps').loadApps(
-                                output
-                            );
-                            GLOBAL_APPS.forEach(a => {
-                                APP_QUICK_PICKS.push({
-                                    action: () => {
-                                        return a.open();
-                                    },
-                                    description: a.description,
-                                    detail: a.scriptFile,
-                                    label: a.displayName,
-                                });
-                            });
-
-                            const WORKSPACE_APPS = ego_helpers.from(
-                                ego_workspace.getAllWorkspaces()
-                            ).selectMany(ws => {
-                                return ego_helpers.from(
-                                    ws.getApps()
-                                ).select(a => {
-                                    return {
-                                        app: a,
-                                        workspace: ws,
-                                    };
-                                });
-                            }).toArray();
-                            WORKSPACE_APPS.forEach(x => {
-                                APP_QUICK_PICKS.push({
-                                    action: () => {
-                                        return x.app
-                                            .open();
-                                    },
-                                    description: x.app.description,
-                                    detail: x.workspace.rootPath,
-                                    label: x.app.name,
-                                });
-                            });
-
-                            const SELECTED_APP_ITEM = await vscode.window.showQuickPick(
-                                ego_helpers.from(
-                                    APP_QUICK_PICKS
-                                ).orderBy(x => {
-                                    return ego_helpers.normalizeString(x.label);
-                                }).thenBy(x => {
-                                    return ego_helpers.normalizeString(x.description);
-                                }).thenBy(x => {
-                                    return ego_helpers.normalizeString(x.detail);
-                                }).pipe(x => {
-                                    x.label = `$(zap)  ${ x.label }`;
-                                }).toArray()
-                            );
-
-                            if (SELECTED_APP_ITEM) {
-                                await Promise.resolve(
-                                    SELECTED_APP_ITEM.action()
-                                );
-                            }
+                            return require('./apps')
+                                .openApp(output);
                         },
                         label: 'Open App',
                         description: 'Opens a global or workspace app.',
+                    },
+                    {
+                        action: async () => {
+                            return require('./apps')
+                                .createApp();
+                        },
+                        label: 'Create App',
+                        description: 'Creates a new app.',
                     }
                 ];
 
