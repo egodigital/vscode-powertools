@@ -27,41 +27,91 @@ import * as vscode from 'vscode';
  * Registers all commands.
  *
  * @param {vscode.ExtensionContext} context The underlying extension context.
+ * @param {vscode.OutputChannel} output The output channel.
  */
-export function registerCommands(context: vscode.ExtensionContext) {
+export function registerCommands(
+    context: vscode.ExtensionContext,
+    output: vscode.OutputChannel,
+) {
     context.subscriptions.push(
         // apps
         vscode.commands.registerCommand('ego.power-tools.apps', async () => {
             try {
-                const ALL_WORKSPACES = ego_workspace.getAllWorkspaces();
-
-                const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = ego_helpers.from(
-                    ALL_WORKSPACES
-                ).selectMany(ws => {
-                    return ws.getApps();
-                }).select(app => {
-                    return {
-                        action: () => {
-                            return app.open();
-                        },
-                        description: app.description,
-                        detail: app.detail,
-                        label: app.name,
-                    };
-                }).orderBy(qp => {
-                    return ego_helpers.normalizeString(qp.label);
-                }).toArray();
-
-                const SELECT_ITEM = await vscode.window.showQuickPick(
-                    QUICK_PICKS,
+                const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [
                     {
-                        placeHolder: 'Select the app, you would like to open ...',
+                        action: async () => {
+                            const APP_QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [];
+
+                            const GLOBAL_APPS: any[] = await require('./apps').loadApps(
+                                output
+                            );
+                            GLOBAL_APPS.forEach(a => {
+                                APP_QUICK_PICKS.push({
+                                    action: () => {
+                                        return a.open();
+                                    },
+                                    description: a.description,
+                                    detail: a.scriptFile,
+                                    label: a.displayName,
+                                });
+                            });
+
+                            const WORKSPACE_APPS = ego_helpers.from(
+                                ego_workspace.getAllWorkspaces()
+                            ).selectMany(ws => {
+                                return ego_helpers.from(
+                                    ws.getApps()
+                                ).select(a => {
+                                    return {
+                                        app: a,
+                                        workspace: ws,
+                                    };
+                                });
+                            }).toArray();
+                            WORKSPACE_APPS.forEach(x => {
+                                APP_QUICK_PICKS.push({
+                                    action: () => {
+                                        return x.app
+                                            .open();
+                                    },
+                                    description: x.app.description,
+                                    detail: x.workspace.rootPath,
+                                    label: x.app.name,
+                                });
+                            });
+
+                            const SELECTED_APP_ITEM = await vscode.window.showQuickPick(
+                                ego_helpers.from(
+                                    APP_QUICK_PICKS
+                                ).orderBy(x => {
+                                    return ego_helpers.normalizeString(x.label);
+                                }).thenBy(x => {
+                                    return ego_helpers.normalizeString(x.description);
+                                }).thenBy(x => {
+                                    return ego_helpers.normalizeString(x.detail);
+                                }).pipe(x => {
+                                    x.label = `$(zap)  ${ x.label }`;
+                                }).toArray()
+                            );
+
+                            if (SELECTED_APP_ITEM) {
+                                await Promise.resolve(
+                                    SELECTED_APP_ITEM.action()
+                                );
+                            }
+                        },
+                        label: 'Open App',
+                        description: 'Opens a global or workspace app.',
                     }
+                ];
+
+                const SELECTED_ITEM = await vscode.window.showQuickPick(
+                    QUICK_PICKS
                 );
 
-                if (SELECT_ITEM) {
+                if (SELECTED_ITEM) {
                     await Promise.resolve(
-                        SELECT_ITEM.action()
+                        SELECTED_ITEM.action()
                     );
                 }
             } catch (e) {

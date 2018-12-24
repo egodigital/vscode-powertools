@@ -17,7 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as ego_apps from './apps';
 import * as ego_commands from './commands';
 import * as ego_helpers from './helpers';
 import * as ego_log from './log';
@@ -255,27 +254,15 @@ export async function activate(context: vscode.ExtensionContext) {
 
     // global extension commands
     WF.next(() => {
-        ego_commands.registerCommands(context);
+        ego_commands.registerCommands(
+            context, outputChannel
+        );
     });
 
     WF.next(() => {
         outputChannel.appendLine('');
         outputChannel.appendLine(`Extension has been initialized.`);
         outputChannel.appendLine('');
-    });
-
-    WF.next(async () => {
-        try {
-            const APPS = await ego_apps.loadApps(
-                outputChannel
-            );
-            if (APPS.length) {
-                await APPS[0].open();
-            }
-        } catch (e) {
-            if (e) {
-            }
-        }
     });
 
     await ego_helpers.QUEUE.add(async () => {
