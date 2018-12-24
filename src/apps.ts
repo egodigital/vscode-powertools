@@ -413,6 +413,8 @@ export class AppWebView extends AppWebViewBase {
  * Creates a (new) app.
  */
 export async function createApp() {
+    const HTML_ENCODER = new htmlEntities.AllHtmlEntities();
+
     const NAME = ego_helpers.normalizeString(
         await vscode.window.showInputBox({
             placeHolder: 'Enter the name of your new app here ...',
@@ -567,7 +569,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER`.split('\n')
         INDEX_EJS,
         `<!--
 
-${ new htmlEntities.AllHtmlEntities().encode(
+${ HTML_ENCODER.encode(
     MIT_HEADER.join('\n')
 ) }
 
@@ -697,6 +699,35 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.`,
+        'utf8'
+    );
+
+    // README.md
+    const README_FILE = path.resolve(
+        path.join(
+            APP_DIR, 'README.md'
+        )
+    );
+    await fsExtra.writeFile(
+        README_FILE,
+        `# ${ HTML_ENCODER.encode(NAME) }
+
+${ ego_helpers.isEmptyString(description) ? 'This is an app for the [Visual Studio Code](https://code.visualstudio.com/) extension [Power Tools](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools).' : HTML_ENCODER.encode(description) }
+
+## Install
+
+Keep sure to have [vscode-powertools](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools) installed.
+
+Then following these steps:
+
+* press \`F1\` in [Visual Studio Code](https://code.visualstudio.com/) to open the command list
+* select command \`Power Tools: Apps\`
+* select \`Open App ...\` sub command
+* now you can open the app by choosing \`${ HTML_ENCODER.encode(DISPLAY_NAME) }\`
+
+## Credits
+
+The app is powered by [vscode-powertools](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools), created by [e.GO Digital](https://e-go-digital.com/).`,
         'utf8'
     );
 
