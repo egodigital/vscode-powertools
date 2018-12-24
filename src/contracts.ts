@@ -179,6 +179,23 @@ export interface AppModule {
  */
 export interface AppPackageJSON {
     /**
+     * Information about the author.
+     */
+    author?: {
+        /**
+         * The email address.
+         */
+        email?: string;
+        /**
+         * The name.
+         */
+        name?: string;
+        /**
+         * The (homepage) URL.
+         */
+        url?: string;
+    };
+    /**
      * The description.
      */
     description?: string;
@@ -187,6 +204,10 @@ export interface AppPackageJSON {
      */
     displayName?: string;
     /**
+     * The software license (ID).
+     */
+    license?: string;
+    /**
      * The (internal) name.
      */
     name?: string;
@@ -194,6 +215,10 @@ export interface AppPackageJSON {
      * Options for the script.
      */
     options?: { [key: string]: any };
+    /**
+     * The version number.
+     */
+    version?: string;
 }
 
 /**
