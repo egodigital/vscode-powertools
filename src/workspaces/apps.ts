@@ -37,9 +37,9 @@ export const KEY_APPS = 'apps';
 
 
 /**
- * A webview for a custom app.
+ * A webview for a custom (workspace) app.
  */
-export class AppWebView extends ego_webview.WebViewBase {
+export class WorkspaceAppWebView extends ego_webview.WebViewBase {
     /**
      * Initializes a new instance of that class.
      *
@@ -201,7 +201,7 @@ export class AppWebView extends ego_webview.WebViewBase {
      * @inheritdoc
      */
     protected getType(): string {
-        return 'App';
+        return 'WorkspaceApp';
     }
 
     /**
@@ -333,7 +333,7 @@ export async function reloadApps() {
             description = undefined;
         }
 
-        let view: AppWebView;
+        let view: WorkspaceAppWebView;
         let newApp: ego_contracts.WorkspaceApp = {
             description: undefined,
             detail: undefined,
@@ -351,7 +351,7 @@ export async function reloadApps() {
                     return false;
                 }
 
-                const NEW_VIEW = new AppWebView(
+                const NEW_VIEW = new WorkspaceAppWebView(
                     WORKSPACE,
                     item
                 );
