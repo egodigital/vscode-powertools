@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as _ from 'lodash';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_values from './values';
@@ -556,6 +557,35 @@ export function getAllWorkspaces(): Workspace[] {
             PROVIDER()
         );
     }
+}
+
+/**
+ * Returns a list of workspace infos.
+ *
+ * @param {Workspace|Workspace[]} [workspaces] The custom list of workspaces.
+ *
+ * @return {ego_contracts.WorkspaceList} The workspace list.
+ */
+export function getWorkspaceList(workspaces?: Workspace | Workspace[]): ego_contracts.WorkspaceList {
+    if (arguments.length < 1) {
+        workspaces = getAllWorkspaces();
+    }
+
+    workspaces = ego_helpers.asArray(workspaces);
+
+    const LIST: ego_contracts.WorkspaceList = {};
+
+    for (const WS of workspaces.map(ws => ws.getInfo())) {
+        if (_.isNil(LIST[ WS.name ])) {
+            LIST[ WS.name ] = WS;
+        } else {
+            LIST[ WS.name ] = ego_helpers.asArray(
+                LIST[ WS.name ]
+            );
+        }
+    }
+
+    return LIST;
 }
 
 /**

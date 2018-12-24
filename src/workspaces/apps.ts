@@ -75,9 +75,12 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
     ): ego_contracts.AppEventScriptArguments {
         const ME = this;
 
-        return {
+        const ARGS: ego_contracts.AppEventScriptArguments = {
             data: data,
             event: eventName,
+            getAllWorkspaces: () => {
+                return this.getAllWorkspaces();
+            },
             getFileResourceUri: (p, asString?) => {
                 let uri: string | vscode.Uri = this.getFileResourceUri(p);
                 if (!_.isNil(uri)) {
@@ -127,8 +130,18 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
             },
             require: (id) => {
                 return ego_helpers.requireModule(id);
-            }
+            },
+            workspaces: undefined,
         };
+
+        // ARGS.workspaces
+        Object.defineProperty(ARGS, 'workspaces', {
+            get: () => {
+                return ego_workspace.getWorkspaceList();
+            }
+        });
+
+        return ARGS;
     }
 
     /**

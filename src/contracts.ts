@@ -67,6 +67,12 @@ export interface AppEventScriptArguments<TData = any> extends WorkspaceScriptArg
      */
     readonly event: string;
     /**
+     * Returns the list of all workspaces.
+     *
+     * @return {WorkspaceInfo[]} The list of workspaces.
+     */
+    readonly getAllWorkspaces: () => WorkspaceInfo[];
+    /**
      * Returns an URI from the 'resources' directory.
      *
      * @param {string} path The (relative) path.
@@ -102,6 +108,10 @@ export interface AppEventScriptArguments<TData = any> extends WorkspaceScriptArg
      * @return string The rendered template.
      */
     readonly renderFile: (file: string, data?: ejs.Data) => string;
+    /**
+     * The list of workspaces, grouped by name.
+     */
+    readonly workspaces: WorkspaceList;
 }
 
 /**
@@ -713,6 +723,11 @@ export interface WorkspaceJob extends vscode.Disposable {
      */
     readonly stop: () => boolean;
 }
+
+/**
+ * A list of workspace infos.
+ */
+export type WorkspaceList = { [name: string]: WorkspaceInfo | WorkspaceInfo[] };
 
 /**
  * Arguments for a workspace based script.

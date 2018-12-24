@@ -153,6 +153,7 @@ export class ScriptConsoleWebView extends ego_webview.WebViewWithContextBase {
                             // @ts-ignore
                             const $vscode = require('vscode');
 
+                            // @ts-ignore
                             const $getWorkspaces = () => {
                                 return ego_helpers.from(
                                     ego_workspace.getAllWorkspaces()
@@ -171,16 +172,8 @@ export class ScriptConsoleWebView extends ego_webview.WebViewWithContextBase {
                                 }).toArray();
                             };
 
-                            const $workspaces: { [name: string]: ego_contracts.WorkspaceInfo | ego_contracts.WorkspaceInfo[] } = {};
-                            for (const WS of $getWorkspaces()) {
-                                if (_.isNil($workspaces[ WS.name ])) {
-                                    $workspaces[ WS.name ] = WS;
-                                } else {
-                                    $workspaces[ WS.name ] = ego_helpers.asArray(
-                                        $workspaces[ WS.name ]
-                                    );
-                                }
-                            }
+                            // @ts-ignore
+                            const $workspaces = ego_workspace.getWorkspaceInfos();
 
                             // @ts-ignore
                             const $clear = () => {

@@ -19,6 +19,7 @@ import * as _ from 'lodash';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_log from './log';
+import * as ego_workspace from './workspace';
 import * as ego_webview from './webview';
 import * as ejs from 'ejs';
 import * as fsExtra from 'fs-extra';
@@ -66,6 +67,29 @@ export abstract class AppWebViewBase extends ego_webview.WebViewBase {
         return ego_helpers.toStringSafe(
             html
         );
+    }
+
+    /**
+     * Returns the list of all workspaces.
+     *
+     * @return {ego_contracts.WorkspaceInfo[]} The list of workspaces.
+     */
+    protected getAllWorkspaces(): ego_contracts.WorkspaceInfo[] {
+        return ego_helpers.from(
+            ego_workspace.getAllWorkspaces()
+        ).select(ws => {
+            return ws.getInfo();
+        }).orderBy(wi => {
+            return wi.index;
+        }).thenBy(wi => {
+            return ego_helpers.normalizeString(
+                wi.name
+            );
+        }).thenBy(wi => {
+            return ego_helpers.normalizeString(
+                wi.rootPath
+            );
+        }).toArray();
     }
 
     /**
@@ -220,9 +244,12 @@ export class AppWebView extends AppWebViewBase {
             options = this.packageJSON;
         }
 
-        return {
+        const ARGS: ego_contracts.AppEventScriptArguments = {
             data: data,
             event: eventName,
+            getAllWorkspaces: () => {
+                return this.getAllWorkspaces();
+            },
             getFileResourceUri: (p, asString?) => {
                 let uri: string | vscode.Uri = this.getFileResourceUri(p);
                 if (!_.isNil(uri)) {
@@ -274,8 +301,18 @@ export class AppWebView extends AppWebViewBase {
             },
             require: (id) => {
                 return ego_helpers.requireModule(id);
-            }
+            },
+            workspaces: undefined,
         };
+
+        // ARGS.workspaces
+        Object.defineProperty(ARGS, 'workspaces', {
+            get: () => {
+                return ego_workspace.getWorkspaceList();
+            }
+        });
+
+        return ARGS;
     }
 
     /**
