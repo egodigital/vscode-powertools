@@ -888,6 +888,11 @@ export enum FileChangeType {
 export const APPS_SUBFOLDER = '.apps';
 
 /**
+ * Name of the event for a new app.
+ */
+export const EVENT_APP_LIST_UPDATED = 'apps.updated-list';
+
+/**
  * (Display) Name of the extension.
  */
 export const EXTENSION_NAME = 'Power Tools by e.GO';

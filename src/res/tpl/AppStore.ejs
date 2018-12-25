@@ -76,6 +76,10 @@
 
 function ego_on_command(command, data) {
     switch (command) {
+        case 'appListUpdated':
+            ego_reload_apps();
+            break;
+
         case 'appsLoaded':
             {
                 const LIST = $('#ego-app-list');

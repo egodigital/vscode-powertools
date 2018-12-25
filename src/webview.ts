@@ -400,10 +400,19 @@ ${ this.generateHtmlFooter() }`;
                 this._panel = newPanel;
             } catch (e) {
                 ego_helpers.tryDispose(newPanel);
+
+                throw e;
             }
 
             return true;
         });
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected onDispose() {
+        ego_helpers.tryDispose(this.panel);
     }
 
     /**

@@ -609,6 +609,8 @@ export class AppWebView extends AppWebViewBase {
  * A web view for an app store.
  */
 export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
+    private _onAppListUpdatedEventFunction: (...args: any[]) => void;
+
     /**
      * @inheritdoc
      */
@@ -635,6 +637,21 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
      */
     protected getType(): string {
         return `AppStore`;
+    }
+
+    private onAppListUpdated() {
+        this.postMessage(
+            'appListUpdated'
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected onDispose() {
+        this.unsetOnAppLisUpdatedEventFunction();
+
+        super.onDispose();
     }
 
     /**
@@ -703,7 +720,7 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
 
                             APPS.push({
                                 'name': name,
-                                'displayName': 'My app',
+                                'displayName': displayName,
                                 'description': description,
                                 'details': details,
                                 'icon': icon,
@@ -797,6 +814,33 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
         }
 
         return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public async open() {
+        this.unsetOnAppLisUpdatedEventFunction();
+
+        this._onAppListUpdatedEventFunction = () => {
+            this.onAppListUpdated();
+        };
+
+        ego_helpers.EVENTS
+                   .on(ego_contracts.EVENT_APP_LIST_UPDATED,
+                       this._onAppListUpdatedEventFunction);
+
+        return await super.open();
+    }
+
+    private unsetOnAppLisUpdatedEventFunction() {
+        ego_helpers.tryRemoveListener(
+            ego_helpers.EVENTS,
+            ego_contracts.EVENT_APP_LIST_UPDATED,
+            this._onAppListUpdatedEventFunction
+        );
+
+        this._onAppListUpdatedEventFunction = null;
     }
 }
 
@@ -1154,6 +1198,12 @@ Then following these steps:
 The app is powered by [vscode-powertools](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools), created by [e.GO Digital](https://e-go-digital.com/).`,
         'utf8'
     );
+
+    ego_helpers.EVENTS.emit(ego_contracts.EVENT_APP_LIST_UPDATED, {
+        dir: APP_DIR,
+        displayName: DISPLAY_NAME,
+        name: NAME,
+    });
 
     // open app folder
     await opn(
