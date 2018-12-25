@@ -5,7 +5,10 @@
 - /img/share/*
   - https://simplesharingbuttons.com
 
-- /src/res/img/ego_digital.svg
+- /src/res/img/ajax-loader-64x64.gif
   - e.GO Digital GmbH (https://www.e-go-digital.com/)
+
+- /src/res/img/ego_digital.svg
+  - https://icons8.com/preloaders/
 
 - Webview make use [MD Bootstrap free](https://mdbootstrap.com/)

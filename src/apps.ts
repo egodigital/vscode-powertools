@@ -26,10 +26,17 @@ import * as ego_webview from './webview';
 import * as ejs from 'ejs';
 import * as fsExtra from 'fs-extra';
 import * as htmlEntities from 'html-entities';
+import * as mimeTypes from 'mime-types';
 const opn = require('opn');
 import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
+
+
+interface UninstallAppData {
+    name: string;
+    source: string;
+}
 
 
 /**
@@ -408,6 +415,201 @@ export class AppWebView extends AppWebViewBase {
     public readonly packageJSON: ego_contracts.AppPackageJSON;
 }
 
+/**
+ * A web view for an app store.
+ */
+export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
+    /**
+     * @inheritdoc
+     */
+    protected generateHtmlBody(): string {
+        const FILE = this.getFileResourceUri('tpl/AppStore.ejs')
+            .fsPath;
+
+        return ejs.render(
+            fsExtra.readFileSync(
+                FILE, 'utf8'
+            )
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected getTitle(): string {
+        return `App Store for 'vscode-powettools'`;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected getType(): string {
+        return `AppStore`;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected async onWebViewMessage(msg: ego_contracts.WebViewMessage): Promise<boolean> {
+        switch (msg.command) {
+            case 'reloadApps':
+                try {
+                    const APPS: any[] = [];
+
+                    // installed apps
+                    const INSTALLED_APPS = await getInstalledApps();
+                    for (const IA of INSTALLED_APPS) {
+                        try {
+                            let name: string;
+                            let displayName: string;
+                            let description: string;
+                            let details: string;
+                            let icon: string;
+
+                            try {
+                                const PACKAGE_JSON = await IA.loadPackageJSON();
+                                if (PACKAGE_JSON) {
+                                    name = PACKAGE_JSON.name;
+                                    description = PACKAGE_JSON.description;
+                                    displayName = PACKAGE_JSON.displayName;
+                                }
+                            } catch { }
+
+                            try {
+                                const README = await IA.loadREADME();
+                                if (false !== README) {
+                                    details = README;
+                                }
+                            } catch { }
+
+                            try {
+                                const ICON = await IA.loadIcon();
+                                if (false !== ICON) {
+                                    icon = ICON;
+                                }
+                            } catch { }
+
+                            if (ego_helpers.isEmptyString(name)) {
+                                name = path.basename(
+                                    path.dirname(IA.path)
+                                );
+                            }
+
+                            if (ego_helpers.isEmptyString(displayName)) {
+                                displayName = name;
+                            }
+
+                            if (ego_helpers.isEmptyString(description)) {
+                                description = undefined;
+                            }
+
+                            if (ego_helpers.isEmptyString(details)) {
+                                details = undefined;
+                            }
+
+                            if (ego_helpers.isEmptyString(icon)) {
+                                icon = undefined;
+                            }
+
+                            APPS.push({
+                                'name': name,
+                                'displayName': 'My app',
+                                'description': description,
+                                'details': details,
+                                'icon': icon,
+                                'isInstalled': true,
+                                'source': path.basename(IA.path),
+                            });
+                        } catch { }
+                    }
+
+                    await this.postMessage(
+                        'appsLoaded',
+                        {
+                            'success': true,
+                            'apps': ego_helpers.from(APPS)
+                                .orderBy(x => ego_helpers.normalizeString(x.displayName))
+                                .thenBy(x => ego_helpers.normalizeString(x.name))
+                                .thenBy(x => ego_helpers.normalizeString(x.source))
+                                .toArray(),
+                        }
+                    );
+                } catch (e) {
+                    await this.postMessage(
+                        'appsLoaded',
+                        {
+                            'success': false,
+                            'error': ego_helpers.toStringSafe(e),
+                        }
+                    );
+                }
+                break;
+
+            case 'uninstallApp':
+                {
+                    const APP_TO_UNINSTALL: UninstallAppData = msg.data;
+                    if (_.isObjectLike(APP_TO_UNINSTALL)) {
+                        if (!ego_helpers.isEmptyString(APP_TO_UNINSTALL.source)) {
+                            const DIRS_WITH_APPS = path.resolve(
+                                path.join(
+                                    os.homedir(),
+                                    ego_contracts.HOMEDIR_SUBFOLDER,
+                                    ego_contracts.APPS_SUBFOLDER,
+                                )
+                            );
+
+                            const APP_DIR = path.resolve(
+                                path.join(
+                                    DIRS_WITH_APPS,
+                                    ego_helpers.toStringSafe(APP_TO_UNINSTALL.source),
+                                )
+                            );
+
+                            if (await ego_helpers.isDirectory(APP_DIR)) {
+                                if (APP_DIR.startsWith(DIRS_WITH_APPS + path.sep)) {
+                                    let err: any;
+                                    try {
+                                        await fsExtra.remove(
+                                            APP_DIR
+                                        );
+
+                                        vscode.window.showInformationMessage(
+                                            `App '${ ego_helpers.toStringSafe(APP_TO_UNINSTALL.name) }' has been uninstalled.`
+                                        );
+                                    } catch (e) {
+                                        err = e;
+
+                                        vscode.window.showErrorMessage(
+                                            `Could not uninstall app '${ ego_helpers.toStringSafe(APP_TO_UNINSTALL.name) }': '${ ego_helpers.toStringSafe(e) }'`
+                                        );
+                                    }
+
+                                    await this.postMessage(
+                                        'appUninstalled',
+                                        {
+                                            'success': _.isNil(err),
+                                            'app': APP_TO_UNINSTALL,
+                                        }
+                                    );
+                                }
+                            } else {
+                                vscode.window.showWarningMessage(
+                                    `Directory for app '${ ego_helpers.toStringSafe(APP_TO_UNINSTALL.name) }' not found!`
+                                );
+                            }
+                        }
+                    }
+                }
+                break;
+
+            default:
+                return false;
+        }
+
+        return true;
+    }
+}
+
 
 /**
  * Creates a (new) app.
@@ -429,7 +631,7 @@ export async function createApp() {
                     path.join(
                         os.homedir(),
                         ego_contracts.HOMEDIR_SUBFOLDER,
-                        '.apps',
+                        ego_contracts.APPS_SUBFOLDER,
                         value
                     )
                 );
@@ -483,7 +685,7 @@ export async function createApp() {
         path.join(
             os.homedir(),
             ego_contracts.HOMEDIR_SUBFOLDER,
-            '.apps',
+            ego_contracts.APPS_SUBFOLDER,
             NAME
         )
     );
@@ -559,14 +761,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER`.split('\n');
 
-    // index.ejs
-    const INDEX_EJS = path.resolve(
+    // view.ejs
+    const VIEW_EJS = path.resolve(
         path.join(
-            APP_DIR, 'index.ejs'
+            APP_DIR, 'view.ejs'
         )
     );
     await fsExtra.writeFile(
-        INDEX_EJS,
+        VIEW_EJS,
         `<!--
 
 ${ HTML_ENCODER.encode(
@@ -577,6 +779,8 @@ ${ HTML_ENCODER.encode(
 
 <div class="container">
   <h1><%= page_title %></h1>
+
+  <pre id="last-message-from-extension"></pre>
 </div>
 
 <style>
@@ -592,7 +796,17 @@ ${ HTML_ENCODER.encode(
  * has been received from the app script.
  */
 function ego_on_command(command, data) {
-    // TODO
+    switch (command) {
+        case 'hello_back_from_extension':
+            // this has been send from
+            // 'onEvent()' function
+            // in 'index.js'
+
+            $('#last-message-from-extension').text(
+                'From extension:\\n\\n' + JSON.stringify(data, null, 2)
+            );
+            break;
+    }
 }
 
 /**
@@ -601,6 +815,12 @@ function ego_on_command(command, data) {
  */
 function ego_on_loaded() {
     // TODO
+
+    // this is send to 'onEvent()' function
+    // in 'index.js'
+    ego_post('hello_from_webview_command', {
+        'message': 'Hello, Echo!'
+    });
 }
 
 </script>
@@ -622,13 +842,27 @@ function ego_on_loaded() {
  * Is invoked on an event.
  */
 exports.onEvent = async (args) => {
+    const vscode = args.require('vscode');
+
     switch (args.event) {
         case 'on.command':
             // is invoked, when the web view has
             // been post a (command) message
-            //
-            // args.data.command => (string) The name of the command.
-            // args.data.data    => (any) The data of the command.
+            if ('hello_from_webview_command' === args.data.command) {
+                // this has been send from
+                // 'ego_on_loaded()' function
+                // in 'view.ejs'
+
+                // s. https://code.visualstudio.com/api/references/vscode-api
+                vscode.window.showInformationMessage(
+                    'From WebView: ' + JSON.stringify(args.data.data, null, 2)
+                );
+
+                // send this back to 'view.ejs'
+                await args.post('hello_back_from_extension', {
+                    'message': 'Hello, Otto!'
+                });
+            }
             break;
 
         case 'on.loaded':
@@ -650,7 +884,7 @@ exports.getTitle = () => {
  */
 exports.getHtml = (args) => {
     return args.renderFile(
-        'index.ejs',
+        'view.ejs',
         {
             'page_title': ${ JSON.stringify(DISPLAY_NAME) },
         }
@@ -741,6 +975,111 @@ The app is powered by [vscode-powertools](https://marketplace.visualstudio.com/i
 }
 
 /**
+ * Returns the list of installed apps.
+ *
+ * @return {Promise<ego_contracts.InstalledApp[]>} The promise with the list of installed apps.
+ */
+export async function getInstalledApps(): Promise<ego_contracts.InstalledApp[]> {
+    const APPS: ego_contracts.InstalledApp[] = [];
+
+    const DIR_WITH_APPS = path.resolve(
+        path.join(
+            os.homedir(),
+            ego_contracts.HOMEDIR_SUBFOLDER,
+            ego_contracts.APPS_SUBFOLDER
+        )
+    );
+
+    if (await ego_helpers.isDirectory(DIR_WITH_APPS, false)) {
+        for (const ITEM of await fsExtra.readdir(DIR_WITH_APPS)) {
+            try {
+                const APP_FULL_PATH = path.resolve(
+                    path.join(
+                        DIR_WITH_APPS, ITEM
+                    )
+                );
+
+                if (!(await ego_helpers.isDirectory(APP_FULL_PATH, false))) {
+                    continue;
+                }
+
+                const INDEX_JS = path.resolve(
+                    path.join(
+                        APP_FULL_PATH, 'index.js'
+                    )
+                );
+
+                if (await ego_helpers.isFile(INDEX_JS, false)) {
+                    APPS.push({
+                        loadIcon: async () => {
+                            const EXTENSIONS = [ 'png', 'gif', 'jpg', 'jpeg' ];
+                            for (const EXT of EXTENSIONS) {
+                                try {
+                                    const ICON_PATH = path.resolve(
+                                        path.join(
+                                            APP_FULL_PATH, `icon.${ EXT }`
+                                        )
+                                    );
+
+                                    const ICON_STAT = await fsExtra.stat(ICON_PATH);
+                                    if (ICON_STAT.isFile() && ICON_STAT.size > 0) {
+                                        const MIME_TYPE = mimeTypes.lookup(ICON_PATH);
+                                        if (false !== MIME_TYPE) {
+                                            const ICON_DATA = await fsExtra.readFile(
+                                                ICON_PATH
+                                            );
+
+                                            return `data:${ MIME_TYPE };base64,${ ICON_DATA.toString('base64') }`;
+                                        }
+                                    }
+                                } catch { }
+                            }
+
+                            return false;
+                        },
+                        loadPackageJSON: async function() {
+                            const PACKAGE_JSON = path.resolve(
+                                path.join(
+                                    APP_FULL_PATH, 'package.json'
+                                )
+                            );
+                            if (await ego_helpers.isFile(PACKAGE_JSON, false)) {
+                                return JSON.parse(
+                                    await fsExtra.readFile(
+                                        PACKAGE_JSON,
+                                        'utf8'
+                                    )
+                                );
+                            }
+
+                            return false;
+                        },
+                        loadREADME: async function() {
+                            const README = path.resolve(
+                                path.join(
+                                    APP_FULL_PATH, 'README.md'
+                                )
+                            );
+                            if (await ego_helpers.isFile(README, false)) {
+                                return await fsExtra.readFile(
+                                    README,
+                                    'utf8'
+                                );
+                            }
+
+                            return false;
+                        },
+                        path: APP_FULL_PATH
+                    });
+                }
+            } catch { }
+        }
+    }
+
+    return APPS;
+}
+
+/**
  * Loads all apps from the home directory.
  *
  * @param {vscode.OutputChannel} output The output channel.
@@ -756,7 +1095,7 @@ export async function loadApps(
         path.join(
             os.homedir(),
             ego_contracts.HOMEDIR_SUBFOLDER,
-            '.apps'
+            ego_contracts.APPS_SUBFOLDER
         )
     );
 
@@ -912,4 +1251,15 @@ export async function openApp(
             SELECTED_ITEM.action()
         );
     }
+}
+
+/**
+ * Opens the app store.
+ *
+ * @param {vscode.ExtensionContext} extension The extension context.
+ */
+export async function openAppStore(extension: vscode.ExtensionContext) {
+    const APP_STORE = new AppStoreWebView(extension);
+
+    return await APP_STORE.open();
 }

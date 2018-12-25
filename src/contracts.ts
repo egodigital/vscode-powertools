@@ -357,6 +357,34 @@ export interface ForPlatforms {
 }
 
 /**
+ * An installed app.
+ */
+export interface InstalledApp {
+    /**
+     * Tries to load the icon file of the app.
+     *
+     * @return {Promise<string|false>} The promise with the data URI or (false) if it does not exist.
+     */
+    readonly loadIcon: () => Promise<string  | false>;
+    /**
+     * Tries to load the 'package.json' file of the app.
+     *
+     * @return {Promise<AppPackageJSON|false>} The promise with the data or (false) if it does not exist.
+     */
+    readonly loadPackageJSON: () => Promise<AppPackageJSON | false>;
+    /**
+     * Tries to load the 'README.md' file of the app.
+     *
+     * @return {Promise<string|false>} The promise with the content or (false) if it does not exist.
+     */
+    readonly loadREADME: () => Promise<string | false>;
+    /**
+     * The directory, where the app is installed.
+     */
+    readonly path: string;
+}
+
+/**
  * A possible value for a job entry.
  */
 export type JobEntry = JobItem;
@@ -790,6 +818,11 @@ export enum FileChangeType {
      */
     Saved,
 }
+
+/**
+ * The name folder with apps inside of the extension's subfolder of the current user.
+ */
+export const APPS_SUBFOLDER = '.apps';
 
 /**
  * (Display) Name of the extension.

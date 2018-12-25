@@ -26,3 +26,10 @@ main {
 #ego-social-media-buttons .ego-social-media-btn {
     float: right;
 }
+
+.ego-ajax-loader {
+    clear: both;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

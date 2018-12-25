@@ -53,6 +53,14 @@ export function registerCommands(
                         },
                         label: 'Create App',
                         description: 'Creates a new app.',
+                    },
+                    {
+                        action: async () => {
+                            return require('./apps')
+                                .openAppStore(context);
+                        },
+                        label: 'Open Store',
+                        description: 'Opens a store, where you can install apps from.',
                     }
                 ];
 

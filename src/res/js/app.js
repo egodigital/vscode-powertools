@@ -25,12 +25,16 @@ function ego_apply_highlight(selector) {
     });
 }
 
-function ego_from_markdown(md) {
+function ego_from_markdown(md, tag) {
+    if (arguments.length < 2) {
+        tag = 'div';
+    }
+
     const CONVERTER = new showdown.Converter();
 
     const HTML = CONVERTER.makeHtml( ego_to_string(md) );
 
-    const CONTENT = $('<div class="ego-markdown" />');
+    const CONTENT = $(`<${ tag } class="ego-markdown" />`);
     CONTENT.html( HTML );
 
     CONTENT.find('script')
