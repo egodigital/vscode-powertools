@@ -65,6 +65,14 @@ export function registerCommands(
                     {
                         action: () => {
                             return require('./apps')
+                                .installApp();
+                        },
+                        label: 'Install App ...',
+                        description: 'Installs an app from a package.',
+                    },
+                    {
+                        action: () => {
+                            return require('./apps')
                                 .openAppStore(context);
                         },
                         label: 'Open Store ...',

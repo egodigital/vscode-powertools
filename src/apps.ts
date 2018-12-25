@@ -31,9 +31,11 @@ import * as mimeTypes from 'mime-types';
 const opn = require('opn');
 import * as os from 'os';
 import * as path from 'path';
+import * as sanitizeFilename from 'sanitize-filename';
 import * as tmp from 'tmp';
+import * as yazl from 'yazl';
 import * as vscode from 'vscode';
-import * as zip from 'yazl';
+const zip = require('node-zip');
 
 
 interface UninstallAppData {
@@ -858,6 +860,9 @@ export async function buildAppPackage() {
         try {
             let name: string;
             let displayName: string;
+            let filesToIgnore: string[];
+
+            // package.json
             try {
                 const PACKAGE_JSON = await IA.loadPackageJSON();
                 if (PACKAGE_JSON) {
@@ -867,6 +872,17 @@ export async function buildAppPackage() {
             } catch (e) {
                 ego_log.CONSOLE
                        .trace(e, 'apps.buildAppPackage(2)');
+            }
+
+            // .egoignore
+            try {
+                const EGO_IGNORE = await IA.loadIgnoreFile();
+                if (EGO_IGNORE) {
+                    filesToIgnore = EGO_IGNORE;
+                }
+            } catch (e) {
+                ego_log.CONSOLE
+                       .trace(e, 'apps.buildAppPackage(3)');
             }
 
             if (ego_helpers.isEmptyString(name)) {
@@ -881,7 +897,7 @@ export async function buildAppPackage() {
             ((x) => {
                 QUICK_PICKS.push({
                     action: async () => {
-                        const NEW_PACKAGE = new zip.ZipFile();
+                        const NEW_PACKAGE = new yazl.ZipFile();
 
                         await vscode.window.withProgress({
                             location: vscode.ProgressLocation.Notification,
@@ -917,16 +933,24 @@ export async function buildAppPackage() {
 
                                     const STAT = await fsExtra.stat(ITEM_PATH);
                                     if (STAT.isFile()) {
-                                        progress.report({
-                                            message: `Adding file '${ RELATIVE_PATH }' ...`,
-                                        });
-
-                                        NEW_PACKAGE.addBuffer(
-                                            await fsExtra.readFile(ITEM_PATH),
-                                            RELATIVE_PATH,
+                                        const IS_IGNORED = ego_helpers.doesMatch(
+                                            RELATIVE_PATH, x.filesToIgnore
+                                        ) || ego_helpers.doesMatch(
+                                            '/' + RELATIVE_PATH, x.filesToIgnore
                                         );
 
-                                        filesAdded = true;
+                                        if (!IS_IGNORED) {
+                                            progress.report({
+                                                message: `Adding file '${ RELATIVE_PATH }' ...`,
+                                            });
+
+                                            NEW_PACKAGE.addBuffer(
+                                                await fsExtra.readFile(ITEM_PATH),
+                                                RELATIVE_PATH,
+                                            );
+
+                                            filesAdded = true;
+                                        }
                                     } else {
                                         await ADD_FOLDER(
                                             RELATIVE_PATH,
@@ -993,6 +1017,7 @@ export async function buildAppPackage() {
             })({
                 app: IA,
                 displayName: displayName,
+                filesToIgnore: ego_helpers.asArray(filesToIgnore, true),
             });
         } catch (e) {
             ego_log.CONSOLE
@@ -1375,6 +1400,23 @@ The app is powered by [vscode-powertools](https://marketplace.visualstudio.com/i
         'utf8'
     );
 
+    // .egoignore
+    const EGO_IGNORE = path.resolve(
+        path.join(
+            APP_DIR, ego_contracts.IGNORE_FILE
+        )
+    );
+    await fsExtra.writeFile(
+        EGO_IGNORE,
+        `# define one or more glob patterns of files
+# which should be ignored
+# when creating a package
+
+**/*.map
+`,
+        'utf8'
+    );
+
     ego_helpers.EVENTS.emit(ego_contracts.EVENT_APP_LIST_UPDATED, {
         dir: APP_DIR,
         displayName: DISPLAY_NAME,
@@ -1427,6 +1469,25 @@ export async function getInstalledApps(): Promise<ego_contracts.InstalledApp[]> 
 
                 if (await ego_helpers.isFile(INDEX_JS, false)) {
                     APPS.push({
+                        loadIgnoreFile: async () => {
+                            const EGO_IGNORE = path.resolve(
+                                path.join(
+                                    APP_FULL_PATH, ego_contracts.IGNORE_FILE
+                                )
+                            );
+                            if (await ego_helpers.exists(EGO_IGNORE)) {
+                                return ego_helpers.from(
+                                    (await fsExtra.readFile(
+                                        EGO_IGNORE, 'utf8'
+                                    )).split('\n')
+                                ).select(x => x.trim())
+                                 .where(x => '' !== x)
+                                 .where(x => !x.startsWith('#'))
+                                 .toArray();
+                            }
+
+                            return false;
+                        },
                         loadIcon: async () => {
                             const EXTENSIONS = [ 'png', 'gif', 'jpg', 'jpeg' ];
                             for (const EXT of EXTENSIONS) {
@@ -1493,6 +1554,200 @@ export async function getInstalledApps(): Promise<ego_contracts.InstalledApp[]> 
     }
 
     return APPS;
+}
+
+/**
+ * Installs an app.
+ */
+export async function installApp() {
+    const APP_FILE = await vscode.window.showOpenDialog({
+        filters: {
+            'Package files (*.ego-app)': [ 'ego-app' ],
+            'All files (*.*)': [ '*' ]
+        },
+        canSelectFolders: false,
+        canSelectFiles: true,
+        canSelectMany: false,
+        openLabel: 'Select package file with app ...',
+    });
+
+    if (!APP_FILE || APP_FILE.length < 1) {
+        return;
+    }
+
+    await installAppFromFile(
+        APP_FILE[0].fsPath
+    );
+}
+
+/**
+ * Installs an app from a file.
+ *
+ * @param {string|Buffer} file The package file.
+ */
+export async function installAppFromFile(
+    file: string | Buffer
+) {
+    if (!Buffer.isBuffer(file)) {
+        file = await fsExtra.readFile(
+            ego_helpers.toStringSafe(file)
+        );
+    }
+
+    const ZIP_FILE = zip(file, {
+        base64: false,
+        checkCRC32: false,
+    });
+
+    if (!ZIP_FILE.files || !ZIP_FILE.files['package.json']) {
+        vscode.window.showWarningMessage(
+            `'package.json' files is missing!`
+        );
+
+        return;
+    }
+
+    const PACKAGE_JSON: ego_contracts.AppPackageJSON = JSON.parse(
+        ZIP_FILE.files['package.json']
+            .asNodeBuffer()
+            .toString('utf8')
+    );
+
+    const NAME = sanitizeFilename(
+        ego_helpers.normalizeString(PACKAGE_JSON.name)
+    );
+    if ('' === NAME) {
+        vscode.window.showWarningMessage(
+            `Not enough information to install the app!`
+        );
+
+        return;
+    }
+
+    const APP_DIR = path.resolve(
+        path.join(
+            os.homedir(),
+            ego_contracts.HOMEDIR_SUBFOLDER,
+            ego_contracts.APPS_SUBFOLDER,
+            NAME,
+        )
+    );
+
+    let installApp = true;
+    if (await ego_helpers.exists(APP_DIR)) {
+        const YES_OR_NO = await vscode.window.showWarningMessage(
+            `App '${ NAME }' is already installed. Do you want to upgrade it?`,
+            'Yes', 'No!'
+        );
+
+        installApp = 'Yes' === YES_OR_NO;
+    }
+
+    if (!installApp) {
+        return;
+    }
+
+    await vscode.window.withProgress({
+        cancellable: false,
+        location: vscode.ProgressLocation.Notification,
+    }, async (progress) => {
+        progress.report({
+            message: `Installing app '${ NAME }' ...`,
+        });
+
+        if (!(await ego_helpers.exists(APP_DIR))) {
+            await fsExtra.mkdirs(APP_DIR);
+        }
+
+        const APP_DIR_ITEMS = await fsExtra.readdir(APP_DIR);
+        if (APP_DIR_ITEMS.length > 0) {
+            // cleanup directory
+
+            progress.report({
+                message: `Remove old files of app '${ NAME }' ...`,
+            });
+
+            for (const ITEM of APP_DIR_ITEMS) {
+                if (ITEM.startsWith('.')) {
+                    continue;
+                }
+
+                progress.report({
+                    message: `Removing '${ ITEM }' of app '${ NAME }' ...`,
+                });
+
+                const FULL_ITEM_PATH = path.resolve(
+                    path.join(
+                        APP_DIR, ITEM
+                    )
+                );
+
+                const STAT = await fsExtra.lstat(FULL_ITEM_PATH);
+                if (STAT.isDirectory()) {
+                    await fsExtra.remove(FULL_ITEM_PATH);
+                } else {
+                    await fsExtra.unlink(FULL_ITEM_PATH);
+                }
+            }
+        }
+
+        progress.report({
+            message: `Extracting files of app '${ NAME }' ...`,
+        });
+
+        for (const FILE in ZIP_FILE.files) {
+            const ENTRY = ZIP_FILE.files[FILE];
+
+            let filePath = ego_helpers.toStringSafe(
+                FILE
+            ).trim();
+            if ('' === filePath) {
+                continue;
+            }
+
+            while (filePath.startsWith('/')) {
+                filePath = filePath.substr(1)
+                    .trim();
+            }
+
+            let isDir = filePath.endsWith('/');
+            while (filePath.endsWith('/')) {
+                filePath = filePath.substr(0, filePath.length - 1)
+                    .trim();
+            }
+
+            const TARGET_PATH = path.resolve(
+                path.join(APP_DIR, filePath)
+            );
+            if (!TARGET_PATH.startsWith(APP_DIR + path.sep)) {
+                continue;
+            }
+
+            progress.report({
+                message: `Extracting '${ filePath }' of app '${ NAME }' ...`,
+            });
+
+            if (isDir) {
+                await fsExtra.mkdirs(TARGET_PATH);
+            } else {
+                const TARGET_DIR = path.dirname(
+                    TARGET_PATH
+                );
+                if (!(await ego_helpers.exists(TARGET_DIR))) {
+                    await fsExtra.mkdirs(TARGET_DIR);
+                }
+
+                await fsExtra.writeFile(
+                    TARGET_PATH,
+                    ENTRY.asNodeBuffer(),
+                );
+            }
+        }
+    });
+
+    vscode.window.showInformationMessage(
+        `App '${ NAME }' has been installed.`,
+    );
 }
 
 /**

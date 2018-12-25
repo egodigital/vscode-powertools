@@ -428,7 +428,13 @@ export interface InstalledApp {
      *
      * @return {Promise<string|false>} The promise with the data URI or (false) if it does not exist.
      */
-    readonly loadIcon: () => Promise<string  | false>;
+    readonly loadIcon: () => Promise<string | false>;
+    /**
+     * Tries to load the '.egoignore' file of the app.
+     *
+     * @return {Promise<string|false>} The promise with the entries or (false) if it does not exist.
+     */
+    readonly loadIgnoreFile: () => Promise<string[] | false>;
     /**
      * Tries to load the 'package.json' file of the app.
      *
@@ -906,3 +912,8 @@ export const GLOBAL_APP_ENTRY = 'index.js';
  * The name of the extension's subfolder inside the home directory of the current user.
  */
 export const HOMEDIR_SUBFOLDER = '.vscode-powertools';
+
+/**
+ * Name of an ignore file.
+ */
+export const IGNORE_FILE = '.egoignore';
