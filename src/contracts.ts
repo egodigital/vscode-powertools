@@ -17,6 +17,7 @@
 
 import * as ego_helpers from './helpers';
 import * as ejs from 'ejs';
+import * as fs from 'fs';
 import * as vscode from 'vscode';
 
 
@@ -59,6 +60,12 @@ export type AppEventFunction<TResult = any> = (args: AppEventScriptArguments) =>
  */
 export interface AppEventScriptArguments<TData = any> extends WorkspaceScriptArguments {
     /**
+     * Clears the '.temp' sub folder.
+     *
+     * @return {boolean} Temp folder has been cleared or not.
+     */
+    readonly clearTemp: () => boolean;
+    /**
      * The data.
      */
     readonly data?: TData;
@@ -66,6 +73,14 @@ export interface AppEventScriptArguments<TData = any> extends WorkspaceScriptArg
      * The name of the event.
      */
     readonly event: string;
+    /**
+     * Checks if a file or folder exists, relative to '.data' sub folder.
+     *
+     * @param {string} path The path of the file / folder to check.
+     *
+     * @return {boolean} Indicates if file / folder exists or not.
+     */
+    readonly exists: (path: string) => boolean;
     /**
      * Returns the list of all workspaces.
      *
@@ -91,6 +106,20 @@ export interface AppEventScriptArguments<TData = any> extends WorkspaceScriptArg
      */
     readonly post: (command: string, data?: any) => Promise<boolean>;
     /**
+     * Reads a file, relative to '.data' sub folder.
+     *
+     * @param {string} path The path of the file.
+     *
+     * @return {Buffer} The read data.
+     */
+    readonly readFile: (path: string) => Buffer;
+    /**
+     * Reads a file or folder, relative to '.data' sub folder.
+     *
+     * @param {string} path The path of the file / folder.
+     */
+    readonly remove: (path: string) => void;
+    /**
      * Renders an 'ejs' template.
      *
      * @param {string} source The (template) source.
@@ -109,9 +138,39 @@ export interface AppEventScriptArguments<TData = any> extends WorkspaceScriptArg
      */
     readonly renderFile: (file: string, data?: ejs.Data) => string;
     /**
+     * Returns file system information of a file or folder, relative to the '.data' sub folder.
+     *
+     * @param {string} path The path of the item.
+     * @param {boolean} [lstat] Use 'fs.lstat()' instead of 'fs.stat()'. Default: (true)
+     *
+     * @return {fs.Stats|false} The information or (false) if not found.
+     */
+    readonly stat: (path: string, lstat?: boolean) => fs.Stats | false;
+    /**
+     * Creates a new temp file, inside the '.temp' sub folder.
+     *
+     * @return {string} The full path of the new file.
+     */
+    readonly tempFile: () => string;
+    /**
+     * Returns a full path, relative to the '.data' sub folder.
+     *
+     * @param {string} path The input path.
+     *
+     * @return {string} The full path.
+     */
+    readonly toDataPath: (path: string) => string;
+    /**
      * The list of workspaces, grouped by name.
      */
     readonly workspaces: WorkspaceList;
+    /**
+     * Write data to a file, relative to '.data' sub folder.
+     *
+     * @param {string} path The path of the file.
+     * @param {any} data The data write.
+     */
+    readonly writeFile: (path: string, data: any) => void;
 }
 
 /**

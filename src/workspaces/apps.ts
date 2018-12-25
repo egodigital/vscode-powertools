@@ -76,8 +76,14 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
         const ME = this;
 
         const ARGS: ego_contracts.AppEventScriptArguments = {
+            clearTemp: () => {
+                return this.clearTempDir();
+            },
             data: data,
             event: eventName,
+            exists: (p) => {
+                return this.fileSystemItemExists(p);
+            },
             getAllWorkspaces: () => {
                 return this.getAllWorkspaces();
             },
@@ -98,6 +104,12 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
                 return this.postMessage(
                     cmd, data
                 );
+            },
+            readFile: (p) => {
+                return this.readFile(p);
+            },
+            remove: (p) => {
+                this.removeFileOrFolder(p);
             },
             render: function (source, data?) {
                 return ejs.render(
@@ -131,7 +143,19 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
             require: (id) => {
                 return ego_helpers.requireModule(id);
             },
+            stat: (p, lstat) => {
+                return this.fileSystemItemStat(p, lstat);
+            },
+            tempFile: () => {
+                return this.createTempFile();
+            },
+            toDataPath: (p) => {
+                return this.toFullDataPath(p);
+            },
             workspaces: undefined,
+            writeFile: (p, data) => {
+                this.writeFile(p, data);
+            },
         };
 
         // ARGS.workspaces

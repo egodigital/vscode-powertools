@@ -24,12 +24,14 @@ import * as ego_log from './log';
 import * as ego_workspace from './workspace';
 import * as ego_webview from './webview';
 import * as ejs from 'ejs';
+import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
 import * as htmlEntities from 'html-entities';
 import * as mimeTypes from 'mime-types';
 const opn = require('opn');
 import * as os from 'os';
 import * as path from 'path';
+import * as tmp from 'tmp';
 import * as vscode from 'vscode';
 
 
@@ -62,6 +64,75 @@ export abstract class AppWebViewBase extends ego_webview.WebViewBase {
         eventName: string,
         data?: any,
     ): ego_contracts.AppEventScriptArguments;
+
+    /**
+     * Clears the '.temp' sub folder.
+     *
+     * @return {boolean} Temp folder has been cleared or not.
+     */
+    protected clearTempDir(): boolean {
+        const TEMP_DIR = this.getTempDir();
+        if (fsExtra.existsSync(TEMP_DIR)) {
+            fsExtra.removeSync(TEMP_DIR);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Creates a new temp file, inside the '.temp' sub folder.
+     *
+     * @return {string} The full path of the new file.
+     */
+    protected createTempFile(): string {
+        const TEMP_DIR = this.getTempDir();
+        if (!fsExtra.existsSync(TEMP_DIR)) {
+            fsExtra.mkdirsSync(TEMP_DIR);
+        }
+
+        const TEMP_FILE = tmp.tmpNameSync({
+            dir: TEMP_DIR,
+        });
+        fsExtra.writeFileSync(
+            TEMP_FILE, Buffer.alloc(0)
+        );
+
+        return TEMP_FILE;
+    }
+
+    /**
+     * Checks if a file or folder exists, relative to '.data' sub folder.
+     *
+     * @param {string} p The path of the file / folder to check.
+     *
+     * @return {boolean} Indicates if file / folder exists or not.
+     */
+    protected fileSystemItemExists(p: string): boolean {
+        return fsExtra.existsSync(
+            this.toFullDataPath(p)
+        );
+    }
+
+    /**
+     * Returns file system information of a file or folder, relative to the '.data' sub folder.
+     *
+     * @param {string} p The path of the item.
+     * @param {boolean} [lstat] Use 'fs.lstat()' instead of 'fs.stat()'. Default: (true)
+     *
+     * @return {fs.Stats|false} The information or (false) if not found.
+     */
+    protected fileSystemItemStat(p: string, lstat?: boolean): fs.Stats | false {
+        p = this.toFullDataPath(p);
+        lstat = ego_helpers.toBooleanSafe(lstat, true);
+
+        if (fsExtra.existsSync(p)) {
+            return lstat ? fsExtra.lstatSync(p)
+                         : fsExtra.statSync(p);
+        }
+
+        return false;
+    }
 
     /**
      * @inheritdoc
@@ -135,6 +206,20 @@ export abstract class AppWebViewBase extends ego_webview.WebViewBase {
     }
 
     /**
+     * Returns the full path of the temp directory.
+     *
+     * @return {string} The temp directory.
+     */
+    protected getTempDir(): string {
+        return path.resolve(
+            path.join(
+                path.dirname(this.scriptFile),
+                '.temp',
+            )
+        );
+    }
+
+    /**
      * @inheritdoc
      */
     protected getTitle(): string {
@@ -202,9 +287,87 @@ export abstract class AppWebViewBase extends ego_webview.WebViewBase {
     }
 
     /**
+     * Reads a file, relative to '.data' sub folder.
+     *
+     * @param {string} p The path of the file.
+     *
+     * @return {Buffer} The read data.
+     */
+    protected readFile(p: string): Buffer {
+        return fsExtra.readFileSync(
+            this.toFullDataPath(p)
+        );
+    }
+
+    /**
+     * Reads a file or folder, relative to '.data' sub folder.
+     *
+     * @param {string} p The path of the file / folder.
+     */
+    protected removeFileOrFolder(p: string) {
+        p = this.toFullDataPath(p);
+
+        if (ego_helpers.isDirectorySync(p, true)) {
+            fsExtra.removeSync(p);
+        } else {
+            fsExtra.unlinkSync(p);
+        }
+    }
+
+    /**
      * Get the full path of the script file.
      */
     public abstract get scriptFile(): string;
+
+    /**
+     * Returns a full path, relative to '.data' sub directory.
+     *
+     * @param {string} p The input path.
+     *
+     * @return {string} The full path.
+     */
+    protected toFullDataPath(p: string): string {
+        p = ego_helpers.toStringSafe(p);
+
+        if (!path.isAbsolute(p)) {
+            p = path.resolve(
+                path.join(
+                    path.dirname(this.scriptFile),
+                    '.data',
+                    p
+                )
+            );
+        }
+
+        return path.resolve(p);
+    }
+
+    /**
+     * Write data to a file, relative to '.data' sub folder.
+     *
+     * @param {string} p The path of the file.
+     * @param {any} data The data write.
+     */
+    protected writeFile(p: string, data: any) {
+        if (!data) {
+            data = Buffer.alloc(0);
+        }
+        if (!Buffer.isBuffer(data)) {
+            data = Buffer.from(
+                ego_helpers.toStringSafe(data), 'utf8'
+            );
+        }
+
+        p = this.toFullDataPath(p);
+
+        // keep sure directory exists
+        const DIR = path.dirname(p);
+        if (!fsExtra.existsSync(DIR)) {
+            fsExtra.mkdirsSync(DIR);
+        }
+
+        fsExtra.writeFileSync(p, data);
+    }
 }
 
 /**
@@ -255,8 +418,14 @@ export class AppWebView extends AppWebViewBase {
         }
 
         const ARGS: ego_contracts.AppEventScriptArguments = {
+            clearTemp: () => {
+                return this.clearTempDir();
+            },
             data: data,
             event: eventName,
+            exists: (p) => {
+                return this.fileSystemItemExists(p);
+            },
             getAllWorkspaces: () => {
                 return this.getAllWorkspaces();
             },
@@ -277,6 +446,12 @@ export class AppWebView extends AppWebViewBase {
                 return this.postMessage(
                     cmd, data
                 );
+            },
+            readFile: (p) => {
+                return this.readFile(p);
+            },
+            remove: (p) => {
+                this.removeFileOrFolder(p);
             },
             render: function (source, data?) {
                 return ejs.render(
@@ -312,7 +487,19 @@ export class AppWebView extends AppWebViewBase {
             require: (id) => {
                 return ego_helpers.requireModule(id);
             },
+            stat: (p, lstat) => {
+                return this.fileSystemItemStat(p, lstat);
+            },
+            tempFile: () => {
+                return this.createTempFile();
+            },
+            toDataPath: (p) => {
+                return this.toFullDataPath(p);
+            },
             workspaces: undefined,
+            writeFile: (p, data) => {
+                this.writeFile(p, data);
+            },
         };
 
         // ARGS.workspaces

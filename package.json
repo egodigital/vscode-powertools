@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.31",
+    "version": "0.0.32",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -505,6 +505,7 @@
         "@types/node": "8.9.3",
         "@types/opn": "^5.1.0",
         "@types/p-queue": "^3.0.0",
+        "@types/tmp": "0.0.33",
         "tslint": "^5.12.0",
         "typescript": "^3.2.2",
         "vscode": "^1.1.25"
@@ -534,6 +535,7 @@
         "moment": "^2.23.0",
         "moment-timezone": "^0.5.23",
         "opn": "^5.4.0",
+        "tmp": "0.0.33",
         "vscode-helpers": "^3.0.0"
     }
 }
