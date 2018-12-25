@@ -39,19 +39,27 @@ export function registerCommands(
             try {
                 const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [
                     {
-                        action: async () => {
+                        action: () => {
                             return require('./apps')
                                 .openApp(context, output);
                         },
-                        label: 'Open App',
+                        label: 'Open App ...',
                         description: 'Opens a global or workspace app.',
                     },
                     {
-                        action: async () => {
+                        action: () => {
+                            return require('./apps')
+                                .buildAppPackage();
+                        },
+                        label: 'Build App Package ...',
+                        description: 'Builds a package file for an app.',
+                    },
+                    {
+                        action: () => {
                             return require('./apps')
                                 .createApp();
                         },
-                        label: 'Create App',
+                        label: 'Create App ...',
                         description: 'Creates a new app.',
                     },
                     {
@@ -59,7 +67,7 @@ export function registerCommands(
                             return require('./apps')
                                 .openAppStore(context);
                         },
-                        label: 'Open Store',
+                        label: 'Open Store ...',
                         description: 'Opens a store, where you can install apps from.',
                     }
                 ];

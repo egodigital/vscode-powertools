@@ -33,6 +33,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as tmp from 'tmp';
 import * as vscode from 'vscode';
+import * as zip from 'yazl';
 
 
 interface UninstallAppData {
@@ -844,6 +845,181 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
     }
 }
 
+
+/**
+ * Builds a package file for an app.
+ */
+export async function buildAppPackage() {
+    const INSTALLED_APPS = await getInstalledApps();
+
+    const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [];
+
+    for (const IA of INSTALLED_APPS) {
+        try {
+            let name: string;
+            let displayName: string;
+            try {
+                const PACKAGE_JSON = await IA.loadPackageJSON();
+                if (PACKAGE_JSON) {
+                    name = PACKAGE_JSON.name;
+                    displayName = PACKAGE_JSON.displayName;
+                }
+            } catch (e) {
+                ego_log.CONSOLE
+                       .trace(e, 'apps.buildAppPackage(2)');
+            }
+
+            if (ego_helpers.isEmptyString(name)) {
+                name = path.basename(
+                    IA.path
+                );
+            }
+            if (ego_helpers.isEmptyString(displayName)) {
+                displayName = name;
+            }
+
+            ((x) => {
+                QUICK_PICKS.push({
+                    action: async () => {
+                        const NEW_PACKAGE = new zip.ZipFile();
+
+                        await vscode.window.withProgress({
+                            location: vscode.ProgressLocation.Notification,
+                        }, async (progress) => {
+                            const ADD_FOLDER = async (p = '') => {
+                                const FOLDER_PATH = path.resolve(
+                                    path.join(x.app.path, p)
+                                );
+
+                                progress.report({
+                                    message: `Adding directory '${ FOLDER_PATH }' ...`,
+                                });
+
+                                let filesAdded = false;
+                                for (const ITEM of await fsExtra.readdir(FOLDER_PATH)) {
+                                    if ('' === p) {
+                                        if (ITEM.startsWith('.')) {
+                                            if ('.egoignore' !== ITEM) {
+                                                continue;
+                                            }
+                                        }
+
+                                        if ('node_modules' === ITEM) {
+                                            continue;  // we do not need the folder here
+                                        }
+                                    }
+
+                                    const ITEM_PATH = path.resolve(
+                                        path.join(FOLDER_PATH, ITEM)
+                                    );
+
+                                    const RELATIVE_PATH = '' !== p ? (p + '/' + ITEM) : ITEM;
+
+                                    const STAT = await fsExtra.stat(ITEM_PATH);
+                                    if (STAT.isFile()) {
+                                        progress.report({
+                                            message: `Adding file '${ RELATIVE_PATH }' ...`,
+                                        });
+
+                                        NEW_PACKAGE.addBuffer(
+                                            await fsExtra.readFile(ITEM_PATH),
+                                            RELATIVE_PATH,
+                                        );
+
+                                        filesAdded = true;
+                                    } else {
+                                        await ADD_FOLDER(
+                                            RELATIVE_PATH,
+                                        );
+                                    }
+                                }
+
+                                if (!filesAdded) {
+                                    if ('' !== p) {
+                                        NEW_PACKAGE.addEmptyDirectory(p);
+                                    }
+                                }
+                            };
+
+                            await ADD_FOLDER();
+                        });
+
+                        const OUTPUT_FILE = await vscode.window.showSaveDialog({
+                            filters: {
+                                'Package files (*.ego-app)': [ 'ego-app' ],
+                                'All files (*.*)': [ '*' ]
+                            },
+                            saveLabel: 'Save app package to ...',
+                        });
+
+                        if (OUTPUT_FILE) {
+                            if (await ego_helpers.exists(OUTPUT_FILE.fsPath)) {
+                                await fsExtra.unlink(OUTPUT_FILE.fsPath);
+                            }
+
+                            await (() => {
+                                return new Promise<void>((resolve, reject) => {
+                                    try {
+                                        const PIPE = NEW_PACKAGE.outputStream.pipe(
+                                            fs.createWriteStream(OUTPUT_FILE.fsPath)
+                                        );
+
+                                        PIPE.once('error', (err) => {
+                                            reject(err);
+                                        });
+
+                                        PIPE.once('close', () => {
+                                            resolve();
+                                        });
+
+                                        NEW_PACKAGE.end();
+                                    } catch (e) {
+                                        reject(e);
+                                    }
+                                });
+                            })();
+
+                            await opn(
+                                path.dirname(OUTPUT_FILE.fsPath),
+                                {
+                                    wait: false,
+                                }
+                            );
+                        }
+                    },
+                    detail: x.app.path,
+                    label: x.displayName,
+                });
+            })({
+                app: IA,
+                displayName: displayName,
+            });
+        } catch (e) {
+            ego_log.CONSOLE
+                   .trace(e, 'apps.buildAppPackage(1)');
+        }
+    }
+
+    if (QUICK_PICKS.length < 1) {
+        vscode.window
+              .showWarningMessage('No apps found!');
+
+        return;
+    }
+
+    const SELECTED_ITEM = await vscode.window.showQuickPick(
+        QUICK_PICKS,
+        {
+            placeHolder: 'Select the app, you would like to build a package for ...'
+        }
+    );
+
+    if (SELECTED_ITEM) {
+        await Promise.resolve(
+            SELECTED_ITEM.action()
+        );
+    }
+}
 
 /**
  * Creates a (new) app.
