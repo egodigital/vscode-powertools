@@ -831,7 +831,7 @@ function ego_on_loaded() {
     // index.js
     const INDEX_JS = path.resolve(
         path.join(
-            APP_DIR, 'index.js'
+            APP_DIR, ego_contracts.GLOBAL_APP_ENTRY
         )
     );
     await fsExtra.writeFile(
@@ -1005,7 +1005,7 @@ export async function getInstalledApps(): Promise<ego_contracts.InstalledApp[]> 
 
                 const INDEX_JS = path.resolve(
                     path.join(
-                        APP_FULL_PATH, 'index.js'
+                        APP_FULL_PATH, ego_contracts.GLOBAL_APP_ENTRY
                     )
                 );
 
@@ -1111,7 +1111,7 @@ export async function loadApps(
                 }
 
                 const INDEX_JS = path.resolve(
-                    path.join(FULL_APP_DIR_PATH, 'index.js')
+                    path.join(FULL_APP_DIR_PATH, ego_contracts.GLOBAL_APP_ENTRY)
                 );
                 if (!(await ego_helpers.isFile(INDEX_JS, false))) {
                     continue;  // no file or not found

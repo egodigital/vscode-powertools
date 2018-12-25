@@ -830,6 +830,11 @@ export const APPS_SUBFOLDER = '.apps';
 export const EXTENSION_NAME = 'Power Tools by e.GO';
 
 /**
+ * The name of the file that is the entry for a global app.
+ */
+export const GLOBAL_APP_ENTRY = 'index.js';
+
+/**
  * The name of the extension's subfolder inside the home directory of the current user.
  */
 export const HOMEDIR_SUBFOLDER = '.vscode-powertools';
