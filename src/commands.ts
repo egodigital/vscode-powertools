@@ -63,7 +63,7 @@ export function registerCommands(
                         description: 'Creates a new app.',
                     },
                     {
-                        action: async () => {
+                        action: () => {
                             return require('./apps')
                                 .openAppStore(context);
                         },
