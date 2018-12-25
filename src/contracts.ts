@@ -82,6 +82,10 @@ export interface AppEventScriptArguments<TData = any> extends WorkspaceScriptArg
      */
     readonly exists: (path: string) => boolean;
     /**
+     * The underlying extension context.
+     */
+    readonly extension: vscode.ExtensionContext;
+    /**
      * Returns the list of all workspaces.
      *
      * @return {WorkspaceInfo[]} The list of workspaces.

@@ -51,7 +51,7 @@ const REGEX_APP_NAME = /^([a-z])([a-z|0-9|\_|\-]{0,})$/gm;
 /**
  * A webview for a custom (workspace) app.
  */
-export abstract class AppWebViewBase extends ego_webview.WebViewBase {
+export abstract class AppWebViewBase extends ego_webview.WebViewWithContextBase {
     /**
      * Creates arguments for an event function.
      *
@@ -379,14 +379,16 @@ export class AppWebView extends AppWebViewBase {
     /**
      * Initializes a new instance of that class.
      *
+     * @param {vscode.ExtensionContext} extension The underlying extension context.
      * @param {vscode.OutputChannel} output The output channel.
      * @param {string} scriptFile The path to the script file.
      */
     public constructor(
+        extension: vscode.ExtensionContext,
         public readonly output: vscode.OutputChannel,
         public readonly scriptFile: string,
     ) {
-        super();
+        super(extension);
 
         // package.json
         const PACKAGE_JSON = path.resolve(
@@ -426,6 +428,7 @@ export class AppWebView extends AppWebViewBase {
             exists: (p) => {
                 return this.fileSystemItemExists(p);
             },
+            extension: this.extension,
             getAllWorkspaces: () => {
                 return this.getAllWorkspaces();
             },
@@ -1269,11 +1272,13 @@ export async function getInstalledApps(): Promise<ego_contracts.InstalledApp[]> 
 /**
  * Loads all apps from the home directory.
  *
+ * @param {vscode.ExtensionContext} extension The underlying extension context.
  * @param {vscode.OutputChannel} output The output channel.
  *
  * @return {Promise<AppWebView[]>} The promise with the loaded apps.
  */
 export async function loadApps(
+    extension: vscode.ExtensionContext,
     output: vscode.OutputChannel
 ): Promise<AppWebView[]> {
     const APPS: AppWebView[] = [];
@@ -1306,6 +1311,7 @@ export async function loadApps(
 
                 APPS.push(
                     new AppWebView(
+                        extension,
                         output,
                         INDEX_JS,
                     )
@@ -1323,16 +1329,18 @@ export async function loadApps(
 /**
  * Opens an app.
  *
+ * @param {vscode.ExtensionContext} extension The underlying extension context.
  * @param {vscode.OutputChannel} output The output channel.
  */
 export async function openApp(
+    extension: vscode.ExtensionContext,
     output: vscode.OutputChannel
 ) {
     const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [];
 
     // "global" apps from home directory
     const GLOBAL_APPS = await loadApps(
-        output
+        extension, output
     );
     GLOBAL_APPS.forEach(a => {
         QUICK_PICKS.push({

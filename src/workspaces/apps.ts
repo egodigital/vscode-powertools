@@ -39,6 +39,7 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
     /**
      * Initializes a new instance of that class.
      *
+     * @param {vscode.ExtensionContext} extension The underlying extension context.
      * @param {ego_workspace.Workspace} workspace The underlying workspace.
      * @param {ego_contracts.AppItem} item The item from the settings.
      */
@@ -46,7 +47,7 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
         public readonly workspace: ego_workspace.Workspace,
         public readonly item: ego_contracts.AppItem,
     ) {
-        super();
+        super(workspace.context.extension);
 
         const SCRIPT_PATH = workspace.replaceValues(
             item.script
@@ -84,6 +85,7 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
             exists: (p) => {
                 return this.fileSystemItemExists(p);
             },
+            extension: this.extension,
             getAllWorkspaces: () => {
                 return this.getAllWorkspaces();
             },

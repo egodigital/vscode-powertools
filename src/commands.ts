@@ -41,7 +41,7 @@ export function registerCommands(
                     {
                         action: async () => {
                             return require('./apps')
-                                .openApp(output);
+                                .openApp(context, output);
                         },
                         label: 'Open App',
                         description: 'Opens a global or workspace app.',
