@@ -173,10 +173,6 @@ ${ this.generateHtmlFooter() }`;
 
             return false;
         };
-
-        const EGO_AJAX_LOADERS = {
-            '64x64': ${ JSON.stringify(`${ this.getFileResourceUri('img/ajax-loader-64x64.gif') }`) }
-        };
     </script>
 </head>
 

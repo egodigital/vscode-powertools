@@ -211,7 +211,7 @@ function ego_on_command(command, data) {
                         ALERT.appendTo(LIST);
                     }
                 }
-            }
+            };
             break;
 
         case 'appUninstalled':
@@ -228,8 +228,7 @@ function ego_on_loaded() {
 
 function ego_reload_apps() {
     $('#ego-app-list').html('')
-        .append($('<img />').attr('src', EGO_AJAX_LOADERS['64x64'])
-                            .attr('class', 'ego-ajax-loader'));
+        .append($('<div class="loader small border-top-info ego-ajax-loader" />'));
 
     ego_post('reloadApps');
 }
