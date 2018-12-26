@@ -662,6 +662,45 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
      */
     protected async onWebViewMessage(msg: ego_contracts.WebViewMessage): Promise<boolean> {
         switch (msg.command) {
+            case 'installApp':
+                {
+                    let err: any;
+                    try {
+                        const APP_URL = ego_helpers.toStringSafe(msg.data.source)
+                            .trim();
+                        if (APP_URL.toLowerCase().startsWith('https://') || APP_URL.toLowerCase().startsWith('http://')) {
+                            let app: Buffer;
+                            await vscode.window.withProgress({
+                                location: vscode.ProgressLocation.Notification,
+                            }, async (progress) => {
+                                progress.report({
+                                    message: `Download app from '${ APP_URL }' ...`,
+                                });
+
+                                const RESPONSE = await ego_helpers.GET(APP_URL);
+                                if (RESPONSE.code < 200 || RESPONSE.code >= 300) {
+                                    throw new Error(`Unexpected response: [${ RESPONSE.code }] '${ RESPONSE.status }'`);
+                                }
+
+                                app = await RESPONSE.readBody();
+                            });
+
+                            await installAppFromFile(
+                                app
+                            );
+                        }
+                    } catch (e) {
+                        err = ego_helpers.errorToString(e);
+                    }
+
+                    await this.postMessage('appInstalled', {
+                        success: _.isNil(err),
+                        app: msg.data,
+                        error: err,
+                    });
+                }
+                break;
+
             case 'reloadApps':
                 try {
                     const APPS: any[] = [];
@@ -732,6 +771,92 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
                             });
                         } catch { }
                     }
+
+                    // store apps
+                    try {
+                        let appStoreUrl = ego_helpers.toStringSafe(
+                            this.extension
+                                .globalState
+                                .get(ego_contracts.KEY_GLOBAL_SETTING_APP_STORE_URL)
+                        ).trim();
+                        if ('' !== appStoreUrl) {
+                            if (!appStoreUrl.toLowerCase().startsWith('https://') && !appStoreUrl.toLowerCase().startsWith('http://')) {
+                                appStoreUrl = 'http://' + appStoreUrl;
+                            }
+
+                            await vscode.window.withProgress({
+                                location: vscode.ProgressLocation.Notification,
+                            }, async (progress) => {
+                                progress.report({
+                                    message: `Loading app store from ${ appStoreUrl } ...`,
+                                });
+
+                                const RESPONSE = await ego_helpers.GET(appStoreUrl);
+                                if (RESPONSE.code < 200 || RESPONSE.code >= 300) {
+                                    throw new Error(`Unexpected response: [${ RESPONSE.code }] '${ RESPONSE.status }'`);
+                                }
+
+                                const APP_STORE: ego_contracts.AppStore = JSON.parse(
+                                    (await RESPONSE.readBody()).toString('utf8')
+                                );
+                                if (_.isObjectLike(APP_STORE)) {
+                                    const APPS_FROM_STORE = ego_helpers.asArray(
+                                        APP_STORE.apps
+                                    );
+
+                                    for (const A of APPS_FROM_STORE) {
+                                        try {
+                                            let name = ego_helpers.normalizeString(A.name);
+                                            if ('' === name) {
+                                                continue;
+                                            }
+
+                                            let source = ego_helpers.toStringSafe(A.source)
+                                                .trim();
+                                            if ('' === source) {
+                                                continue;
+                                            }
+
+                                            if (!source.toLowerCase().startsWith('https://') && !source.toLowerCase().startsWith('http://')) {
+                                                source = 'http://' + source;
+                                            }
+
+                                            let displayName = ego_helpers.toStringSafe(
+                                                A.displayName
+                                            ).trim();
+                                            if ('' === displayName) {
+                                                displayName = name;
+                                            }
+
+                                            let description = ego_helpers.toStringSafe(
+                                                A.description
+                                            ).trim();
+                                            if ('' === description) {
+                                                description = undefined;
+                                            }
+
+                                            let icon = ego_helpers.toStringSafe(
+                                                A.icon
+                                            ).trim();
+                                            if ('' === icon) {
+                                                icon = undefined;
+                                            }
+
+                                            APPS.push({
+                                                'name': name,
+                                                'displayName': displayName,
+                                                'description': description,
+                                                'details': undefined,
+                                                'icon': icon,
+                                                'isInstalled': false,
+                                                'source': source,
+                                            });
+                                        } catch { }
+                                    }
+                                }
+                            });
+                        }
+                    } catch { }
 
                     await this.postMessage(
                         'appsLoaded',
@@ -1417,11 +1542,7 @@ The app is powered by [vscode-powertools](https://marketplace.visualstudio.com/i
         'utf8'
     );
 
-    ego_helpers.EVENTS.emit(ego_contracts.EVENT_APP_LIST_UPDATED, {
-        dir: APP_DIR,
-        displayName: DISPLAY_NAME,
-        name: NAME,
-    });
+    raiseInstalledAppListUpdated();
 
     // open app folder
     await opn(
@@ -1745,6 +1866,8 @@ export async function installAppFromFile(
         }
     });
 
+    raiseInstalledAppListUpdated();
+
     vscode.window.showInformationMessage(
         `App '${ NAME }' has been installed.`,
     );
@@ -1764,44 +1887,49 @@ export async function loadApps(
 ): Promise<AppWebView[]> {
     const APPS: AppWebView[] = [];
 
-    const DIR_WITH_APPS = path.resolve(
-        path.join(
-            os.homedir(),
-            ego_contracts.HOMEDIR_SUBFOLDER,
-            ego_contracts.APPS_SUBFOLDER
-        )
-    );
+    try {
+        const DIR_WITH_APPS = path.resolve(
+            path.join(
+                os.homedir(),
+                ego_contracts.HOMEDIR_SUBFOLDER,
+                ego_contracts.APPS_SUBFOLDER
+            )
+        );
 
-    if (await ego_helpers.isDirectory(DIR_WITH_APPS)) {
-        for (const APP_DIR of await fsExtra.readdir(DIR_WITH_APPS)) {
-            try {
-                const FULL_APP_DIR_PATH = path.resolve(
-                    path.join(DIR_WITH_APPS, APP_DIR)
-                );
+        if (await ego_helpers.isDirectory(DIR_WITH_APPS)) {
+            for (const APP_DIR of await fsExtra.readdir(DIR_WITH_APPS)) {
+                try {
+                    const FULL_APP_DIR_PATH = path.resolve(
+                        path.join(DIR_WITH_APPS, APP_DIR)
+                    );
 
-                if (!(await ego_helpers.isDirectory(FULL_APP_DIR_PATH, false))) {
-                    continue;  // no directory or not found
+                    if (!(await ego_helpers.isDirectory(FULL_APP_DIR_PATH, false))) {
+                        continue;  // no directory or not found
+                    }
+
+                    const INDEX_JS = path.resolve(
+                        path.join(FULL_APP_DIR_PATH, ego_contracts.GLOBAL_APP_ENTRY)
+                    );
+                    if (!(await ego_helpers.isFile(INDEX_JS, false))) {
+                        continue;  // no file or not found
+                    }
+
+                    APPS.push(
+                        new AppWebView(
+                            extension,
+                            output,
+                            INDEX_JS,
+                        )
+                    );
+                } catch (e) {
+                    ego_log.CONSOLE
+                           .trace(e, 'apps.loadApps(2)');
                 }
-
-                const INDEX_JS = path.resolve(
-                    path.join(FULL_APP_DIR_PATH, ego_contracts.GLOBAL_APP_ENTRY)
-                );
-                if (!(await ego_helpers.isFile(INDEX_JS, false))) {
-                    continue;  // no file or not found
-                }
-
-                APPS.push(
-                    new AppWebView(
-                        extension,
-                        output,
-                        INDEX_JS,
-                    )
-                );
-            } catch (e) {
-                ego_log.CONSOLE
-                       .trace(e, 'apps.loadApps(1)');
             }
         }
+    } catch (e) {
+        ego_log.CONSOLE
+               .trace(e, 'apps.loadApps(1)');
     }
 
     return APPS;
@@ -1938,4 +2066,12 @@ export async function openAppStore(extension: vscode.ExtensionContext) {
     const APP_STORE = new AppStoreWebView(extension);
 
     return await APP_STORE.open();
+}
+
+/**
+ * Raises the event when list of installed apps have been updated.
+ */
+export function raiseInstalledAppListUpdated() {
+    ego_helpers.EVENTS
+               .emit(ego_contracts.EVENT_APP_LIST_UPDATED);
 }

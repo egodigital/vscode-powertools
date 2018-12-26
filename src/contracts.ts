@@ -293,6 +293,46 @@ export interface AppPackageJSON {
 }
 
 /**
+ * Describes an app store.
+ */
+export interface AppStore {
+    /**
+     * One or more app entries.
+     */
+    apps: AppStoreApp[];
+    /**
+     * The name of the store.
+     */
+    name: string;
+}
+
+/**
+ * An app entry in an spp atore.
+ */
+export interface AppStoreApp {
+    /**
+     * A description of the app.
+     */
+    description?: string;
+    /**
+     * The display name of the app.
+     */
+    displayName?: string;
+    /**
+     * URL to an app icon.
+     */
+    icon?: string;
+    /**
+     * The name of the app.
+     */
+    name: string;
+    /**
+     * The source, where the package can downloaded.
+     */
+    source: string;
+}
+
+/**
  * Settings for a button in the status bar.
  */
 export interface Button {

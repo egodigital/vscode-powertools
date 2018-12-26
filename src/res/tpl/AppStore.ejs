@@ -163,6 +163,10 @@ function ego_on_command(command, data) {
                                     );
                                     INSTALL_BTN.attr('title', 'Install ...');
                                     INSTALL_BTN.addClass('btn-primary');
+
+                                    INSTALL_BTN.on('click', function() {
+                                        ego_install_app(a);
+                                    });
                                 }
                                 INSTALL_BTN.appendTo(
                                     NEW_CARD.find('.card-body')
@@ -224,6 +228,13 @@ function ego_on_command(command, data) {
 
 function ego_on_loaded() {
     ego_reload_apps();
+}
+
+function ego_install_app(app) {
+    ego_post('installApp', {
+        name: app.name,
+        source: app.source,
+    });
 }
 
 function ego_reload_apps() {
