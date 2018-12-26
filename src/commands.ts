@@ -72,7 +72,7 @@ export function registerCommands(
                     },
                     {
                         action: () => {
-                            return require('./apps')
+                            return require('./apps/store')
                                 .openAppStore(context);
                         },
                         label: 'Open Store ...',
