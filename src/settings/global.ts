@@ -15,8 +15,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as _ from 'lodash';
+import * as ego_contracts from '../contracts';
+import * as ego_helpers from '../helpers';
 import * as ego_webview from '../webview';
+import * as ejs from 'ejs';
+import * as fsExtra from 'fs-extra';
 import * as vscode from 'vscode';
+
+
+interface SettingsFromWebView {
+    appStoreUrl: string;
+}
 
 
 /**
@@ -27,7 +37,14 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
      * @inheritdoc
      */
     protected generateHtmlBody(): string {
-        return `@TODO`;
+        const FILE = this.getFileResourceUri('tpl/GlobalSettings.ejs')
+            .fsPath;
+
+        return ejs.render(
+            fsExtra.readFileSync(
+                FILE, 'utf8'
+            )
+        );
     }
 
     /**
@@ -42,6 +59,80 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
      */
     protected getType(): string {
         return 'GlobalSettings';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected async onWebViewMessage(msg: ego_contracts.WebViewMessage): Promise<boolean> {
+        switch (msg.command) {
+            case 'reloadSettings':
+                {
+                    let err: any;
+                    let settings: SettingsFromWebView;
+                    try {
+                        settings = {
+                            appStoreUrl: ego_helpers.toStringSafe(
+                                this.extension
+                                    .globalState
+                                    .get(ego_contracts.KEY_GLOBAL_SETTING_APP_STORE_URL)
+                            ).trim()
+                        };
+
+                        if ('' === settings.appStoreUrl) {
+                            settings.appStoreUrl = undefined;
+                        }
+                    } catch (e) {
+                        err = ego_helpers.errorToString(e);
+                        settings = undefined;
+                    }
+
+                    await this.postMessage(
+                        'settingsReloaded',
+                        {
+                            success: _.isNil(err),
+                            error: err,
+                            settings: settings,
+                        },
+                    );
+                }
+                break;
+
+            case 'saveSettings':
+                {
+                    let err: any;
+                    try {
+                        const SETTINGS: SettingsFromWebView = msg.data;
+
+                        let appStoreUrl = ego_helpers.toStringSafe(
+                            SETTINGS.appStoreUrl
+                        ).trim();
+                        if ('' === appStoreUrl) {
+                            appStoreUrl = undefined;
+                        }
+
+                        await this.extension
+                            .globalState
+                            .update(ego_contracts.KEY_GLOBAL_SETTING_APP_STORE_URL, appStoreUrl);
+                    } catch (e) {
+                        err = ego_helpers.errorToString(e);
+                    }
+
+                    await this.postMessage(
+                        'settingsSaved',
+                        {
+                            success: _.isNil(err),
+                            error: err,
+                        }
+                    );
+                }
+                break;
+
+            default:
+                return false;
+        }
+
+        return true;
     }
 }
 

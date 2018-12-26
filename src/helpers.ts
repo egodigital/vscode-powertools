@@ -129,6 +129,24 @@ export function doesMatchPlatformCondition(obj: ego_contracts.ForPlatforms): boo
     ).length > 0;
 }
 
+/**
+ * Converts an error value to a string.
+ *
+ * @param {any} err The error.
+ *
+ * @return {string} The error as string.
+ */
+export function errorToString(err: any): string {
+    if (err) {
+        if (err instanceof Error) {
+            return `[${ err.name }] '${ err.message }'`;
+        } else {
+            return toStringSafe(err);
+        }
+    }
+
+    return '';
+}
 
 /**
  * Filters "conditional" items.

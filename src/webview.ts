@@ -18,6 +18,7 @@
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_log from './log';
+import * as fsExtra from 'fs-extra';
 import * as htmlEntities from 'html-entities';
 const opn = require('opn');
 import * as path from 'path';
@@ -82,6 +83,8 @@ ${ this.generateHtmlFooter() }`;
      * @returns {string} The HTML footer.
      */
     protected generateHtmlFooter() {
+        const WEBVIEW_JAVASCRIPT_URI = this.getFileResourceUri('js/app.' + this.getType() + '.js');
+
         return `
         </main>
 
@@ -99,7 +102,7 @@ ${ this.generateHtmlFooter() }`;
         <script type="text/javascript" src="${ this.getFileResourceUri('js/mdb.js') }" crossorigin="anonymous"></script>
 
         <script type="text/javascript" src="${ this.getFileResourceUri('js/app.js') }" crossorigin="anonymous"></script>
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/app.' + this.getType() + '.js') }" crossorigin="anonymous"></script>
+        ${ WEBVIEW_JAVASCRIPT_URI && fsExtra.existsSync(WEBVIEW_JAVASCRIPT_URI.fsPath) ? `<script type="text/javascript" src="${ WEBVIEW_JAVASCRIPT_URI }" crossorigin="anonymous"></script>` : '' }
     </body>
 </html>`;
     }
@@ -111,6 +114,7 @@ ${ this.generateHtmlFooter() }`;
      */
     protected generateHtmlHeader() {
         const HTML_ENTITIES = new htmlEntities.AllHtmlEntities();
+        const WEBVIEW_STYLE_URI = this.getFileResourceUri('css/app.' + this.getType() + '.css');
 
         return `<!DOCTYPE html>
 <html lang="en">
@@ -133,7 +137,7 @@ ${ this.generateHtmlFooter() }`;
     <link href="${ this.getFileResourceUri('css/mdb.css') }" rel="stylesheet">
 
     <link href="${ this.getFileResourceUri('css/app.css') }" rel="stylesheet">
-    <link href="${ this.getFileResourceUri('css/app.' + this.getType() + '.css') }" rel="stylesheet">
+    ${ WEBVIEW_STYLE_URI && fsExtra.existsSync(WEBVIEW_STYLE_URI.fsPath) ? `<link href="${ WEBVIEW_STYLE_URI }" rel="stylesheet">` : '' }
 
     <script>
         const vscode = acquireVsCodeApi();

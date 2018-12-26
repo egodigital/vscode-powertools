@@ -917,3 +917,8 @@ export const HOMEDIR_SUBFOLDER = '.vscode-powertools';
  * Name of an ignore file.
  */
 export const IGNORE_FILE = '.egoignore';
+
+/**
+ * The key for the global setting that stores the app store URL.
+ */
+export const KEY_GLOBAL_SETTING_APP_STORE_URL = 'egoPTAppStoreUrl';

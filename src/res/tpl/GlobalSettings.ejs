@@ -1,0 +1,61 @@
+
+<!-- content -->
+<div class="container" id="ego-content-container">    
+    <div class="row">
+        <div class="col col-12">
+            <table class="ego-content">
+                <tbody>
+                    <tr>
+                        <td class="ego-left">
+                            <!-- Sidebar -->
+                            <div class="sidebar-fixed position-fixed">
+                                <div class="list-group list-group-flush">
+                                    <a href="#" onclick="ego_on_loaded('apps')" class="list-group-item list-group-item-action waves-effect ego-item ego-item-apps">
+                                        <i class="fa fa-bolt mr-3"></i>Apps
+                                    </a>
+                                </div>    
+                            </div>
+                            <!-- Sidebar -->
+                        </td>
+        
+                        <td class="ego-right">
+                            <div class="ego-area ego-area-apps" style="display: none;">
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item active">Apps</li>
+                                    </ol>
+                                </nav>
+
+                                <form>
+                                    <!-- App Store URL -->
+                                    <div class="form-group">
+                                        <label for="ego-app-store-url">App Store URL</label>
+                                        <input id="ego-app-store-url"
+                                               class="form-control"
+                                               type="text"          
+                                               title="Custom App Store URL"                             
+                                               data-toggle="popover"
+                                               data-trigger="focus"
+                                               data-placement="bottom"
+                                               data-content="Enter an URL with a JSON file, which describes a custom app store.">
+                                    </div>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <a class="ego-btn btn btn-primary" id="ego-save-settings-btn">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                
+                <span>Save</span>
+            </a>
+        </div>
+    </div>
+</div>
+<!-- content -->
