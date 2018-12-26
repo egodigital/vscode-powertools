@@ -428,6 +428,35 @@ export interface CronJobItem extends JobItem {
 }
 
 /**
+ * An event action.
+ */
+export interface EventAction {
+    /**
+     * The type.
+     */
+    type?: string;
+}
+
+/**
+ * A possible value for an event entry.
+ */
+export type EventEntry = EventItem;
+
+/**
+ * An event item.
+ */
+export interface EventItem {
+    /**
+     * The action.
+     */
+    action: EventAction;
+    /**
+     * The event type.
+     */
+    type?: string;
+}
+
+/**
  * Extension configuration.
  */
 export interface ExtensionConfiguration extends WithValues {
@@ -440,6 +469,10 @@ export interface ExtensionConfiguration extends WithValues {
      */
     commands?: { [id: string]: CommandEntry };
     /**
+     * One or more events to register.
+     */
+    events?: EventEntry[];
+    /**
      * One or more jobs to run.
      */
     jobs?: JobEntry[];
@@ -447,6 +480,68 @@ export interface ExtensionConfiguration extends WithValues {
      * One or more things to run at startup.
      */
     startup?: StartupEntry[];
+}
+
+/**
+ * Arguments for script that is executed on a file / folder change.
+ */
+export interface FileChangeEventActionScriptArguments extends WorkspaceScriptArguments {
+    /**
+     * The type of change.
+     */
+    readonly changeType: FileChangeType;
+    /**
+     * The underlying document (if available).
+     */
+    readonly document: vscode.TextDocument;
+    /**
+     * The changed file / folder.
+     */
+    readonly file: vscode.Uri;
+}
+
+/**
+ * A script module that is executed on a file / folder change.
+ */
+export interface FileChangeEventActionScriptModule {
+    /**
+     * Executes the script.
+     *
+     * @param {FileChangeEventActionScriptArguments} args Arguments for the execution.
+     */
+    readonly execute: (args: FileChangeEventActionScriptArguments) => any;
+}
+
+/**
+ * An action for a file / folder based event.
+ */
+export interface FileEventItem extends EventItem {
+    /**
+     * One or more glob patterns that describe, what files should be EXCLUDED.
+     */
+    exclude?: string[];
+    /**
+     * One or more glob patterns that describe, what files should be INCLUDED.
+     */
+    files?: string[];
+}
+
+/**
+ * Arguments for script that is executed when a file has been saved.
+ */
+export interface FileSavedEventActionScriptArguments extends FileChangeEventActionScriptArguments {
+}
+
+/**
+ * A script module that is executed when a file has been saved.
+ */
+export interface FileSavedEventActionScriptModule {
+    /**
+     * Executes the script.
+     *
+     * @param {FileSavedEventActionScriptArguments} args Arguments for the execution.
+     */
+    readonly execute: (args: FileSavedEventActionScriptArguments) => any;
 }
 
 /**
@@ -640,6 +735,20 @@ export interface ScriptCommandStartupModule {
      * @param {ScriptCommandStartupArguments} args Arguments for the execution.
      */
     readonly execute: (args: ScriptCommandStartupArguments) => any;
+}
+
+/**
+ * A script based event action.
+ */
+export interface ScriptEventAction extends EventAction {
+    /**
+     * Options for the script.
+     */
+    options?: any;
+    /**
+     * The path to the script, that should be executed.
+     */
+    script: string;
 }
 
 /**
@@ -844,6 +953,23 @@ export interface WorkspaceCommandScriptModule {
      * @param {WorkspaceCommandScriptArguments} args Arguments for the execution.
      */
     readonly execute: (args: WorkspaceCommandScriptArguments) => any;
+}
+
+/**
+ * A workspace event.
+ */
+export interface WorkspaceEvent extends vscode.Disposable {
+    /**
+     * Executes the event.
+     *
+     * @param {string} type The type for what the event should be executed.
+     * @param {any[]} [args] One or more arguments for the execution.
+     */
+    readonly execute: (type: string, ...args: any[]) => void | PromiseLike<void>;
+    /**
+     * Gets the type.
+     */
+    readonly type: string;
 }
 
 /**

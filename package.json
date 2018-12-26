@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.40",
+    "version": "0.0.41",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -179,6 +179,75 @@
                                         "script"
                                     ]
                                 }
+                            }
+                        },
+                        "events": {
+                            "description": "One or more events to register.",
+                            "type": "array",
+                            "items": {
+                                "oneOf": [
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "action": {
+                                                "description": "The action.",
+                                                "oneOf": [
+                                                    {
+                                                        "description": "A script based event action.",
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "options": {
+                                                                "description": "Options for the script."
+                                                            },
+                                                            "script": {
+                                                                "description": "The path to the script to execute.",
+                                                                "type": "string"
+                                                            },
+                                                            "type": {
+                                                                "description": "The type.",
+                                                                "enum": [
+                                                                    "script"
+                                                                ],
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "script"
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "files": {
+                                                "description": "One or more glob patterns of files to include.",
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "exclude": {
+                                                "description": "One or more glob patterns of files to exclude.",
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": {
+                                                "description": "The event type.",
+                                                "enum": [
+                                                    "",
+                                                    "file.changed",
+                                                    "file.created",
+                                                    "file.deleted",
+                                                    "file.saved"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "action"
+                                        ]
+                                    }
+                                ]
                             }
                         },
                         "jobs": {

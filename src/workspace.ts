@@ -21,6 +21,7 @@ import * as ego_helpers from './helpers';
 import * as ego_values from './values';
 import * as ego_workspaces_apps from './workspaces/apps';
 import * as ego_workspaces_commands from './workspaces/commands';
+import * as ego_workspaces_events from './workspaces/events';
 import * as ego_workspaces_jobs from './workspaces/jobs';
 import * as ego_workspaces_startup from './workspaces/startup';
 import * as fsExtra from 'fs-extra';
@@ -131,6 +132,38 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     }
 
     /**
+     * Returns all events of that workspace.
+     *
+     * @return {ego_contracts.WorkspaceEvent[]} The list of events.
+     */
+    public getEvents(): ego_contracts.WorkspaceEvent[] {
+        return ego_helpers.asArray(
+            this.instanceState[
+                ego_workspaces_events.KEY_EVENTS
+            ]
+        );
+    }
+
+    /**
+     * Returns all events of that workspace by type.
+     *
+     * @param {string} type The type.
+     *
+     * @return {ego_contracts.WorkspaceEvent[]} The list of events.
+     */
+    public getEventsBy(type: string): ego_contracts.WorkspaceEvent[] {
+        type = ego_helpers.normalizeString(type);
+
+        return this.getEvents()
+            .filter(e => {
+                const EVENT_TYPE = ego_helpers.normalizeString(e.type);
+
+                return EVENT_TYPE === type ||
+                       EVENT_TYPE === '';
+            });
+    }
+
+    /**
      * Returns the full path of an existing file.
      *
      * @param {string} p The input path value.
@@ -218,6 +251,9 @@ export class Workspace extends ego_helpers.WorkspaceBase {
             ego_workspaces_commands.KEY_COMMANDS
         ] = [];
         this.instanceState[
+            ego_workspaces_events.KEY_EVENTS
+        ] = [];
+        this.instanceState[
             ego_workspaces_jobs.KEY_JOBS
         ] = [];
         this.instanceState[
@@ -231,7 +267,9 @@ export class Workspace extends ego_helpers.WorkspaceBase {
                     await this.onFileChange(type, file);
                 }).then(() => {
                 }).catch((err) => {
-
+                    this.logger.trace(
+                        err, 'workspace.onFileChange(1)'
+                    );
                 });
             };
 
@@ -250,7 +288,7 @@ export class Workspace extends ego_helpers.WorkspaceBase {
             this._isInitialized = true;
             await this.reloadConfiguration();
         } catch (e) {
-            this.logger.err(
+            this.logger.trace(
                 e, 'workspace.initialize(1)'
             );
 
@@ -359,7 +397,8 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     public async onDidSaveTextDocument(doc: vscode.TextDocument) {
         await this._QUEUE.add(async () => {
             await this.onFileChange(
-                ego_contracts.FileChangeType.Saved, doc.uri
+                ego_contracts.FileChangeType.Saved, doc.uri,
+                doc
             );
         });
     }
@@ -374,6 +413,10 @@ export class Workspace extends ego_helpers.WorkspaceBase {
 
         ego_helpers.tryDispose(this.context.fileWatcher);
 
+        // events
+        ego_workspaces_events.disposeEvents.apply(
+            this
+        );
         // apps
         ego_workspaces_apps.disposeApps.apply(
             this
@@ -388,7 +431,10 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         );
     }
 
-    private async onFileChange(type: ego_contracts.FileChangeType, file: vscode.Uri) {
+    private async onFileChange(
+        type: ego_contracts.FileChangeType, file: vscode.Uri,
+        doc?: vscode.TextDocument,
+    ) {
         if (this.isInFinalizeState) {
             return;
         }
@@ -400,6 +446,55 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         }
         if (this.isInVscode(file.fsPath)) {
             return;
+        }
+
+        if (arguments.length < 3) {
+            const EDITORS = ego_helpers.asArray(
+                vscode.window.visibleTextEditors
+            );
+
+            for (const E of EDITORS) {
+                const EDITORS_DOC = E.document;
+                if (EDITORS_DOC) {
+                    if (!ego_helpers.isEmptyString(EDITORS_DOC.fileName)) {
+                        if (path.resolve(EDITORS_DOC.fileName) === path.resolve(file.fsPath)) {
+                            doc = EDITORS_DOC;
+                        }
+                    }
+                }
+            }
+        }
+
+        let eventType: string;
+        switch (type) {
+            case ego_contracts.FileChangeType.Changed:
+                eventType = 'file.changed';
+                break;
+
+            case ego_contracts.FileChangeType.Created:
+                eventType = 'file.created';
+                break;
+
+            case ego_contracts.FileChangeType.Deleted:
+                eventType = 'file.deleted';
+                break;
+
+            case ego_contracts.FileChangeType.Saved:
+                eventType = 'file.saved';
+                break;
+        }
+
+        const EVENTS = this.getEventsBy(eventType);
+        for (const E of EVENTS) {
+            try {
+                await Promise.resolve(
+                    E.execute(eventType,
+                              type, file, doc)
+                );
+            } catch (e) {
+                this.logger
+                    .trace(e, 'workspace.onFileChange(1)');
+            }
         }
     }
 
@@ -438,6 +533,10 @@ export class Workspace extends ego_helpers.WorkspaceBase {
             );
             // jobs
             await ego_workspaces_jobs.reloadJobs.apply(
+                this
+            );
+            // events
+            await ego_workspaces_events.reloadEvents.apply(
                 this
             );
         } finally {
@@ -515,7 +614,7 @@ export class Workspace extends ego_helpers.WorkspaceBase {
      *
      * @param {string} p The path to convert.
      *
-     * @return {string|false} The relative path or (false) if 'path' could not be converted.
+     * @return {string|false} The relative path or (false) if 'p' could not be converted.
      */
     public toRelativePath(p: string): string | false {
         p = ego_helpers.toStringSafe(p);
@@ -528,7 +627,7 @@ export class Workspace extends ego_helpers.WorkspaceBase {
                 .split(path.sep)
                 .join('/');
 
-        if (!p.startsWith(WORKSPACE_DIR)) {
+        if (WORKSPACE_DIR !== p && !p.startsWith(WORKSPACE_DIR + '/')) {
             return false;
         }
 
