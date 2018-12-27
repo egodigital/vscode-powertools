@@ -171,10 +171,30 @@
                                                 "description": "The color.",
                                                 "type": "string"
                                             },
+                                            "if": {
+                                                "description": "The JavaScript code that checks the avaibility of that button.",
+                                                "type": "string"
+                                            },
                                             "isRight": {
                                                 "description": "Display button on the right side or not.",
                                                 "type": "boolean",
                                                 "default": false
+                                            },
+                                            "platforms": {
+                                                "description": "One or more platform names, that button is for.",
+                                                "type": "array",
+                                                "items": {
+                                                    "enum": [
+                                                        "aix",
+                                                        "darwin",
+                                                        "freebsd",
+                                                        "linux",
+                                                        "openbsd",
+                                                        "sunos",
+                                                        "win32"
+                                                    ],
+                                                    "type": "string"
+                                                }
                                             },
                                             "priority": {
                                                 "description": "The priority.",
