@@ -202,8 +202,8 @@ export function registerCommands(
             }
         }),
 
-        // openGlobalSettings
-        vscode.commands.registerCommand('ego.power-tools.openGlobalSettings', async () => {
+        // globalSettings
+        vscode.commands.registerCommand('ego.power-tools.globalSettings', async () => {
             try {
                 await ego_settings_global.openGlobalSettings(context);
             } catch (e) {
