@@ -226,8 +226,12 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
 
     let newJob: ego_contracts.WorkspaceJob;
 
+    const FORMAT = ego_helpers.normalizeString(
+        ego_helpers.normalizeString(item.format)
+    );
+
     let cronTime: string | Date | false = false;
-    switch (ego_helpers.normalizeString(item.format)) {
+    switch (FORMAT) {
         case '':
         case 'crontab':
             cronTime = WORKSPACE.replaceValues(
