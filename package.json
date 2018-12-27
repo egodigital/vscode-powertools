@@ -379,7 +379,7 @@
                                             "time": {
                                                 "description": "The time pattern.",
                                                 "type": "string",
-                                                "default": "* * * * * 0"
+                                                "default": "0 * * * * *"
                                             },
                                             "type": {
                                                 "enum": [
