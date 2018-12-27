@@ -27,7 +27,7 @@ $clear();
 
 await $withProgress(async (progress, cancelToken) => {
     progress.report({
-        message: \`Laoding list of random users from 'randomuser.me' ...\`,
+        message: \`Loading list of random users from 'randomuser.me' ...\`,
     });
 
     // s. https://github.com/mkloubert/vscode-helpers#get-
