@@ -173,7 +173,7 @@ export class ScriptConsoleWebView extends ego_webview.WebViewWithContextBase {
                             };
 
                             // @ts-ignore
-                            const $workspaces = ego_workspace.getWorkspaceInfos();
+                            const $workspaces = ego_workspace.getWorkspaceList();
 
                             // @ts-ignore
                             const $clear = () => {
