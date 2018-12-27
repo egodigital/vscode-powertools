@@ -230,7 +230,7 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
     switch (ego_helpers.normalizeString(item.format)) {
         case '':
         case 'crontab':
-            cronTime = ego_helpers.toStringSafe(
+            cronTime = WORKSPACE.replaceValues(
                 item.time
             ).trim();
             break;
