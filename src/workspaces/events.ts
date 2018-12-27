@@ -76,6 +76,13 @@ export async function reloadEvents() {
 
     EVENTS.forEach(e => {
         try {
+            if (!ego_helpers.doesMatchPlatformCondition(e)) {
+                return;
+            }
+            if (!ego_helpers.doesMatchFilterCondition(e)) {
+                return;
+            }
+
             let executeAction: ((type: string, ...args: any[]) => void | PromiseLike<void>);
             let disposeAction: () => { };
 

@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.43",
+    "version": "0.0.44",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -217,6 +217,13 @@
                                                     }
                                                 ]
                                             },
+                                            "exclude": {
+                                                "description": "One or more glob patterns of files to exclude.",
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            },
                                             "files": {
                                                 "description": "One or more glob patterns of files to include.",
                                                 "type": "array",
@@ -224,10 +231,23 @@
                                                     "type": "string"
                                                 }
                                             },
-                                            "exclude": {
-                                                "description": "One or more glob patterns of files to exclude.",
+                                            "if": {
+                                                "description": "The JavaScript code that checks the avaibility of that event.",
+                                                "type": "string"
+                                            },
+                                            "platforms": {
+                                                "description": "One or more platform names, that event is for.",
                                                 "type": "array",
                                                 "items": {
+                                                    "enum": [
+                                                        "aix",
+                                                        "darwin",
+                                                        "freebsd",
+                                                        "linux",
+                                                        "openbsd",
+                                                        "sunos",
+                                                        "win32"
+                                                    ],
                                                     "type": "string"
                                                 }
                                             },
@@ -332,9 +352,29 @@
                                                 ],
                                                 "type": "string"
                                             },
+                                            "if": {
+                                                "description": "The JavaScript code that checks the avaibility of that job.",
+                                                "type": "string"
+                                            },
                                             "name": {
                                                 "description": "The (display) name.",
                                                 "type": "string"
+                                            },
+                                            "platforms": {
+                                                "description": "One or more platform names, that job is for.",
+                                                "type": "array",
+                                                "items": {
+                                                    "enum": [
+                                                        "aix",
+                                                        "darwin",
+                                                        "freebsd",
+                                                        "linux",
+                                                        "openbsd",
+                                                        "sunos",
+                                                        "win32"
+                                                    ],
+                                                    "type": "string"
+                                                }
                                             },
                                             "time": {
                                                 "description": "The time pattern.",

@@ -149,7 +149,17 @@ export class ScriptConsoleWebView extends ego_webview.WebViewWithContextBase {
                                 .token;
 
                             // @ts-ignore
+                            const _ = require('lodash');
+                            // @ts-ignore
+                            const $fs = require('fs-extra');
+                            // @ts-ignore
                             const $helpers = require('./helpers');
+                            // @ts-ignore
+                            const $html = new htmlEntities.AllHtmlEntities();
+                            // @ts-ignore
+                            const $path = require('path');
+                            // @ts-ignore
+                            const $moment = require('moment');
                             // @ts-ignore
                             const $vscode = require('vscode');
 
@@ -208,6 +218,34 @@ export class ScriptConsoleWebView extends ego_webview.WebViewWithContextBase {
                                 $writeHtml(`<pre>${ new htmlEntities.AllHtmlEntities().encode(
                                     JSON.stringify(val, null, 2)
                                 ) }</pre>`);
+                            };
+
+                            // @ts-ignore
+                            const $require = (id: string) => {
+                                return ego_helpers.requireModule(id);
+                            };
+
+                            // @ts-ignore
+                            const $sleep = (sec: number) => {
+                                return ego_helpers.sleep(
+                                    Math.floor(
+                                        parseFloat(
+                                            ego_helpers.toStringSafe(sec).trim()
+                                        ) * 1000.0
+                                    )
+                                );
+                            };
+
+                            // @ts-ignore
+                            const $withProgress = (task: Function) => {
+                                return vscode.window.withProgress({
+                                    cancellable: true,
+                                    location: $vscode.ProgressLocation.Notification,
+                                }, async (progress, cancelToken) => {
+                                    return Promise.resolve(
+                                        task(progress, cancelToken)
+                                    );
+                                });
                             };
 
                             return await Promise.resolve(

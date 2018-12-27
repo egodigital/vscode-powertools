@@ -445,7 +445,7 @@ export type EventEntry = EventItem;
 /**
  * An event item.
  */
-export interface EventItem {
+export interface EventItem extends Conditional, ForPlatforms {
     /**
      * The action.
      */

@@ -17,6 +17,7 @@
 
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
+import * as ego_resources from './resources';
 import * as ego_scripts from './scripts';
 import * as ego_settings_global from './settings/global';
 import * as ego_workspace from './workspace';
@@ -218,7 +219,7 @@ export function registerCommands(
                     {
                         action: async () => {
                             const NEW_EDITOR = await ego_helpers.openAndShowTextDocument({
-                                content: '',
+                                content: ego_resources.EXAMPLE_SCRIPT,
                                 language: 'javascript',
                             });
 
