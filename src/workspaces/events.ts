@@ -17,7 +17,6 @@
 
 import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
-import * as ego_log from '../log';
 import * as ego_workspace from '../workspace';
 import * as vscode from 'vscode';
 
@@ -234,8 +233,8 @@ export async function reloadEvents() {
                 });
             }
         } catch (err) {
-            ego_log.CONSOLE
-                   .trace(err, 'events.reloadEvents(1)');
+            WORKSPACE.logger
+                     .trace(err, 'events.reloadEvents(1)');
         }
     });
 }

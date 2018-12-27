@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.46",
+    "version": "0.0.48",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -99,6 +99,98 @@
                                         },
                                         "required": [
                                             "script"
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        "buttons": {
+                            "description": "One or more buttons to register.",
+                            "type": "array",
+                            "items": {
+                                "oneOf": [
+                                    {
+                                        "description": "The button to register",
+                                        "type": "object",
+                                        "properties": {
+                                            "action": {
+                                                "oneOf": [
+                                                    {
+                                                        "description": "The shell command to execute.",
+                                                        "type": "string"
+                                                    },
+                                                    {
+                                                        "description": "Executes a script.",
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "options": {
+                                                                "description": "Options for the script."
+                                                            },
+                                                            "script": {
+                                                                "description": "The path of the script to execute.",
+                                                                "type": "string"
+                                                            },
+                                                            "type": {
+                                                                "enum": [
+                                                                    "script"
+                                                                ],
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "script"
+                                                        ]
+                                                    },
+                                                    {
+                                                        "description": "Executes a shell command.",
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "command": {
+                                                                "description": "The command to execute.",
+                                                                "type": "string"
+                                                            },
+                                                            "cwd": {
+                                                                "description": "The custom working directory.",
+                                                                "type": "string"
+                                                            },
+                                                            "type": {
+                                                                "enum": [
+                                                                    "",
+                                                                    "shell"
+                                                                ],
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "command"
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "color": {
+                                                "description": "The color.",
+                                                "type": "string"
+                                            },
+                                            "isRight": {
+                                                "description": "Display button on the right side or not.",
+                                                "type": "boolean",
+                                                "default": false
+                                            },
+                                            "priority": {
+                                                "description": "The priority.",
+                                                "type": "number"
+                                            },
+                                            "text": {
+                                                "description": "The label / text.",
+                                                "type": "string"
+                                            },
+                                            "tooltip": {
+                                                "description": "The tooltip.",
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "action"
                                         ]
                                     }
                                 ]

@@ -38,9 +38,6 @@ import * as vscode from 'vscode';
 const zip = require('node-zip');
 
 
-
-
-
 /**
  * Name of the key for storing app instances.
  */

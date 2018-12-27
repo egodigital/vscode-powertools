@@ -20,6 +20,7 @@ import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_values from './values';
 import * as ego_workspaces_apps from './workspaces/apps';
+import * as ego_workspaces_buttons from './workspaces/buttons';
 import * as ego_workspaces_commands from './workspaces/commands';
 import * as ego_workspaces_events from './workspaces/events';
 import * as ego_workspaces_jobs from './workspaces/jobs';
@@ -248,6 +249,12 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         };
 
         this.instanceState[
+            ego_workspaces_apps.KEY_APPS
+        ] = [];
+        this.instanceState[
+            ego_workspaces_buttons.KEY_BUTTONS
+        ] = [];
+        this.instanceState[
             ego_workspaces_commands.KEY_COMMANDS
         ] = [];
         this.instanceState[
@@ -255,9 +262,6 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         ] = [];
         this.instanceState[
             ego_workspaces_jobs.KEY_JOBS
-        ] = [];
-        this.instanceState[
-            ego_workspaces_apps.KEY_APPS
         ] = [];
 
         // file change events
@@ -417,12 +421,16 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         ego_workspaces_events.disposeEvents.apply(
             this
         );
-        // apps
-        ego_workspaces_apps.disposeApps.apply(
-            this
-        );
         // jobs
         ego_workspaces_jobs.disposeJobs.apply(
+            this
+        );
+        // buttons
+        ego_workspaces_buttons.disposeButtons.apply(
+            this
+        );
+        // apps
+        ego_workspaces_apps.disposeApps.apply(
             this
         );
         // commands
@@ -523,12 +531,12 @@ export class Workspace extends ego_helpers.WorkspaceBase {
             await ego_workspaces_commands.reloadCommands.apply(
                 this
             );
-            // startups
-            await ego_workspaces_startup.onStartup.apply(
-                this
-            );
             // apps
             await ego_workspaces_apps.reloadApps.apply(
+                this
+            );
+            // buttons
+            await ego_workspaces_buttons.reloadButtons.apply(
                 this
             );
             // jobs
@@ -537,6 +545,11 @@ export class Workspace extends ego_helpers.WorkspaceBase {
             );
             // events
             await ego_workspaces_events.reloadEvents.apply(
+                this
+            );
+
+            // startups !!!THIS HAS TO BE DONE AT LAST!!!
+            await ego_workspaces_startup.onStartup.apply(
                 this
             );
         } finally {

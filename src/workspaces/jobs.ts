@@ -20,7 +20,6 @@ import * as childProcess from 'child_process';
 import * as cron from 'cron';
 import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
-import * as ego_log from '../log';
 import * as ego_workspace from '../workspace';
 import * as path from 'path';
 
@@ -148,6 +147,9 @@ function createActionFunction(
                                             WORKSPACE.rootPath, currentWorkDirectory
                                         );
                                     }
+                                    path.resolve(
+                                        WORKSPACE.replaceValues(currentWorkDirectory)
+                                    );
 
                                     childProcess.exec(
                                         WORKSPACE.replaceValues(SHELL_ACTION.command),
@@ -281,8 +283,8 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
                     }).catch((err) => {
                         isExecutingJob = false;
 
-                        ego_log.CONSOLE.trace(
-                            err, `workspaces.reloadJobs(2:${ name })`
+                        WORKSPACE.logger.trace(
+                            err, `jobs.reloadJobs(2:${ name })`
                         );
                     });
                 },
@@ -333,12 +335,8 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
                 }
             });
         } catch (e) {
-            ego_log.CONSOLE.trace(
-                e, `workspaces.reloadJobs(1)`
-            );
-
-            ego_helpers.showErrorMessage(
-                e
+            WORKSPACE.logger.trace(
+                e, `jobs.reloadJobs(1)`
             );
         }
     }

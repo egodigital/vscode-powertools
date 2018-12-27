@@ -359,6 +359,50 @@ export interface Button {
 }
 
 /**
+ * A button action.
+ */
+export interface ButtonAction {
+    type?: string;
+}
+
+/**
+ * A module for a script based button action.
+ */
+export interface ButtonActionScriptModule {
+    /**
+     * Executes the module.
+     *
+     * @return {ButtonActionScriptArguments} args The arguments for the execution.
+     */
+    readonly execute: (args: ButtonActionScriptArguments) => any;
+}
+
+/**
+ * Arguments for a script based button action.
+ */
+export interface ButtonActionScriptArguments extends WorkspaceScriptArguments {
+    /**
+     * The underlying button instance.
+     */
+    readonly button: vscode.StatusBarItem;
+}
+
+/**
+ * A possible value for a button entry in the settings.
+ */
+export type ButtonEntry = ButtonItem;
+
+/**
+ * A button item in the settings.
+ */
+export interface ButtonItem extends Button, Conditional, ForPlatforms {
+    /**
+     * The action to invoke, when clicked.
+     */
+    action: string | ButtonAction;
+}
+
+/**
  * A value item running (JavaScript) code.
  */
 export interface CodeValueItem extends ValueItem {
@@ -464,6 +508,10 @@ export interface ExtensionConfiguration extends WithValues {
      * One or more apps to register.
      */
     apps?: AppEntry[];
+    /**
+     * One or more buttons to register.
+     */
+    buttons?: ButtonEntry[];
     /**
      * One or more commands to register.
      */
@@ -706,6 +754,34 @@ export interface ScriptArguments {
 }
 
 /**
+ * A button action based on a script.
+ */
+export interface ScriptButtonAction extends ButtonAction {
+    /**
+     * Options for the script.
+     */
+    options?: any;
+    /**
+     * The path of the script to execute.
+     */
+    script: string;
+}
+
+/**
+ * A button action based on a shell command.
+ */
+export interface ShellCommandButtonAction extends ButtonAction {
+    /**
+     * The command to execute.
+     */
+    command: string;
+    /**
+     * The custom working directory.
+     */
+    cwd?: string;
+}
+
+/**
  * Arguments for a startup script.
  */
 export interface ScriptCommandStartupArguments extends WorkspaceScriptArguments {
@@ -893,6 +969,12 @@ export interface WorkspaceApp extends vscode.Disposable {
      * Gets the current web view instance.
      */
     readonly view: vscode.Disposable;
+}
+
+/**
+ * A workspace button.
+ */
+export interface WorkspaceButton extends vscode.Disposable {
 }
 
 /**

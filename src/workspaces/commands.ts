@@ -18,7 +18,6 @@
 import * as _ from 'lodash';
 import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
-import * as ego_log from '../log';
 import * as ego_workspace from '../workspace';
 import * as vscode from 'vscode';
 
@@ -142,7 +141,7 @@ export async function reloadCommands() {
                             }
                         }
                     } catch (e) {
-                        ego_log.CONSOLE.trace(
+                        WORKSPACE.logger.trace(
                             e, `workspaces.reloadCommands.execute(${ key })`
                         );
 
@@ -234,8 +233,8 @@ export async function reloadCommands() {
                 ego_helpers.tryDispose(newButton);
                 ego_helpers.tryDispose(newCommand);
 
-                ego_log.CONSOLE
-                       .trace(e, `commands.reloadCommands(${ key })`);
+                WORKSPACE.logger
+                         .trace(e, `commands.reloadCommands(${ key })`);
             }
         });
     }

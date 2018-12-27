@@ -248,122 +248,127 @@ export async function reloadApps() {
     ];
 
     APP_ENTRIES.forEach(entry => {
-        let item: ego_contracts.AppItem;
-        if (_.isObjectLike(entry)) {
-            item = <ego_contracts.AppItem>entry;
-        } else {
-            item = {
-                script: ego_helpers.toStringSafe(entry),
-            };
-        }
-
-        if (!ego_helpers.doesMatchPlatformCondition(item)) {
-            return;
-        }
-        if (!ego_helpers.doesMatchFilterCondition(item)) {
-            return;
-        }
-
-        let name = ego_helpers.toStringSafe(
-            item.name
-        ).trim();
-        if ('' === name) {
-            name = item.script;
-        }
-
-        let description = ego_helpers.toStringSafe(
-            item.description
-        ).trim();
-        if ('' === description) {
-            description = undefined;
-        }
-
-        let view: WorkspaceAppWebView;
-        let newApp: ego_contracts.WorkspaceApp = {
-            description: undefined,
-            detail: undefined,
-            dispose: function() {
-                const VIEW = view;
-                if (VIEW) {
-                    VIEW.dispose();
-                }
-
-                view = null;
-            },
-            name: undefined,
-            open: async function() {
-                if (view) {
-                    return false;
-                }
-
-                const NEW_VIEW = new WorkspaceAppWebView(
-                    WORKSPACE,
-                    item
-                );
-
-                if (!(await NEW_VIEW.open())) {
-                    return false;
-                }
-
-                return NEW_VIEW;
-            },
-            view: undefined,
-        };
-
-        // newApp.description
-        Object.defineProperty(newApp, 'description', {
-            enumerable: true,
-            get: () => {
-                const DESCRIPTION = WORKSPACE.replaceValues(
-                    description
-                ).trim();
-
-                return '' !== DESCRIPTION ? DESCRIPTION
-                                          : undefined;
+        try {
+            let item: ego_contracts.AppItem;
+            if (_.isObjectLike(entry)) {
+                item = <ego_contracts.AppItem>entry;
+            } else {
+                item = {
+                    script: ego_helpers.toStringSafe(entry),
+                };
             }
-        });
 
-        // newApp.detail
-        Object.defineProperty(newApp, 'detail', {
-            enumerable: true,
-            get: () => {
-                let detail = WORKSPACE.getExistingFullPath(
-                    item.script
-                );
-                if (false === detail) {
-                    detail = ego_helpers.toStringSafe(
+            if (!ego_helpers.doesMatchPlatformCondition(item)) {
+                return;
+            }
+            if (!ego_helpers.doesMatchFilterCondition(item)) {
+                return;
+            }
+
+            let name = ego_helpers.toStringSafe(
+                item.name
+            ).trim();
+            if ('' === name) {
+                name = item.script;
+            }
+
+            let description = ego_helpers.toStringSafe(
+                item.description
+            ).trim();
+            if ('' === description) {
+                description = undefined;
+            }
+
+            let view: WorkspaceAppWebView;
+            let newApp: ego_contracts.WorkspaceApp = {
+                description: undefined,
+                detail: undefined,
+                dispose: function() {
+                    const VIEW = view;
+                    if (VIEW) {
+                        VIEW.dispose();
+                    }
+
+                    view = null;
+                },
+                name: undefined,
+                open: async function() {
+                    if (view) {
+                        return false;
+                    }
+
+                    const NEW_VIEW = new WorkspaceAppWebView(
+                        WORKSPACE,
+                        item
+                    );
+
+                    if (!(await NEW_VIEW.open())) {
+                        return false;
+                    }
+
+                    return NEW_VIEW;
+                },
+                view: undefined,
+            };
+
+            // newApp.description
+            Object.defineProperty(newApp, 'description', {
+                enumerable: true,
+                get: () => {
+                    const DESCRIPTION = WORKSPACE.replaceValues(
+                        description
+                    ).trim();
+
+                    return '' !== DESCRIPTION ? DESCRIPTION
+                                            : undefined;
+                }
+            });
+
+            // newApp.detail
+            Object.defineProperty(newApp, 'detail', {
+                enumerable: true,
+                get: () => {
+                    let detail = WORKSPACE.getExistingFullPath(
                         item.script
                     );
+                    if (false === detail) {
+                        detail = ego_helpers.toStringSafe(
+                            item.script
+                        );
+                    }
+
+                    return detail;
                 }
+            });
 
-                return detail;
+            // newApp.name
+            Object.defineProperty(newApp, 'name', {
+                enumerable: true,
+                get: () => {
+                    const NAME = WORKSPACE.replaceValues(
+                        name
+                    ).trim();
+
+                    return '' !== NAME ? NAME
+                                    : undefined;
+                }
+            });
+
+            // newApp.view
+            Object.defineProperty(newApp, 'view', {
+                get: () => {
+                    return view;
+                }
+            });
+
+            if (newApp) {
+                APP_LIST.push(
+                    newApp
+                );
             }
-        });
-
-        // newApp.name
-        Object.defineProperty(newApp, 'name', {
-            enumerable: true,
-            get: () => {
-                const NAME = WORKSPACE.replaceValues(
-                    name
-                ).trim();
-
-                return '' !== NAME ? NAME
-                                   : undefined;
-            }
-        });
-
-        // newApp.view
-        Object.defineProperty(newApp, 'view', {
-            get: () => {
-                return view;
-            }
-        });
-
-        if (newApp) {
-            APP_LIST.push(
-                newApp
-            );
+        } catch (e) {
+            WORKSPACE.logger
+                     .trace(e, 'apps.reloadApps(1)');
         }
     });
 }
