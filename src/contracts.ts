@@ -770,19 +770,7 @@ export interface ScriptButtonAction extends ButtonAction {
 /**
  * A button action based on a shell command.
  */
-export interface ShellCommandButtonAction extends ButtonAction {
-    /**
-     * The command to execute.
-     */
-    command: string;
-    /**
-     * The custom working directory.
-     */
-    cwd?: string;
-    /**
-     * Do not write result to output.
-     */
-    silent?: boolean;
+export interface ShellCommandButtonAction extends ButtonAction, ShellCommand {
 }
 
 /**
@@ -832,9 +820,9 @@ export interface ScriptEventAction extends EventAction {
 }
 
 /**
- * A startup item running a (shell) command.
+ * Settings for running a shell command.
  */
-export interface ShellCommandStartupItem extends StartupItem {
+export interface ShellCommand extends StartupItem {
     /**
      * The custom working directory.
      */
@@ -847,6 +835,12 @@ export interface ShellCommandStartupItem extends StartupItem {
      * Do not write result to output.
      */
     silent?: boolean;
+}
+
+/**
+ * A startup item running a (shell) command.
+ */
+export interface ShellCommandStartupItem extends ShellCommand, StartupItem {
 }
 
 /**

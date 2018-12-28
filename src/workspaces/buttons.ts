@@ -16,11 +16,9 @@
  */
 
 import * as _ from 'lodash';
-import * as childProcess from 'child_process';
 import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
 import * as ego_workspace from '../workspace';
-import * as path from 'path';
 import * as vscode from 'vscode';
 
 
@@ -109,82 +107,10 @@ export async function reloadButtons() {
                     case '':
                     case 'shell':
                         {
-                            const SHELL_ACTION = <ego_contracts.ShellCommandButtonAction>btnAction;
-
                             commandAction = async () => {
-                                const COMMAND_TO_EXECUTE = WORKSPACE.replaceValues(
-                                    SHELL_ACTION.command
+                                await WORKSPACE.runShellCommand(
+                                    <ego_contracts.ShellCommandButtonAction>btnAction
                                 );
-
-                                let cwd = WORKSPACE.replaceValues(
-                                    SHELL_ACTION.cwd
-                                );
-                                if (ego_helpers.isEmptyString(cwd)) {
-                                    cwd = WORKSPACE.rootPath;
-                                }
-                                if (!path.isAbsolute(cwd)) {
-                                    cwd = path.join(
-                                        WORKSPACE.rootPath, cwd
-                                    );
-                                }
-                                cwd = path.resolve(cwd);
-
-                                const SILENT = ego_helpers.toBooleanSafe(SHELL_ACTION.silent, true);
-
-                                // run command
-                                await vscode.window.withProgress({
-                                    cancellable: false,
-                                    location: vscode.ProgressLocation.Notification,
-                                    title: 'Shell Command',
-                                }, (progress) => {
-                                    return new Promise<void>((resolve, reject) => {
-                                        const COMPLETED = (err: any, result?: string) => {
-                                            const WRITE_RESULT = () => {
-                                                if (!SILENT) {
-                                                    if (!ego_helpers.isEmptyString(result)) {
-                                                        WORKSPACE.output
-                                                            .appendLine(ego_helpers.toStringSafe(result));
-                                                        WORKSPACE.output
-                                                            .appendLine('');
-                                                    }
-                                                }
-                                            };
-
-                                            if (err) {
-                                                WORKSPACE.output
-                                                    .appendLine(`[FAILED: '${ ego_helpers.errorToString(err) }']`);
-
-                                                WRITE_RESULT();
-
-                                                reject(err);
-                                            } else {
-                                                WORKSPACE.output
-                                                    .appendLine('[OK]');
-
-                                                WRITE_RESULT();
-
-                                                resolve();
-                                            }
-                                        };
-
-                                        try {
-                                            WORKSPACE.output
-                                                .append(`Running shell command '${ COMMAND_TO_EXECUTE }' ... `);
-
-                                            progress.report({
-                                                message: `Running '${ COMMAND_TO_EXECUTE }' ...`,
-                                            });
-
-                                            childProcess.exec(COMMAND_TO_EXECUTE, {
-                                                cwd: cwd,
-                                            }, (err, result) => {
-                                                COMPLETED(err, result);
-                                            });
-                                        } catch (e) {
-                                            COMPLETED(e);
-                                        }
-                                    });
-                                });
                             };
                         }
                         break;

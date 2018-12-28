@@ -16,6 +16,7 @@
  */
 
 import * as _ from 'lodash';
+import * as childProcess from 'child_process';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_values from './values';
@@ -592,6 +593,87 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         }
 
         return val;
+    }
+
+    /**
+     * Runs a shell command for that workspace and shows it progress in the GUI.
+     *
+     * @param {ego_contracts.ShellCommand} shellCmd The command to run.
+     */
+    public async runShellCommand(shellCmd: ego_contracts.ShellCommand) {
+        const COMMAND_TO_EXECUTE = this.replaceValues(
+            shellCmd.command
+        );
+
+        let cwd = this.replaceValues(
+            shellCmd.cwd
+        );
+        if (ego_helpers.isEmptyString(cwd)) {
+            cwd = this.rootPath;
+        }
+        if (!path.isAbsolute(cwd)) {
+            cwd = path.join(
+                this.rootPath, cwd
+            );
+        }
+        cwd = path.resolve(cwd);
+
+        const SILENT = ego_helpers.toBooleanSafe(shellCmd.silent, true);
+
+        // run command
+        await vscode.window.withProgress({
+            cancellable: false,
+            location: vscode.ProgressLocation.Notification,
+            title: 'Shell Command',
+        }, (progress) => {
+            return new Promise<void>((resolve, reject) => {
+                const COMPLETED = (err: any, result?: string) => {
+                    const WRITE_RESULT = () => {
+                        if (!SILENT) {
+                            if (!ego_helpers.isEmptyString(result)) {
+                                this.output
+                                    .appendLine(ego_helpers.toStringSafe(result));
+                                this.output
+                                    .appendLine('');
+                            }
+                        }
+                    };
+
+                    if (err) {
+                        this.output
+                            .appendLine(`[FAILED: '${ ego_helpers.errorToString(err) }']`);
+
+                        WRITE_RESULT();
+
+                        reject(err);
+                    } else {
+                        this.output
+                            .appendLine('[OK]');
+
+                        WRITE_RESULT();
+
+                        resolve();
+                    }
+                };
+
+                try {
+                    this.output
+                        .append(`Running shell command '${ COMMAND_TO_EXECUTE }' ... `);
+
+                    progress.report({
+                        message: `Running '${ COMMAND_TO_EXECUTE }' ...`,
+                    });
+
+                    childProcess.exec(COMMAND_TO_EXECUTE, {
+                        cwd: cwd,
+                    }, (err, result) => {
+                        COMPLETED(err, result);
+                    });
+                } catch (e) {
+                    COMPLETED(e);
+                }
+            });
+        });
     }
 
     /**
