@@ -779,6 +779,10 @@ export interface ShellCommandButtonAction extends ButtonAction {
      * The custom working directory.
      */
     cwd?: string;
+    /**
+     * Do not write result to output.
+     */
+    silent?: boolean;
 }
 
 /**

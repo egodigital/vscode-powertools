@@ -129,24 +129,62 @@ export async function reloadButtons() {
                                 }
                                 cwd = path.resolve(cwd);
 
+                                const SILENT = ego_helpers.toBooleanSafe(SHELL_ACTION.silent, true);
+
                                 // run command
-                                await (() => {
+                                await vscode.window.withProgress({
+                                    cancellable: false,
+                                    location: vscode.ProgressLocation.Notification,
+                                    title: 'Shell Command',
+                                }, (progress) => {
                                     return new Promise<void>((resolve, reject) => {
+                                        const COMPLETED = (err: any, result?: string) => {
+                                            const WRITE_RESULT = () => {
+                                                if (!SILENT) {
+                                                    if (!ego_helpers.isEmptyString(result)) {
+                                                        WORKSPACE.output
+                                                            .appendLine(ego_helpers.toStringSafe(result));
+                                                        WORKSPACE.output
+                                                            .appendLine('');
+                                                    }
+                                                }
+                                            };
+
+                                            if (err) {
+                                                WORKSPACE.output
+                                                    .appendLine(`[FAILED: '${ ego_helpers.errorToString(err) }']`);
+
+                                                WRITE_RESULT();
+
+                                                reject(err);
+                                            } else {
+                                                WORKSPACE.output
+                                                    .appendLine('[OK]');
+
+                                                WRITE_RESULT();
+
+                                                resolve();
+                                            }
+                                        };
+
                                         try {
+                                            WORKSPACE.output
+                                                .append(`Running shell command '${ COMMAND_TO_EXECUTE }' ... `);
+
+                                            progress.report({
+                                                message: `Running '${ COMMAND_TO_EXECUTE }' ...`,
+                                            });
+
                                             childProcess.exec(COMMAND_TO_EXECUTE, {
                                                 cwd: cwd,
-                                            }, (err) => {
-                                                if (err) {
-                                                    reject(err);
-                                                } else {
-                                                    resolve();
-                                                }
+                                            }, (err, result) => {
+                                                COMPLETED(err, result);
                                             });
                                         } catch (e) {
-                                            reject(e);
+                                            COMPLETED(e);
                                         }
                                     });
-                                })();
+                                });
                             };
                         }
                         break;

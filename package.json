@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.48",
+    "version": "0.0.49",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -152,6 +152,11 @@
                                                             "cwd": {
                                                                 "description": "The custom working directory.",
                                                                 "type": "string"
+                                                            },
+                                                            "silent": {
+                                                                "description": "Do not write result to output.",
+                                                                "type": "boolean",
+                                                                "default": true
                                                             },
                                                             "type": {
                                                                 "enum": [
