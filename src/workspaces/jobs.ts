@@ -16,12 +16,10 @@
  */
 
 import * as _ from 'lodash';
-import * as childProcess from 'child_process';
 import * as cron from 'cron';
 import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
 import * as ego_workspace from '../workspace';
-import * as path from 'path';
 
 
 /**
@@ -133,86 +131,24 @@ function createActionFunction(
                 case '':
                 case 'shell':
                     {
-                        const SHELL_ACTION = <ego_contracts.JobItemShellCommandAction>item.action;
-
-                        func = () => {
-                            return new Promise((resolve, reject) => {
-                                try {
-                                    let currentWorkDirectory = WORKSPACE.replaceValues(SHELL_ACTION.cwd);
-                                    if ('' === currentWorkDirectory.trim()) {
-                                        currentWorkDirectory = WORKSPACE.rootPath;
-                                    }
-                                    if (!path.isAbsolute(currentWorkDirectory)) {
-                                        currentWorkDirectory = path.join(
-                                            WORKSPACE.rootPath, currentWorkDirectory
-                                        );
-                                    }
-                                    path.resolve(
-                                        WORKSPACE.replaceValues(currentWorkDirectory)
-                                    );
-
-                                    childProcess.exec(
-                                        WORKSPACE.replaceValues(SHELL_ACTION.command),
-                                        {
-                                            cwd: path.resolve(
-                                                currentWorkDirectory
-                                            ),
-                                        },
-                                        (err) => {
-                                            if (err) {
-                                                reject(err);
-                                            } else {
-                                                resolve();
-                                            }
-                                        }
-                                    );
-                                } catch (e) {
-                                    reject(e);
+                        func = async () => {
+                            await WORKSPACE.runShellCommand(
+                                <ego_contracts.JobItemShellCommandAction>item.action,
+                                {
+                                    noProgress: true,
                                 }
-                            });
+                            );
                         };
                     }
                     break;
 
                 case 'script':
                     {
-                        const SCRIPT_ACTION = <ego_contracts.JobItemScriptAction>item.action;
-
                         func = async () => {
-                            const SCRIPT_PATH = WORKSPACE.replaceValues(
-                                SCRIPT_ACTION.script
+                            await WORKSPACE.executeScript(
+                                <ego_contracts.JobItemScriptAction>item.action,
+                                (args) => args,
                             );
-
-                            const FULL_SCRIPT_PATH = WORKSPACE.getExistingFullPath(
-                                SCRIPT_PATH
-                            );
-
-                            if (false === FULL_SCRIPT_PATH) {
-                                throw new Error(`Script '${ SCRIPT_PATH }' not found!`);
-                            }
-
-                            const SCRIPT_MODULE = ego_helpers.loadModule<ego_contracts.JobItemScriptActionModule>(
-                                FULL_SCRIPT_PATH
-                            );
-                            if (SCRIPT_MODULE) {
-                                if (SCRIPT_MODULE.execute) {
-                                    const ARGS: ego_contracts.JobItemScriptActionArguments = {
-                                        logger: WORKSPACE.logger,
-                                        options: ego_helpers.cloneObject(SCRIPT_ACTION.options),
-                                        output: WORKSPACE.output,
-                                        replaceValues: (val) => {
-                                            return WORKSPACE.replaceValues(val);
-                                        },
-                                        require: (id) => {
-                                            return ego_helpers.requireModule(id);
-                                        }
-                                    };
-
-                                    await Promise.resolve(
-                                        SCRIPT_MODULE.execute(ARGS)
-                                    );
-                                }
-                            }
                         };
                     }
                     break;

@@ -676,15 +676,7 @@ export interface JobItemAction {
 /**
  * A job item action running a script.
  */
-export interface JobItemScriptAction extends JobItemAction {
-    /**
-     * Options for running the script.
-     */
-    options?: any;
-    /**
-     * The path to the script to invoke.
-     */
-    script: string;
+export interface JobItemScriptAction extends JobItemAction, WithScript {
 }
 
 /**
@@ -696,27 +688,19 @@ export interface JobItemScriptActionArguments extends WorkspaceScriptArguments {
 /**
  * Job item script module.
  */
-export interface JobItemScriptActionModule {
-    /**
-     * Executes the module.
-     *
-     * @param {JobItemScriptArguments} args Arguments for the execution.
-     */
-    readonly execute: (args: JobItemScriptActionArguments) => any;
+export interface JobItemScriptActionModule extends ScriptModule<JobItemScriptActionArguments> {
 }
 
 /**
  * A job item action running a shell command.
  */
-export interface JobItemShellCommandAction extends JobItemAction {
-    /**
-     * The custom working directory.
-     */
-    cwd?: string;
-    /**
-     * The shell command to execute.
-     */
-    command: string;
+export interface JobItemShellCommandAction extends JobItemAction, ShellCommand {
+}
+
+/**
+ * A progress context of a 'vscode.window.withProgress()' task.
+ */
+export interface ProgressContext extends vscode.Progress<{ message?: string; increment?: number }> {
 }
 
 /**
@@ -817,6 +801,18 @@ export interface ScriptEventAction extends EventAction {
      * The path to the script, that should be executed.
      */
     script: string;
+}
+
+/**
+ * A general script module.
+ */
+export interface ScriptModule<TArgs extends ScriptArguments = ScriptArguments> {
+    /**
+     * Executes the module.
+     *
+     * @param {TArgs} args The arguments for the execution.
+     */
+    readonly execute: (args: TArgs) => any;
 }
 
 /**
@@ -930,6 +926,20 @@ export interface WebViewLogMessageData {
  * Options for a web view with a panel.
  */
 export type WebViewWithPanelOptions = vscode.WebviewPanelOptions & vscode.WebviewOptions;
+
+/**
+ * An object that uses a script.
+ */
+export interface WithScript {
+    /**
+     * Options for running the script.
+     */
+    options?: any;
+    /**
+     * The path to the script to invoke.
+     */
+    script: string;
+}
 
 /**
  * An object which contains one or more value entries.

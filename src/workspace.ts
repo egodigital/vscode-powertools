@@ -34,6 +34,16 @@ import * as vscode from 'vscode';
 
 
 /**
+ * Options for 'Workspace.runShellCommand()' methods.
+ */
+export interface RunShellCommandOptions {
+    /**
+     * Do not show progress window.
+     */
+    noProgress?: boolean;
+}
+
+/**
  * A context for a workspace instaqnce.
  */
 export interface WorkspaceContext {
@@ -105,6 +115,63 @@ export class Workspace extends ego_helpers.WorkspaceBase {
      */
     public get configSource() {
         return this._configSrc;
+    }
+
+    /**
+     * Executes a script.
+     *
+     * @param {TSettings} settings The object with the settings.
+     * @param {Function} argsFactory The function that produces the argument object for the execution.
+     *
+     * @return {Promise<any>} The promise with the result of the execution.
+     */
+    public async executeScript<
+        TArgs extends ego_contracts.WorkspaceScriptArguments,
+        TSettings extends ego_contracts.WithScript = ego_contracts.WithScript
+    >(
+        settings: TSettings,
+        argsFactory: (args: TArgs, settings: TSettings) => TArgs | PromiseLike<TArgs>
+    ): Promise<any> {
+        const SCRIPT_PATH = this.replaceValues(
+            settings.script
+        );
+
+        const FULL_SCRIPT_PATH = this.getExistingFullPath(
+            SCRIPT_PATH
+        );
+
+        if (false === FULL_SCRIPT_PATH) {
+            throw new Error(`Script '${ SCRIPT_PATH }' not found!`);
+        }
+
+        const SCRIPT_MODULE = ego_helpers.loadModule<ego_contracts.ScriptModule>(
+            FULL_SCRIPT_PATH
+        );
+        if (SCRIPT_MODULE) {
+            if (SCRIPT_MODULE.execute) {
+                const BASE_ARGS: ego_contracts.WorkspaceScriptArguments = {
+                    logger: this.logger,
+                    options: ego_helpers.cloneObject(settings.options),
+                    output: this.output,
+                    replaceValues: (val) => {
+                        return this.replaceValues(val);
+                    },
+                    require: (id) => {
+                        return ego_helpers.requireModule(id);
+                    }
+                };
+
+                const ARGS: TArgs = await Promise.resolve(
+                    argsFactory(
+                        <any>BASE_ARGS, settings
+                    )
+                );
+
+                return await Promise.resolve(
+                    SCRIPT_MODULE.execute(ARGS)
+                );
+            }
+        }
     }
 
     /**
@@ -599,8 +666,13 @@ export class Workspace extends ego_helpers.WorkspaceBase {
      * Runs a shell command for that workspace and shows it progress in the GUI.
      *
      * @param {ego_contracts.ShellCommand} shellCmd The command to run.
+     * @param {RunShellCommandOptions} [opts] Custom options.
      */
-    public async runShellCommand(shellCmd: ego_contracts.ShellCommand) {
+    public async runShellCommand(shellCmd: ego_contracts.ShellCommand, opts?: RunShellCommandOptions) {
+        if (!opts) {
+            opts = <any>opts;
+        }
+
         const COMMAND_TO_EXECUTE = this.replaceValues(
             shellCmd.command
         );
@@ -620,12 +692,7 @@ export class Workspace extends ego_helpers.WorkspaceBase {
 
         const SILENT = ego_helpers.toBooleanSafe(shellCmd.silent, true);
 
-        // run command
-        await vscode.window.withProgress({
-            cancellable: false,
-            location: vscode.ProgressLocation.Notification,
-            title: 'Shell Command',
-        }, (progress) => {
+        const COMMAND_ACTION = (progress: ego_contracts.ProgressContext) => {
             return new Promise<void>((resolve, reject) => {
                 const COMPLETED = (err: any, result?: string) => {
                     const WRITE_RESULT = () => {
@@ -660,9 +727,11 @@ export class Workspace extends ego_helpers.WorkspaceBase {
                     this.output
                         .append(`Running shell command '${ COMMAND_TO_EXECUTE }' ... `);
 
-                    progress.report({
-                        message: `Running '${ COMMAND_TO_EXECUTE }' ...`,
-                    });
+                    if (progress) {
+                        progress.report({
+                            message: `Running '${ COMMAND_TO_EXECUTE }' ...`,
+                        });
+                    }
 
                     childProcess.exec(COMMAND_TO_EXECUTE, {
                         cwd: cwd,
@@ -673,7 +742,20 @@ export class Workspace extends ego_helpers.WorkspaceBase {
                     COMPLETED(e);
                 }
             });
-        });
+        };
+
+        // run command
+        if (ego_helpers.toBooleanSafe(opts.noProgress)) {
+            await COMMAND_ACTION(null);
+        } else {
+            await vscode.window.withProgress({
+                cancellable: false,
+                location: vscode.ProgressLocation.Notification,
+                title: 'Shell Command',
+            }, async (progress) => {
+                await COMMAND_ACTION(progress);
+            });
+        }
     }
 
     /**
