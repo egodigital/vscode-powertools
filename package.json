@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.57",
+    "version": "0.0.58",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -466,6 +466,33 @@
                                                 "description": "Run on startup or not.",
                                                 "type": "boolean",
                                                 "default": true
+                                            },
+                                            "button": {
+                                                "description": "Settings for an optional button.",
+                                                "type": "object",
+                                                "properties": {
+                                                    "color": {
+                                                        "description": "The color.",
+                                                        "type": "string"
+                                                    },
+                                                    "isRight": {
+                                                        "description": "Display button on the right side or not.",
+                                                        "type": "boolean",
+                                                        "default": false
+                                                    },
+                                                    "priority": {
+                                                        "description": "The priority.",
+                                                        "type": "number"
+                                                    },
+                                                    "text": {
+                                                        "description": "The label / text.",
+                                                        "type": "string"
+                                                    },
+                                                    "tooltip": {
+                                                        "description": "The tooltip.",
+                                                        "type": "string"
+                                                    }
+                                                }
                                             },
                                             "description": {
                                                 "description": "A description for the job.",

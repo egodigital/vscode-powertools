@@ -235,7 +235,7 @@ export function requireModule<TModule = any>(id: string): TModule {
 export async function showErrorMessage(err: any) {
     if (err) {
         return await vscode.window.showErrorMessage(
-            toStringSafe(err).trim()
+            errorToString(err).trim()
         );
     }
 }

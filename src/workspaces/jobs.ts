@@ -20,13 +20,281 @@ import * as cron from 'cron';
 import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
 import * as ego_workspace from '../workspace';
+import * as vscode from 'vscode';
 
 
 /**
  * Name of the key for storing job instances.
  */
 export const KEY_JOBS = 'jobs';
+let nextJobButtonCommandId = Number.MIN_SAFE_INTEGER;
 
+
+function createActionFunction(
+    item: ego_contracts.CronJobItem,
+    buttonProvider: () => vscode.StatusBarItem,
+) {
+    const WORKSPACE: ego_workspace.Workspace = this;
+
+    let func: Function;
+
+    if (item.action) {
+        let jobAction: ego_contracts.JobItemAction;
+        if (_.isObjectLike(item.action)) {
+            jobAction = <ego_contracts.JobItemAction>item.action;
+        } else {
+            jobAction = <ego_contracts.JobItemShellCommandAction>{
+                command: ego_helpers.toStringSafe(
+                    item.action
+                ),
+            };
+        }
+
+        if (jobAction) {
+            switch (ego_helpers.normalizeString(jobAction.type)) {
+                case '':
+                case 'shell':
+                    {
+                        func = async () => {
+                            await WORKSPACE.runShellCommand(
+                                <ego_contracts.JobItemShellCommandAction>item.action,
+                                {
+                                    noProgress: true,
+                                }
+                            );
+                        };
+                    }
+                    break;
+
+                case 'script':
+                    {
+                        func = async () => {
+                            await WORKSPACE.executeScript<ego_contracts.JobItemScriptActionArguments>(
+                                <ego_contracts.JobItemScriptAction>item.action,
+                                (args) => {
+                                    // args.button
+                                    Object.defineProperty(args, 'button', {
+                                        get: () => {
+                                            return buttonProvider();
+                                        }
+                                    });
+
+                                    return args;
+                                },
+                            );
+                        };
+                    }
+                    break;
+            }
+        }
+    }
+
+    return func;
+}
+
+function createNewCronJob(item: ego_contracts.CronJobItem) {
+    const WORKSPACE: ego_workspace.Workspace = this;
+
+    let newJob: ego_contracts.WorkspaceJob;
+
+    const FORMAT = ego_helpers.normalizeString(
+        ego_helpers.normalizeString(item.format)
+    );
+
+    let cronTime: string | Date | false = false;
+    switch (FORMAT) {
+        case '':
+        case 'crontab':
+            cronTime = WORKSPACE.replaceValues(
+                item.time
+            ).trim();
+            break;
+    }
+
+    if (false !== cronTime) {
+        let newButton: vscode.StatusBarItem;
+        let newButtonCommand: vscode.Disposable;
+
+        const DISPOSE_BUTTON = () => {
+            ego_helpers.tryDispose(newButton);
+            ego_helpers.tryDispose(newButtonCommand);
+        };
+
+        const UPDATE_BUTTON_TEXT = () => {
+            const ICON = newJob.isRunning ?
+                'primitive-square' : 'triangle-right';
+
+            newButton.text = `$(${ ICON })  ` + WORKSPACE.replaceValues(
+                item.button.text
+            ).trim();
+        };
+
+        const UPDATE_BUTTON = () => {
+            if (newButton && item.button) {
+                UPDATE_BUTTON_TEXT();
+            }
+        };
+
+        try {
+            const TICK_ACTION = createActionFunction.apply(
+                WORKSPACE,
+                [
+                    item,
+                    () => newButton,
+                ]
+            );
+
+            const GET_NAME = () => {
+                let name = WORKSPACE.replaceValues(
+                    item.name
+                ).trim();
+                if ('' === name) {
+                    name = <string>cronTime;
+                }
+
+                return name;
+            };
+
+            const GET_DESCRIPTION = () => {
+                let description = ego_helpers.toStringSafe(
+                    item.description
+                ).trim();
+                if ('' === description) {
+                    description = undefined;
+                }
+
+                return description;
+            };
+
+            let isExecutingJob = false;
+            const NEW_CRON = new cron.CronJob(
+                cronTime,
+                () => {
+                    if (isExecutingJob) {
+                        return;
+                    }
+
+                    isExecutingJob = true;
+                    (async () => {
+                        if (TICK_ACTION) {
+                            return await Promise.resolve(
+                                TICK_ACTION()
+                            );
+                        }
+                    })().then(() => {
+                        isExecutingJob = false;
+                    }).catch((err) => {
+                        isExecutingJob = false;
+
+                        WORKSPACE.logger.trace(
+                            err, `jobs.reloadJobs(2:${ GET_NAME() })`
+                        );
+                    });
+                },
+                null,  // onComplete()
+                false,  // start
+                null,  // timeZone
+                null,  // context
+                false,  // runOnInit
+            );
+
+            if (ego_helpers.toBooleanSafe(item.autoStart, true)) {
+                NEW_CRON.start();
+            }
+
+            newJob = {
+                description: undefined,
+                dispose: function() {
+                    DISPOSE_BUTTON();
+
+                    if (this.isRunning) {
+                        this.stop();
+                    }
+                },
+                isRunning: undefined,
+                name: undefined,
+                start: function () {
+                    if (!this.isRunning) {
+                        isExecutingJob = false;
+                        NEW_CRON.start();
+
+                        UPDATE_BUTTON();
+                        return true;
+                    }
+
+                    return false;
+                },
+                stop: function () {
+                    if (this.isRunning) {
+                        NEW_CRON.stop();
+                        isExecutingJob = false;
+
+                        UPDATE_BUTTON();
+                        return true;
+                    }
+
+                    return false;
+                }
+            };
+
+            // newJob.description
+            Object.defineProperty(newJob, 'description', {
+                get: () => {
+                    return GET_DESCRIPTION();
+                }
+            });
+
+            // newJob.isRunning
+            Object.defineProperty(newJob, 'isRunning', {
+                get: () => {
+                    return NEW_CRON.running;
+                }
+            });
+
+            // newJob.name
+            Object.defineProperty(newJob, 'name', {
+                get: () => {
+                    return GET_NAME();
+                }
+            });
+
+            if (item.button) {
+                const ID = nextJobButtonCommandId++;
+                const CMD_ID = `ego.power-tools.buttons.jobBtn${ ID }`;
+
+                newButtonCommand = vscode.commands.registerCommand(CMD_ID, async () => {
+                    try {
+                        if (newJob.isRunning) {
+                            newJob.stop();
+                        } else {
+                            newJob.start();
+                        }
+                    } catch (e) {
+                        ego_helpers.showErrorMessage(e);
+                    }
+                });
+
+                newButton = ego_helpers.buildButtonSync(item.button, (btn) => {
+                    btn.color = WORKSPACE.replaceValues(btn.color);
+                    btn.tooltip = WORKSPACE.replaceValues(btn.tooltip);
+                    btn.command = CMD_ID;
+                });
+
+                UPDATE_BUTTON();
+
+                newButton.show();
+            }
+        } catch (e) {
+            DISPOSE_BUTTON();
+
+            WORKSPACE.logger.trace(
+                e, `jobs.reloadJobs(1)`
+            );
+        }
+    }
+
+    return newJob;
+}
 
 /**
  * Disposes all workspace jobs.
@@ -104,178 +372,4 @@ export async function reloadJobs() {
             );
         }
     });
-}
-
-
-function createActionFunction(
-    item: ego_contracts.CronJobItem
-) {
-    const WORKSPACE: ego_workspace.Workspace = this;
-
-    let func: Function;
-
-    if (item.action) {
-        let jobAction: ego_contracts.JobItemAction;
-        if (_.isObjectLike(item.action)) {
-            jobAction = <ego_contracts.JobItemAction>item.action;
-        } else {
-            jobAction = <ego_contracts.JobItemShellCommandAction>{
-                command: ego_helpers.toStringSafe(
-                    item.action
-                ),
-            };
-        }
-
-        if (jobAction) {
-            switch (ego_helpers.normalizeString(jobAction.type)) {
-                case '':
-                case 'shell':
-                    {
-                        func = async () => {
-                            await WORKSPACE.runShellCommand(
-                                <ego_contracts.JobItemShellCommandAction>item.action,
-                                {
-                                    noProgress: true,
-                                }
-                            );
-                        };
-                    }
-                    break;
-
-                case 'script':
-                    {
-                        func = async () => {
-                            await WORKSPACE.executeScript(
-                                <ego_contracts.JobItemScriptAction>item.action,
-                                (args) => args,
-                            );
-                        };
-                    }
-                    break;
-            }
-        }
-    }
-
-    return func;
-}
-
-function createNewCronJob(item: ego_contracts.CronJobItem) {
-    const WORKSPACE: ego_workspace.Workspace = this;
-
-    let newJob: ego_contracts.WorkspaceJob;
-
-    const FORMAT = ego_helpers.normalizeString(
-        ego_helpers.normalizeString(item.format)
-    );
-
-    let cronTime: string | Date | false = false;
-    switch (FORMAT) {
-        case '':
-        case 'crontab':
-            cronTime = WORKSPACE.replaceValues(
-                item.time
-            ).trim();
-            break;
-    }
-
-    if (false !== cronTime) {
-        try {
-            const TICK_ACTION = createActionFunction.apply(
-                WORKSPACE,
-                [ item ]
-            );
-
-            let name = ego_helpers.toStringSafe(
-                item.name
-            ).trim();
-            if ('' === name) {
-                name = cronTime;
-            }
-
-            let description = ego_helpers.toStringSafe(
-                item.description
-            ).trim();
-            if ('' === description) {
-                description = undefined;
-            }
-
-            let isExecutingJob = false;
-            const NEW_CRON = new cron.CronJob(
-                cronTime,
-                () => {
-                    if (isExecutingJob) {
-                        return;
-                    }
-
-                    isExecutingJob = true;
-                    (async () => {
-                        if (TICK_ACTION) {
-                            return await Promise.resolve(
-                                TICK_ACTION()
-                            );
-                        }
-                    })().then(() => {
-                        isExecutingJob = false;
-                    }).catch((err) => {
-                        isExecutingJob = false;
-
-                        WORKSPACE.logger.trace(
-                            err, `jobs.reloadJobs(2:${ name })`
-                        );
-                    });
-                },
-                null,  // onComplete()
-                false,  // start
-                null,  // timeZone
-                null,  // context
-                false,  // runOnInit
-            );
-
-            if (ego_helpers.toBooleanSafe(item.autoStart, true)) {
-                NEW_CRON.start();
-            }
-
-            newJob = {
-                description: description,
-                dispose: function() {
-                    this.stop();
-                },
-                isRunning: undefined,
-                name: name,
-                start: function () {
-                    if (!this.isRunning) {
-                        isExecutingJob = false;
-                        NEW_CRON.start();
-
-                        return true;
-                    }
-
-                    return false;
-                },
-                stop: function () {
-                    if (this.isRunning) {
-                        NEW_CRON.stop();
-                        isExecutingJob = false;
-
-                        return true;
-                    }
-
-                    return false;
-                }
-            };
-
-            // newJob.isRunning
-            Object.defineProperty(newJob, 'isRunning', {
-                get: () => {
-                    return NEW_CRON.running;
-                }
-            });
-        } catch (e) {
-            WORKSPACE.logger.trace(
-                e, `jobs.reloadJobs(1)`
-            );
-        }
-    }
-
-    return newJob;
 }

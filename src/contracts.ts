@@ -439,6 +439,13 @@ export interface Conditional {
     'if'?: string;
 }
 
+
+/**
+ * A button for a cron jon.
+ */
+export interface CronJobButton extends Button {
+}
+
 /**
  * A cron job.
  */
@@ -447,6 +454,10 @@ export interface CronJobItem extends JobItem {
      * Run on startup or not.
      */
     autoStart?: boolean;
+    /**
+     * On optional button to define.
+     */
+    button?: CronJobButton;
     /**
      * The format of the value in 'time'.
      */
@@ -657,6 +668,10 @@ export interface JobItemScriptAction extends JobItemAction, WithScript {
  * Arguments for a job item script.
  */
 export interface JobItemScriptActionArguments extends WorkspaceScriptArguments {
+    /**
+     * The underlying button (if available).
+     */
+    readonly button: vscode.StatusBarItem;
 }
 
 /**
