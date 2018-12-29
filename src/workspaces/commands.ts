@@ -105,41 +105,19 @@ export async function reloadCommands() {
             try {
                 newCommand = vscode.commands.registerCommand(ID, async function() {
                     try {
-                        const SCRIPT_PATH = WORKSPACE.replaceValues(
-                            item.script
-                        );
-
-                        const FULL_SCRIPT_PATH = WORKSPACE.getExistingFullPath(
-                            SCRIPT_PATH
-                        );
-
-                        if (false === FULL_SCRIPT_PATH) {
-                            throw new Error(`Script '${ SCRIPT_PATH }' not found!`);
-                        }
-
-                        const SCRIPT_MODULE = ego_helpers.loadModule<ego_contracts.WorkspaceCommandScriptModule>(
-                            FULL_SCRIPT_PATH
-                        );
-                        if (SCRIPT_MODULE) {
-                            if (SCRIPT_MODULE.execute) {
-                                const ARGS: ego_contracts.WorkspaceCommandScriptArguments = {
-                                    command: key,
-                                    logger: WORKSPACE.logger,
-                                    options: ego_helpers.cloneObject(item.options),
-                                    replaceValues: (val) => {
-                                        return WORKSPACE.replaceValues(val);
+                        await WORKSPACE.executeScript<ego_contracts.WorkspaceCommandScriptArguments>(
+                            item,
+                            (args) => {
+                                // args.command
+                                Object.defineProperty(args, 'command', {
+                                    get: () => {
+                                        return key;
                                     },
-                                    output: WORKSPACE.output,
-                                    require: (id) => {
-                                        return ego_helpers.requireModule(id);
-                                    }
-                                };
+                                });
 
-                                return await Promise.resolve(
-                                    SCRIPT_MODULE.execute(ARGS)
-                                );
+                                return args;
                             }
-                        }
+                        );
                     } catch (e) {
                         WORKSPACE.logger.trace(
                             e, `workspaces.reloadCommands.execute(${ key })`

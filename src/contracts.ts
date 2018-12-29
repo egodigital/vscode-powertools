@@ -414,7 +414,7 @@ export type CommandEntry = CommandItem;
 /**
  * A command item.
  */
-export interface CommandItem extends Conditional, ForPlatforms {
+export interface CommandItem extends Conditional, ForPlatforms, WithScript {
     /**
      * Settings for an optional button.
      */
@@ -427,14 +427,6 @@ export interface CommandItem extends Conditional, ForPlatforms {
      * The name for display.
      */
     name?: string;
-    /**
-     * Options for running the script.
-     */
-    options?: any;
-    /**
-     * The path to the script that should be executed.
-     */
-    script: string;
 }
 
 /**
@@ -1022,13 +1014,7 @@ export interface WorkspaceCommandScriptArguments extends WorkspaceScriptArgument
 /**
  * A workspace command script module.
  */
-export interface WorkspaceCommandScriptModule {
-    /**
-     * Executes the script.
-     *
-     * @param {WorkspaceCommandScriptArguments} args Arguments for the execution.
-     */
-    readonly execute: (args: WorkspaceCommandScriptArguments) => any;
+export interface WorkspaceCommandScriptModule extends WorkspaceCommandScriptArguments {
 }
 
 /**

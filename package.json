@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.53",
+    "version": "0.0.54",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -633,6 +633,30 @@
                                     "description": "A value.",
                                     "oneOf": [
                                         {
+                                            "description": "A static array value.",
+                                            "type": "array"
+                                        },
+                                        {
+                                            "description": "A static boolean value.",
+                                            "type": "boolean"
+                                        },
+                                        {
+                                            "description": "A static integer value.",
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "description": "A static (null) value.",
+                                            "type": "null"
+                                        },
+                                        {
+                                            "description": "A static number/float value.",
+                                            "type": "number"
+                                        },
+                                        {
+                                            "description": "A static object value.",
+                                            "type": "object"
+                                        },
+                                        {
                                             "description": "A static string value.",
                                             "type": "string"
                                         },
@@ -671,7 +695,10 @@
                                                     ],
                                                     "type": "string"
                                                 }
-                                            }
+                                            },
+                                            "required": [
+                                                "code"
+                                            ]
                                         },
                                         {
                                             "description": "A static value.",
@@ -708,7 +735,10 @@
                                                 "value": {
                                                     "description": "The value."
                                                 }
-                                            }
+                                            },
+                                            "required": [
+                                                "value"
+                                            ]
                                         }
                                     ]
                                 }
