@@ -368,13 +368,7 @@ export interface ButtonAction {
 /**
  * A module for a script based button action.
  */
-export interface ButtonActionScriptModule {
-    /**
-     * Executes the module.
-     *
-     * @return {ButtonActionScriptArguments} args The arguments for the execution.
-     */
-    readonly execute: (args: ButtonActionScriptArguments) => any;
+export interface ButtonActionScriptModule extends ScriptModule<ButtonActionScriptArguments> {
 }
 
 /**
@@ -694,7 +688,7 @@ export interface JobItemScriptActionModule extends ScriptModule<JobItemScriptAct
 /**
  * A job item action running a shell command.
  */
-export interface JobItemShellCommandAction extends JobItemAction, ShellCommand {
+export interface JobItemShellCommandAction extends JobItemAction, WithShellCommand {
 }
 
 /**
@@ -740,21 +734,13 @@ export interface ScriptArguments {
 /**
  * A button action based on a script.
  */
-export interface ScriptButtonAction extends ButtonAction {
-    /**
-     * Options for the script.
-     */
-    options?: any;
-    /**
-     * The path of the script to execute.
-     */
-    script: string;
+export interface ScriptButtonAction extends ButtonAction, WithScript {
 }
 
 /**
  * A button action based on a shell command.
  */
-export interface ShellCommandButtonAction extends ButtonAction, ShellCommand {
+export interface ShellCommandButtonAction extends ButtonAction, WithShellCommand {
 }
 
 /**
@@ -816,27 +802,9 @@ export interface ScriptModule<TArgs extends ScriptArguments = ScriptArguments> {
 }
 
 /**
- * Settings for running a shell command.
- */
-export interface ShellCommand extends StartupItem {
-    /**
-     * The custom working directory.
-     */
-    cwd?: string;
-    /**
-     * The command to execute.
-     */
-    command: string;
-    /**
-     * Do not write result to output.
-     */
-    silent?: boolean;
-}
-
-/**
  * A startup item running a (shell) command.
  */
-export interface ShellCommandStartupItem extends ShellCommand, StartupItem {
+export interface ShellCommandStartupItem extends StartupItem, WithShellCommand {
 }
 
 /**
@@ -939,6 +907,24 @@ export interface WithScript {
      * The path to the script to invoke.
      */
     script: string;
+}
+
+/**
+ * Object that uses a shell command.
+ */
+export interface WithShellCommand {
+    /**
+     * The custom working directory.
+     */
+    cwd?: string;
+    /**
+     * The command to execute.
+     */
+    command: string;
+    /**
+     * Do not write result to output.
+     */
+    silent?: boolean;
 }
 
 /**

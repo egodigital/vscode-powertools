@@ -117,51 +117,20 @@ export async function reloadButtons() {
 
                     case 'script':
                         {
-                            const SCRIPT_ACTION = <ego_contracts.ScriptButtonAction>btnAction;
-
                             commandAction = async () => {
-                                const SCRIPT_PATH = WORKSPACE.replaceValues(
-                                    SCRIPT_ACTION.script
-                                );
-
-                                const FULL_SCRIPT_PATH = WORKSPACE.getExistingFullPath(
-                                    SCRIPT_PATH
-                                );
-
-                                if (false === FULL_SCRIPT_PATH) {
-                                    throw new Error(`Script '${ SCRIPT_PATH }' not found!`);
-                                }
-
-                                const SCRIPT_MODULE = ego_helpers.loadModule<ego_contracts.ButtonActionScriptModule>(
-                                    FULL_SCRIPT_PATH
-                                );
-                                if (SCRIPT_MODULE) {
-                                    if (SCRIPT_MODULE.execute) {
-                                        const ARGS: ego_contracts.ButtonActionScriptArguments = {
-                                            button: undefined,
-                                            logger: WORKSPACE.logger,
-                                            options: ego_helpers.cloneObject(SCRIPT_ACTION.options),
-                                            output: WORKSPACE.output,
-                                            replaceValues: (val) => {
-                                                return WORKSPACE.replaceValues(val);
-                                            },
-                                            require: (id) => {
-                                                return ego_helpers.requireModule(id);
-                                            },
-                                        };
-
+                                await WORKSPACE.executeScript<ego_contracts.ButtonActionScriptArguments>(
+                                    <ego_contracts.ScriptButtonAction>btnAction,
+                                    (args) => {
                                         // ARGS.button
-                                        Object.defineProperty(ARGS, 'button', {
+                                        Object.defineProperty(args, 'button', {
                                             get: () => {
                                                 return newButton;
                                             }
                                         });
 
-                                        await Promise.resolve(
-                                            SCRIPT_MODULE.execute(ARGS)
-                                        );
-                                    }
-                                }
+                                        return args;
+                                    },
+                                );
                             };
                         }
                         break;

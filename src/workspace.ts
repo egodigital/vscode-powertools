@@ -665,20 +665,20 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     /**
      * Runs a shell command for that workspace and shows it progress in the GUI.
      *
-     * @param {ego_contracts.ShellCommand} shellCmd The command to run.
+     * @param {ego_contracts.WithShellCommand} settings Settings with the command to run.
      * @param {RunShellCommandOptions} [opts] Custom options.
      */
-    public async runShellCommand(shellCmd: ego_contracts.ShellCommand, opts?: RunShellCommandOptions) {
+    public async runShellCommand(settings: ego_contracts.WithShellCommand, opts?: RunShellCommandOptions) {
         if (!opts) {
             opts = <any>opts;
         }
 
         const COMMAND_TO_EXECUTE = this.replaceValues(
-            shellCmd.command
+            settings.command
         );
 
         let cwd = this.replaceValues(
-            shellCmd.cwd
+            settings.cwd
         );
         if (ego_helpers.isEmptyString(cwd)) {
             cwd = this.rootPath;
@@ -690,7 +690,7 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         }
         cwd = path.resolve(cwd);
 
-        const SILENT = ego_helpers.toBooleanSafe(shellCmd.silent, true);
+        const SILENT = ego_helpers.toBooleanSafe(settings.silent, true);
 
         const COMMAND_ACTION = (progress: ego_contracts.ProgressContext) => {
             return new Promise<void>((resolve, reject) => {
