@@ -20,7 +20,14 @@
  * Options for 'run' function.
  */
 export interface RunOptions {
+    /**
+     * The code to execute.
+     */
     code: string;
+    /**
+     * (Optional) Values.
+     */
+    values?: { [name: string]: any };
 }
 
 
@@ -33,6 +40,8 @@ export interface RunOptions {
  */
 export function run<TResult = any>(_749b18b8162b474388f9d39d173483fa_tmmk: RunOptions): TResult {
     // @ts-ignore
+    const _ = require('lodash');
+    // @ts-ignore
     const $fs = require('fs-extra');
     // @ts-ignore
     const $h = require('./helpers');
@@ -40,12 +49,26 @@ export function run<TResult = any>(_749b18b8162b474388f9d39d173483fa_tmmk: RunOp
     const $m = require('moment');
     require('moment-timezone');
     // @ts-ignore
+    const $p = require('path');
+    // @ts-ignore
     const $vs = require('vscode');
 
     // @ts-ignore
     const $r = (id: string) => {
         return $h.requireModule(id);
     };
+
+    const $v: any = {};
+    if (_749b18b8162b474388f9d39d173483fa_tmmk.values) {
+        _.forIn(_749b18b8162b474388f9d39d173483fa_tmmk.values, (value: any, key: string) => {
+            Object.defineProperty($v, key, {
+                enumerable: true,
+                get: () => {
+                    return value;
+                },
+            });
+        });
+    }
 
     return eval(
         $h.toStringSafe(

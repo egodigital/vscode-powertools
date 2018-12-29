@@ -79,10 +79,10 @@ export async function reloadCommands() {
                 return;
             }
 
-            if (!ego_helpers.doesMatchPlatformCondition(item)) {
+            if (!WORKSPACE.doesMatchPlatformCondition(item)) {
                 return;
             }
-            if (!ego_helpers.doesMatchFilterCondition(item)) {
+            if (!WORKSPACE.doesMatchFilterCondition(item)) {
                 return;
             }
 
@@ -110,6 +110,7 @@ export async function reloadCommands() {
                             (args) => {
                                 // args.command
                                 Object.defineProperty(args, 'command', {
+                                    enumerable: true,
                                     get: () => {
                                         return key;
                                     },

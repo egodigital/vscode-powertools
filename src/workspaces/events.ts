@@ -75,10 +75,10 @@ export async function reloadEvents() {
 
     EVENTS.forEach(e => {
         try {
-            if (!ego_helpers.doesMatchPlatformCondition(e)) {
+            if (!WORKSPACE.doesMatchPlatformCondition(e)) {
                 return;
             }
-            if (!ego_helpers.doesMatchFilterCondition(e)) {
+            if (!WORKSPACE.doesMatchFilterCondition(e)) {
                 return;
             }
 
@@ -141,6 +141,7 @@ export async function reloadEvents() {
                                             (args) => {
                                                 // args.changeType
                                                 Object.defineProperty(args, 'changeType', {
+                                                    enumerable: true,
                                                     get: () => {
                                                         return args[0];
                                                     },
@@ -148,6 +149,7 @@ export async function reloadEvents() {
 
                                                 // args.document
                                                 Object.defineProperty(args, 'document', {
+                                                    enumerable: true,
                                                     get: () => {
                                                         return args[2];
                                                     },
@@ -155,6 +157,7 @@ export async function reloadEvents() {
 
                                                 // args.file
                                                 Object.defineProperty(args, 'file', {
+                                                    enumerable: true,
                                                     get: () => {
                                                         return args[1];
                                                     },
@@ -173,6 +176,7 @@ export async function reloadEvents() {
                                             (args) => {
                                                 // args.changeType
                                                 Object.defineProperty(args, 'changeType', {
+                                                    enumerable: true,
                                                     get: () => {
                                                         return args[0];
                                                     },
@@ -180,6 +184,7 @@ export async function reloadEvents() {
 
                                                 // args.document
                                                 Object.defineProperty(args, 'document', {
+                                                    enumerable: true,
                                                     get: () => {
                                                         return args[2];
                                                     },
@@ -187,6 +192,7 @@ export async function reloadEvents() {
 
                                                 // args.file
                                                 Object.defineProperty(args, 'file', {
+                                                    enumerable: true,
                                                     get: () => {
                                                         return args[1];
                                                     },

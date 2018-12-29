@@ -863,6 +863,18 @@ export interface ValueItem extends Conditional, ForPlatforms {
 }
 
 /**
+ * Provides values.
+ *
+ * @return {Value[]} The values.
+ */
+export type ValueProvider = () => Value[];
+
+/**
+ * An object that stores values, by their names.
+ */
+export type ValueStorage = { [name: string]: any };
+
+/**
  * Settings for view columns.
  */
 export type ViewColumnSettings = vscode.ViewColumn | { viewColumn: vscode.ViewColumn, preserveFocus?: boolean };

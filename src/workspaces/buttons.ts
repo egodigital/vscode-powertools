@@ -77,10 +77,10 @@ export async function reloadButtons() {
 
     BUTTONS.forEach(b => {
         try {
-            if (!ego_helpers.doesMatchPlatformCondition(b)) {
+            if (!WORKSPACE.doesMatchPlatformCondition(b)) {
                 return;
             }
-            if (!ego_helpers.doesMatchFilterCondition(b)) {
+            if (!WORKSPACE.doesMatchFilterCondition(b)) {
                 return;
             }
 
@@ -123,6 +123,7 @@ export async function reloadButtons() {
                                     (args) => {
                                         // ARGS.button
                                         Object.defineProperty(args, 'button', {
+                                            enumerable: true,
                                             get: () => {
                                                 return newButton;
                                             }

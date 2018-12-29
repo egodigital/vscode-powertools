@@ -140,7 +140,8 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
                 );
             },
             replaceValues: (val) => {
-                return this.workspace.replaceValues(val);
+                return this.workspace
+                    .replaceValues(val);
             },
             require: (id) => {
                 return ego_helpers.requireModule(id);
@@ -162,6 +163,7 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
 
         // ARGS.workspaces
         Object.defineProperty(ARGS, 'workspaces', {
+            enumerable: true,
             get: () => {
                 return ego_workspace.getWorkspaceList();
             }
@@ -259,10 +261,10 @@ export async function reloadApps() {
                 };
             }
 
-            if (!ego_helpers.doesMatchPlatformCondition(item)) {
+            if (!WORKSPACE.doesMatchPlatformCondition(item)) {
                 return;
             }
-            if (!ego_helpers.doesMatchFilterCondition(item)) {
+            if (!WORKSPACE.doesMatchFilterCondition(item)) {
                 return;
             }
 
@@ -357,6 +359,7 @@ export async function reloadApps() {
 
             // newApp.view
             Object.defineProperty(newApp, 'view', {
+                enumerable: true,
                 get: () => {
                     return view;
                 }

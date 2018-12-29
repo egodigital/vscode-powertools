@@ -74,6 +74,7 @@ function createActionFunction(
                                 (args) => {
                                     // args.button
                                     Object.defineProperty(args, 'button', {
+                                        enumerable: true,
                                         get: () => {
                                             return buttonProvider();
                                         }
@@ -239,6 +240,7 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
 
             // newJob.description
             Object.defineProperty(newJob, 'description', {
+                enumerable: true,
                 get: () => {
                     return GET_DESCRIPTION();
                 }
@@ -246,6 +248,7 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
 
             // newJob.isRunning
             Object.defineProperty(newJob, 'isRunning', {
+                enumerable: true,
                 get: () => {
                     return NEW_CRON.running;
                 }
@@ -253,6 +256,7 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
 
             // newJob.name
             Object.defineProperty(newJob, 'name', {
+                enumerable: true,
                 get: () => {
                     return GET_NAME();
                 }
@@ -346,10 +350,10 @@ export async function reloadJobs() {
     ];
 
     JOB_ENTRIES.forEach(entry => {
-        if (!ego_helpers.doesMatchPlatformCondition(entry)) {
+        if (!WORKSPACE.doesMatchPlatformCondition(entry)) {
             return;
         }
-        if (!ego_helpers.doesMatchFilterCondition(entry)) {
+        if (!WORKSPACE.doesMatchFilterCondition(entry)) {
             return;
         }
 

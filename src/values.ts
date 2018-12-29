@@ -20,6 +20,7 @@ import * as ego_code from './code';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as fsExtra from 'fs-extra';
+import * as os from 'os';
 import * as path from 'path';
 
 
@@ -65,10 +66,12 @@ export class CodeValue implements ego_contracts.Value {
      * Initializes a new instance of that class.
      *
      * @param {string} code The code to execute.
+     * @param {ego_contracts.ValueProvider} otherValues Provides the other values.
      * @param {string} [name] The optional name.
      */
     constructor(
         public readonly code: string,
+        public readonly otherValues: ego_contracts.ValueProvider,
         public readonly name?: string,
     ) { }
 
@@ -78,6 +81,9 @@ export class CodeValue implements ego_contracts.Value {
     public get value(): any {
         return ego_code.run({
             code: this.code,
+            values: toValueStorage(
+                this.otherValues()
+            ),
         });
     }
 }
@@ -208,6 +214,49 @@ export class StaticValue implements ego_contracts.Value {
 
 
 /**
+ * Returns the list of global values.
+ *
+ * @return { ego_contracts.Value[]} The global values.
+ */
+export function getGlobalValues(): ego_contracts.Value[] {
+    return [
+        // ${appDir}
+        new FunctionValue(() => {
+            return ego_helpers.getAppsDir();
+        }, 'appDir'),
+        // ${cwd}
+        new FunctionValue(() => {
+            return process.cwd();
+        }, 'cwd'),
+        // ${EOL}
+        new FunctionValue(() => {
+            return os.EOL;
+        }, 'EOL'),
+        // ${extensionDir}
+        new FunctionValue(() => {
+            return ego_helpers.getExtensionDirInHome();
+        }, 'extensionDir'),
+        // ${homeDir}
+        new FunctionValue(() => {
+            return os.homedir();
+        }, 'homeDir'),
+        // ${hostName}
+        new FunctionValue(() => {
+            return os.hostname();
+        }, 'hostName'),
+        // ${tempDir}
+        new FunctionValue(() => {
+            return os.tmpdir();
+        }, 'tempDir'),
+        // ${userName}
+        new FunctionValue(() => {
+            return os.userInfo()
+                .username;
+        }, 'userName'),
+    ];
+}
+
+/**
  * Handles a value as string and replaces placeholders.
  *
  * @param {ego_contracts.WithValues} obj The object with value entries.
@@ -226,13 +275,33 @@ export function replaceValues(
         opts = <any>{};
     }
 
-    const ALL_VALUES = ego_helpers.asArray(
-        opts.buildInValues
+    const ALL_VALUES = getGlobalValues().concat(
+        ego_helpers.asArray(
+            opts.buildInValues
+        )
     ).concat(
         toValues(obj, {
             pathResolver: opts.pathResolver,
         })
     );
+
+    return replaceValuesByObjects(
+        ALL_VALUES, val
+    );
+}
+
+/**
+ * Handles a value as string and replaces placeholders (by objects).
+ *
+ * @param {ego_contracts.Value|ego_contracts.Value[]} objs One or more values.
+ * @param {any} val The input value.
+ *
+ * @return {string} The output value.
+ */
+export function replaceValuesByObjects(
+    objs: ego_contracts.Value | ego_contracts.Value[], val: any,
+): string {
+    objs = ego_helpers.asArray(objs);
 
     // ${VALUE_NAME}
     val = val.replace(/(\$)(\{)([^\}]*)(\})/gm, (match, varIdentifier, openBracket, varName: string, closedBracked) => {
@@ -242,7 +311,7 @@ export function replaceValues(
 
         varName = ego_helpers.normalizeString(varName);
 
-        const LAST_VALUE = ego_helpers.from(ALL_VALUES).lastOrDefault(v => {
+        const LAST_VALUE = ego_helpers.from(<ego_contracts.Value[]>objs).lastOrDefault(v => {
             return ego_helpers.normalizeString(v.name) === varName;
         }, false);
 
@@ -279,17 +348,16 @@ export function toValues(
     if (obj) {
         const ALL_ENTRIES = obj.values;
         if (ALL_ENTRIES) {
-            for (const KEY in ALL_ENTRIES) {
-                const ENTRY = ALL_ENTRIES[KEY];
-                const NAME = ego_helpers.normalizeString(KEY);
+            _.forIn(ALL_ENTRIES, (entry, key) => {
+                const NAME = ego_helpers.normalizeString(key);
 
                 let valueItem: ego_contracts.ValueItem | false = false;
-                if (!_.isNil(ENTRY)) {
-                    if (_.isObjectLike(ENTRY)) {
-                        valueItem = <ego_contracts.ValueItem>ENTRY;
+                if (!_.isNil(entry)) {
+                    if (_.isObjectLike(entry)) {
+                        valueItem = <ego_contracts.ValueItem>entry;
                     } else {
                         valueItem = <ego_contracts.StaticValueItem>{
-                            value: ENTRY
+                            value: entry
                         };
                     }
                 }
@@ -319,6 +387,11 @@ export function toValues(
                                         VALUES.push(
                                             new CodeValue(
                                                 CODE_ITEM.code,
+                                                () => {
+                                                    return VALUES.filter(v => {
+                                                        return NAME !== ego_helpers.normalizeString(v.name);
+                                                    });
+                                                },
                                                 NAME,
                                             )
                                         );
@@ -343,9 +416,33 @@ export function toValues(
                         }
                     }
                 }
-            }
+            });
         }
     }
 
     return VALUES;
+}
+
+/**
+ * Converts a list of value objects to a grouped storage (object).
+ *
+ * @return {ego_contracts.ValueStorage} The storage.
+ */
+export function toValueStorage(values: ego_contracts.Value | ego_contracts.Value[]): ego_contracts.ValueStorage {
+    values = ego_helpers.asArray(
+        values
+    );
+
+    const STORAGE: ego_contracts.ValueStorage = {};
+    values.forEach(v => {
+        Object.defineProperty(STORAGE, v.name, {
+            configurable: true,
+            enumerable: true,
+            get: () => {
+                return v.value;
+            },
+        });
+    });
+
+    return STORAGE;
 }

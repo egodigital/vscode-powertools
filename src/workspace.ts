@@ -17,6 +17,7 @@
 
 import * as _ from 'lodash';
 import * as childProcess from 'child_process';
+import * as ego_code from './code';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_values from './values';
@@ -117,6 +118,32 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     }
 
     /**
+     * Checks if a conditional object does match items condition.
+     *
+     * @param {ego_contracts.Conditional} obj The object to check.
+     *
+     * @return {boolean} Matches condition or not.
+     */
+    public doesMatchFilterCondition(obj: ego_contracts.Conditional): boolean {
+        return this.filterConditionals(
+            obj
+        ).length > 0;
+    }
+
+    /**
+     * Checks if a platform object does match the (current) platform.
+     *
+     * @param {ego_contracts.Conditional} obj The object to check.
+     *
+     * @return {boolean} Matches condition or not.
+     */
+    public doesMatchPlatformCondition(obj: ego_contracts.ForPlatforms): boolean {
+        return this.filterForPlatform(
+            obj
+        ).length > 0;
+    }
+
+    /**
      * Executes a script.
      *
      * @param {TSettings} settings The object with the settings.
@@ -171,6 +198,66 @@ export class Workspace extends ego_helpers.WorkspaceBase {
                 );
             }
         }
+    }
+
+    /**
+     * Filters "conditional" items.
+     *
+     * @param {TObj|TObj[]} objs The objects to check.
+     *
+     * @return {TObj[]} The filtered items.
+     */
+    public filterConditionals<TObj extends ego_contracts.Conditional = ego_contracts.Conditional>(
+        objs: TObj | TObj[]
+    ): TObj[] {
+        return ego_helpers.asArray(objs).filter(o => {
+            try {
+                const IF = ego_helpers.toStringSafe(o.if);
+                if ('' !== IF.trim()) {
+                    const ALL_VALUES = this.getValues(true);
+
+                    const VALUES: any = {};
+                    ALL_VALUES.forEach(v => {
+                        Object.defineProperty(VALUES, v.name, {
+                            enumerable: true,
+                            get: () => {
+                                return v.value;
+                            },
+                        });
+                    });
+
+                    return ego_helpers.toBooleanSafe(
+                        ego_code.run({
+                            code: IF,
+                            values: VALUES,
+                        }),
+                        true
+                    );
+                }
+
+                return true;
+            } catch (e) {
+                this.logger
+                    .trace(e, 'workspace.Workspace.filterConditionals(1)');
+
+                return false;
+            }
+        });
+    }
+
+    /**
+     * Filters "platform" items.
+     *
+     * @param {TObj|TObj[]} objs The objects to check.
+     *
+     * @return {TObj[]} The filtered items.
+     */
+    public filterForPlatform<TObj extends ego_contracts.ForPlatforms>(
+        objs: TObj | TObj[]
+    ): TObj[] {
+        return ego_helpers.filterForPlatform(
+            objs
+        );
     }
 
     /**
@@ -306,6 +393,52 @@ export class Workspace extends ego_helpers.WorkspaceBase {
                 ego_workspaces_jobs.KEY_JOBS
             ]
         );
+    }
+
+    /**
+     * Returns the list of all values.
+     *
+     * @param {boolean} [all] Return also the ones from the settings. Default: (false)
+     *
+     * @return {ego_contracts.Value[]} The list of values.
+     */
+    public getValues(all?: boolean): ego_contracts.Value[] {
+        all = ego_helpers.toBooleanSafe(all);
+
+        const VALUES: ego_contracts.Value[] = [
+            new ego_values.FunctionValue(() => {
+                return this.id;
+            }, 'workspaceId'),
+            new ego_values.FunctionValue(() => {
+                return this.folder.index;
+            }, 'workspaceIndex'),
+            new ego_values.FunctionValue(() => {
+                return this.folder.name;
+            }, 'workspaceName'),
+            new ego_values.FunctionValue(() => {
+                return this.rootPath;
+            }, 'workspaceRoot'),
+            new ego_values.FunctionValue(() => {
+                return this.folder.uri;
+            }, 'workspaceUri'),
+        ];
+
+        if (all) {
+            ego_helpers.from(
+                ego_values.toValues(
+                    this.settings,
+                    {
+                        pathResolver: (p) => {
+                            return this.resolveValuePath(p);
+                        },
+                    }
+                ),
+            ).pushTo(
+                VALUES
+            );
+        }
+
+        return VALUES;
     }
 
     /**
@@ -640,51 +773,39 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         if (!this.isInFinalizeState) {
             if (this.isInitialized) {
                 val = ego_values.replaceValues(this.settings, val, {
-                    buildInValues: [
-                        new ego_values.FunctionValue(() => {
-                            return this.id;
-                        }, 'workspaceId'),
-                        new ego_values.FunctionValue(() => {
-                            return this.folder.index;
-                        }, 'workspaceIndex'),
-                        new ego_values.FunctionValue(() => {
-                            return this.folder.name;
-                        }, 'workspaceName'),
-                        new ego_values.FunctionValue(() => {
-                            return this.rootPath;
-                        }, 'workspaceRoot'),
-                        new ego_values.FunctionValue(() => {
-                            return this.folder.uri;
-                        }, 'workspaceUri'),
-                    ],
+                    buildInValues: this.getValues(),
                     pathResolver: (p: string) => {
-                        p = ego_helpers.toStringSafe(p);
-
-                        if (path.isAbsolute(p)) {
-                            p = path.resolve(p);
-
-                            if (fsExtra.existsSync(p)) {
-                                return p;
-                            }
-                        } else {
-                            for (const LU of this.getFolderLookups()) {
-                                const FULL_PATH = path.resolve(
-                                    path.join(LU, p)
-                                );
-
-                                if (fsExtra.existsSync(FULL_PATH)) {
-                                    return FULL_PATH;
-                                }
-                            }
-                        }
-
-                        return false;
+                        return this.resolveValuePath(p);
                     },
                 });
             }
         }
 
         return val;
+    }
+
+    private resolveValuePath(p: string) {
+        p = ego_helpers.toStringSafe(p);
+
+        if (path.isAbsolute(p)) {
+            p = path.resolve(p);
+
+            if (fsExtra.existsSync(p)) {
+                return p;
+            }
+        } else {
+            for (const LU of this.getFolderLookups()) {
+                const FULL_PATH = path.resolve(
+                    path.join(LU, p)
+                );
+
+                if (fsExtra.existsSync(FULL_PATH)) {
+                    return FULL_PATH;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

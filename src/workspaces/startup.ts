@@ -57,10 +57,10 @@ export async function onStartup() {
                 };
             }
 
-            if (!ego_helpers.doesMatchPlatformCondition(entry)) {
+            if (!WORKSPACE.doesMatchPlatformCondition(entry)) {
                 continue;
             }
-            if (!ego_helpers.doesMatchFilterCondition(entry)) {
+            if (!WORKSPACE.doesMatchFilterCondition(entry)) {
                 continue;
             }
 

@@ -21,6 +21,7 @@ import * as childProcess from 'child_process';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_log from './log';
+import * as ego_values from './values';
 import * as ego_workspace from './workspace';
 import * as ego_webview from './webview';
 import * as ejs from 'ejs';
@@ -490,8 +491,9 @@ export class AppWebView extends AppWebViewBase {
                 );
             },
             replaceValues: (val) => {
-                return ego_helpers.toStringSafe(
-                    val
+                return ego_values.replaceValuesByObjects(
+                    ego_values.getGlobalValues(),
+                    val,
                 );
             },
             require: (id) => {
@@ -514,6 +516,7 @@ export class AppWebView extends AppWebViewBase {
 
         // ARGS.workspaces
         Object.defineProperty(ARGS, 'workspaces', {
+            enumerable: true,
             get: () => {
                 return ego_workspace.getWorkspaceList();
             }
