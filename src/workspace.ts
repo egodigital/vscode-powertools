@@ -27,7 +27,6 @@ import * as ego_workspaces_events from './workspaces/events';
 import * as ego_workspaces_jobs from './workspaces/jobs';
 import * as ego_workspaces_startup from './workspaces/startup';
 import * as fsExtra from 'fs-extra';
-import * as os from 'os';
 import * as path from 'path';
 import * as pQueue from 'p-queue';
 import * as vscode from 'vscode';
@@ -247,25 +246,7 @@ export class Workspace extends ego_helpers.WorkspaceBase {
             ) : false;
         }
 
-        const LOOKUPS = [
-            // '.vscode' sub folder
-            // insode workspace
-            path.resolve(
-                path.join(
-                    this.rootPath, '.vscode'
-                )
-            ),
-
-            // extension's suf folder
-            // inside user's home directory
-            path.resolve(
-                path.join(
-                    os.homedir(), ego_contracts.HOMEDIR_SUBFOLDER
-                )
-            ),
-        ];
-
-        for (const LU of LOOKUPS) {
+        for (const LU of this.getFolderLookups()) {
             const FULL_PATH = path.resolve(
                 path.join(
                     LU, p
@@ -278,6 +259,27 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         }
 
         return false;
+    }
+
+    /**
+     * Returns the list of folders to lookup for relative paths.
+     *
+     * @return {string[]} Folder lookups.
+     */
+    public getFolderLookups(): string[] {
+        return [
+            // '.vscode' sub folder
+            // insode workspace
+            path.resolve(
+                path.join(
+                    this.rootPath, '.vscode'
+                )
+            ),
+
+            // extension's suf folder
+            // inside user's home directory
+            ego_helpers.getExtensionDirInHome(),
+        ];
     }
 
     /**
@@ -654,7 +656,30 @@ export class Workspace extends ego_helpers.WorkspaceBase {
                         new ego_values.FunctionValue(() => {
                             return this.folder.uri;
                         }, 'workspaceUri'),
-                    ]
+                    ],
+                    pathResolver: (p: string) => {
+                        p = ego_helpers.toStringSafe(p);
+
+                        if (path.isAbsolute(p)) {
+                            p = path.resolve(p);
+
+                            if (fsExtra.existsSync(p)) {
+                                return p;
+                            }
+                        } else {
+                            for (const LU of this.getFolderLookups()) {
+                                const FULL_PATH = path.resolve(
+                                    path.join(LU, p)
+                                );
+
+                                if (fsExtra.existsSync(FULL_PATH)) {
+                                    return FULL_PATH;
+                                }
+                            }
+                        }
+
+                        return false;
+                    },
                 });
             }
         }

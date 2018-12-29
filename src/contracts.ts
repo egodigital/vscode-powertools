@@ -578,6 +578,20 @@ export interface FileSavedEventActionScriptModule extends ScriptModule<FileSaved
 }
 
 /**
+ * A file value item.
+ */
+export interface FileValueItem extends ValueItem {
+    /**
+     * The path to the file that should be loaded.
+     */
+    file: any;
+    /**
+     * The target (data) format to use.
+     */
+    format?: string;
+}
+
+/**
  * An object for specific platforms.
  */
 export interface ForPlatforms {

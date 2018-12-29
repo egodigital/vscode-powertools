@@ -201,11 +201,23 @@ export function filterForPlatform<TObj extends ego_contracts.ForPlatforms>(
 }
 
 /**
+ * Returns the (possible path) of the extension's global apps sub folder.
+ *
+ * @return {string} The path of the extension's global apps sub folder.
+ */
+export function getAppsDir(): string {
+    return path.resolve(
+        path.join(getExtensionDirInHome(),
+                  ego_contracts.HOMEDIR_SUBFOLDER)
+    );
+}
+
+/**
  * Returns the (possible path) of the extension's sub folder inside the home directory.
  *
  * @return {string} The path of the extension's sub folder inside the home directory.
  */
-export function getExtensionDirInHome() {
+export function getExtensionDirInHome(): string {
     return path.resolve(
         path.join(os.homedir(),
                   ego_contracts.HOMEDIR_SUBFOLDER)

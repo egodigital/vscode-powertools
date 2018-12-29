@@ -177,9 +177,10 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
         const URIs: vscode.Uri[] = super.getResourceUris();
 
         // '.vscode' sub folder inside workspace
-        URIs.unshift(
+        URIs.splice(
+            1, 0,
             vscode.Uri.file(path.resolve(
-                path.join(this.workspace.rootPath, './vscode')
+                path.join(this.workspace.rootPath, '.vscode')
             ))
         );
 

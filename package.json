@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.58",
+    "version": "0.0.59",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -685,10 +685,6 @@
                                             "type": "number"
                                         },
                                         {
-                                            "description": "A static object value.",
-                                            "type": "object"
-                                        },
-                                        {
                                             "description": "A static string value.",
                                             "type": "string"
                                         },
@@ -730,6 +726,61 @@
                                             },
                                             "required": [
                                                 "code"
+                                            ]
+                                        },
+                                        {
+                                            "description": "A value from a file.",
+                                            "type": "object",
+                                            "properties": {
+                                                "file": {
+                                                    "description": "The path to the file that should be loaded.",
+                                                    "type": "string"
+                                                },
+                                                "format": {
+                                                    "description": "The target (data) format to use.",
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "b64",
+                                                        "base64",
+                                                        "bin",
+                                                        "binary",
+                                                        "blob",
+                                                        "buffer",
+                                                        "json",
+                                                        "str",
+                                                        "string"
+                                                    ]
+                                                },
+                                                "if": {
+                                                    "description": "The JavaScript code that checks the avaibility of that value.",
+                                                    "type": "string"
+                                                },
+                                                "platforms": {
+                                                    "description": "One or more platform names, that value is for.",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "enum": [
+                                                            "aix",
+                                                            "darwin",
+                                                            "freebsd",
+                                                            "linux",
+                                                            "openbsd",
+                                                            "sunos",
+                                                            "win32"
+                                                        ],
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": {
+                                                    "description": "The type.",
+                                                    "enum": [
+                                                        "file"
+                                                    ],
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "file"
                                             ]
                                         },
                                         {

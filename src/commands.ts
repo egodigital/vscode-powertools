@@ -25,7 +25,6 @@ import * as ego_workspace from './workspace';
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
 import * as moment from 'moment';
-import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
@@ -221,11 +220,7 @@ export function registerCommands(
         // logs
         vscode.commands.registerCommand('ego.power-tools.logs', async () => {
             try {
-                const LOG_DIR = path.resolve(
-                    path.join(
-                        os.homedir(), ego_contracts.HOMEDIR_SUBFOLDER
-                    )
-                );
+                const LOG_DIR = ego_helpers.getExtensionDirInHome();
 
                 const LOG_FILES: {
                     date: moment.Moment,

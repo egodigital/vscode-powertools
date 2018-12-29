@@ -22,7 +22,6 @@ import * as ego_helpers from '../helpers';
 import * as ego_webview from '../webview';
 import * as ejs from 'ejs';
 import * as fsExtra from 'fs-extra';
-import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
@@ -310,13 +309,7 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
                     const APP_TO_UNINSTALL: UninstallAppData = msg.data;
                     if (_.isObjectLike(APP_TO_UNINSTALL)) {
                         if (!ego_helpers.isEmptyString(APP_TO_UNINSTALL.source)) {
-                            const DIRS_WITH_APPS = path.resolve(
-                                path.join(
-                                    os.homedir(),
-                                    ego_contracts.HOMEDIR_SUBFOLDER,
-                                    ego_contracts.APPS_SUBFOLDER,
-                                )
-                            );
+                            const DIRS_WITH_APPS = ego_helpers.getAppsDir();
 
                             const APP_DIR = path.resolve(
                                 path.join(

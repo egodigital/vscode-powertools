@@ -194,9 +194,19 @@ export abstract class AppWebViewBase extends ego_webview.WebViewWithContextBase 
 
         // '.vscode-powertools' sub folder inside user's home directory
         URIs.unshift(
-            vscode.Uri.file(path.resolve(
-                path.join(os.homedir(), ego_contracts.HOMEDIR_SUBFOLDER)
-            ))
+            vscode.Uri.file(
+                ego_helpers.getExtensionDirInHome()
+            )
+        );
+        // script's folder
+        URIs.unshift(
+            vscode.Uri.file(
+                path.resolve(
+                    path.dirname(
+                        this.scriptFile
+                    )
+                )
+            )
         );
 
         return URIs;
@@ -819,10 +829,8 @@ export async function createApp() {
 
                 const APP_DIR = path.resolve(
                     path.join(
-                        os.homedir(),
-                        ego_contracts.HOMEDIR_SUBFOLDER,
-                        ego_contracts.APPS_SUBFOLDER,
-                        value
+                        ego_helpers.getAppsDir(),
+                        value,
                     )
                 );
                 if (fsExtra.existsSync(APP_DIR)) {
@@ -873,10 +881,8 @@ export async function createApp() {
 
     const APP_DIR = path.resolve(
         path.join(
-            os.homedir(),
-            ego_contracts.HOMEDIR_SUBFOLDER,
-            ego_contracts.APPS_SUBFOLDER,
-            NAME
+            ego_helpers.getAppsDir(),
+            NAME,
         )
     );
 
@@ -1191,13 +1197,7 @@ The app is powered by [vscode-powertools](https://marketplace.visualstudio.com/i
 export async function getInstalledApps(): Promise<ego_contracts.InstalledApp[]> {
     const APPS: ego_contracts.InstalledApp[] = [];
 
-    const DIR_WITH_APPS = path.resolve(
-        path.join(
-            os.homedir(),
-            ego_contracts.HOMEDIR_SUBFOLDER,
-            ego_contracts.APPS_SUBFOLDER
-        )
-    );
+    const DIR_WITH_APPS = ego_helpers.getAppsDir();
 
     if (await ego_helpers.isDirectory(DIR_WITH_APPS, false)) {
         for (const ITEM of await fsExtra.readdir(DIR_WITH_APPS)) {
@@ -1377,9 +1377,7 @@ export async function installAppFromFile(
 
     const APP_DIR = path.resolve(
         path.join(
-            os.homedir(),
-            ego_contracts.HOMEDIR_SUBFOLDER,
-            ego_contracts.APPS_SUBFOLDER,
+            ego_helpers.getAppsDir(),
             NAME,
         )
     );
@@ -1518,13 +1516,7 @@ export async function loadApps(
     const APPS: AppWebView[] = [];
 
     try {
-        const DIR_WITH_APPS = path.resolve(
-            path.join(
-                os.homedir(),
-                ego_contracts.HOMEDIR_SUBFOLDER,
-                ego_contracts.APPS_SUBFOLDER
-            )
-        );
+        const DIR_WITH_APPS = ego_helpers.getAppsDir();
 
         if (await ego_helpers.isDirectory(DIR_WITH_APPS)) {
             for (const APP_DIR of await fsExtra.readdir(DIR_WITH_APPS)) {
