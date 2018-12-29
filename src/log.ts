@@ -22,6 +22,10 @@ import * as os from 'os';
 import * as path from 'path';
 
 
+/**
+ * The format for log files.
+ */
+export const LOG_FILE_FORMAT = 'YYYYMMDD';
 const NEW_CONSOLE_LOGGER = ego_helpers.createLogger();
 
 // write to console
@@ -120,7 +124,7 @@ NEW_CONSOLE_LOGGER.addAction((ctx) => {
     const LOG_FILE = path.resolve(
         path.join(
             LOGS_DIR,
-            `${TIME.format('YYYYMMDD')}.log`
+            `${TIME.format(LOG_FILE_FORMAT)}.log`
         )
     );
 

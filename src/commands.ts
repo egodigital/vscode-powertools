@@ -17,10 +17,16 @@
 
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
+import * as ego_log from './log';
 import * as ego_resources from './resources';
 import * as ego_scripts from './scripts';
 import * as ego_settings_global from './settings/global';
 import * as ego_workspace from './workspace';
+import * as fs from 'fs';
+import * as fsExtra from 'fs-extra';
+import * as moment from 'moment';
+import * as os from 'os';
+import * as path from 'path';
 import * as vscode from 'vscode';
 
 
@@ -207,6 +213,102 @@ export function registerCommands(
         vscode.commands.registerCommand('ego.power-tools.globalSettings', async () => {
             try {
                 await ego_settings_global.openGlobalSettings(context);
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }),
+
+        // logs
+        vscode.commands.registerCommand('ego.power-tools.logs', async () => {
+            try {
+                const LOG_DIR = path.resolve(
+                    path.join(
+                        os.homedir(), ego_contracts.HOMEDIR_SUBFOLDER
+                    )
+                );
+
+                const LOG_FILES: {
+                    date: moment.Moment,
+                    path: string,
+                    stats: fs.Stats,
+                }[] = [];
+
+                if (await ego_helpers.isDirectory(LOG_DIR, false)) {
+                    for (const ITEM of await fsExtra.readdir(LOG_DIR)) {
+                        try {
+                            const FULL_ITEM_PATH = path.resolve(
+                                path.join(
+                                    LOG_DIR, ITEM
+                                )
+                            );
+
+                            const STATS = await fsExtra.stat(
+                                FULL_ITEM_PATH
+                            );
+
+                            if (STATS.isFile()) {
+                                if (FULL_ITEM_PATH.endsWith('.log')) {
+                                    const DATE = moment.utc(
+                                        path.basename(
+                                            ITEM, path.extname(ITEM)
+                                        ),
+                                        ego_log.LOG_FILE_FORMAT
+                                    );
+
+                                    if (DATE.isValid()) {
+                                        LOG_FILES.push({
+                                            date: DATE,
+                                            path: FULL_ITEM_PATH,
+                                            stats: STATS,
+                                        });
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            ego_log.CONSOLE
+                                   .trace(e, 'ego.power-tools.logs(1)');
+                        }
+                    }
+                }
+
+                const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = ego_helpers.from(
+                    LOG_FILES
+                ).orderByDescending(lf => {
+                    return lf.date
+                        .format('YYYYMMDD');
+                }).select(lf => {
+                    return {
+                        action: async () => {
+                            await ego_helpers.openAndShowTextDocument(
+                                lf.path
+                            );
+                        },
+                        detail: `Last Change: ${ moment(lf.stats.mtime).format('YYYY-MM-DD HH:mm:ss') }`,
+                        label: lf.date
+                            .format('YYYY-MM-DD'),
+                    };
+                }).toArray();
+
+                if (QUICK_PICKS.length < 1) {
+                    vscode.window
+                        .showWarningMessage('No log files found!');
+
+                    return;
+                }
+
+                const SELECTED_ITEM = await vscode.window.showQuickPick(
+                    QUICK_PICKS,
+                    {
+                        canPickMany: false,
+                        placeHolder: 'Select the log file, you would like to open ...',
+                    }
+                );
+
+                if (SELECTED_ITEM) {
+                    await Promise.resolve(
+                        SELECTED_ITEM.action()
+                    );
+                }
             } catch (e) {
                 ego_helpers.showErrorMessage(e);
             }
