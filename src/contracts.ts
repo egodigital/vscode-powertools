@@ -537,13 +537,7 @@ export interface FileChangeEventActionScriptArguments extends WorkspaceScriptArg
 /**
  * A script module that is executed on a file / folder change.
  */
-export interface FileChangeEventActionScriptModule {
-    /**
-     * Executes the script.
-     *
-     * @param {FileChangeEventActionScriptArguments} args Arguments for the execution.
-     */
-    readonly execute: (args: FileChangeEventActionScriptArguments) => any;
+export interface FileChangeEventActionScriptModule extends ScriptModule<FileChangeEventActionScriptArguments> {
 }
 
 /**
@@ -569,13 +563,7 @@ export interface FileSavedEventActionScriptArguments extends FileChangeEventActi
 /**
  * A script module that is executed when a file has been saved.
  */
-export interface FileSavedEventActionScriptModule {
-    /**
-     * Executes the script.
-     *
-     * @param {FileSavedEventActionScriptArguments} args Arguments for the execution.
-     */
-    readonly execute: (args: FileSavedEventActionScriptArguments) => any;
+export interface FileSavedEventActionScriptModule extends ScriptModule<FileSavedEventActionScriptArguments> {
 }
 
 /**
@@ -770,15 +758,7 @@ export interface ScriptCommandStartupModule {
 /**
  * A script based event action.
  */
-export interface ScriptEventAction extends EventAction {
-    /**
-     * Options for the script.
-     */
-    options?: any;
-    /**
-     * The path to the script, that should be executed.
-     */
-    script: string;
+export interface ScriptEventAction extends EventAction, WithScript {
 }
 
 /**

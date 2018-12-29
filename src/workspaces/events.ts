@@ -98,14 +98,14 @@ export async function reloadEvents() {
 
                 const FILES = ego_helpers.from(
                     ego_helpers.asArray(item.files)
-                ).select(f => ego_helpers.toStringSafe(f).trim())
-                 .where(f => '' !== f)
+                ).select(f => WORKSPACE.replaceValues(f))
+                 .where(f => '' !== f.trim())
                  .toArray();
 
                 const EXCLUDE = ego_helpers.from(
                     ego_helpers.asArray(item.exclude)
-                ).select(e => ego_helpers.toStringSafe(e).trim())
-                 .where(e => '' !== e)
+                ).select(e => WORKSPACE.replaceValues(e))
+                 .where(e => '' !== e.trim())
                  .toArray();
 
                 if (EXCLUDE.length > 0) {
@@ -128,8 +128,6 @@ export async function reloadEvents() {
             switch (ego_helpers.normalizeString(e.action.type)) {
                 case 'script':
                     {
-                        const SCRIPT_ACTION = <ego_contracts.ScriptEventAction>e.action;
-
                         executeAction = async (eventType: string, ...args: any[]) => {
                             eventType = ego_helpers.normalizeString(eventType);
 
@@ -138,85 +136,65 @@ export async function reloadEvents() {
                                 case 'file.created':
                                 case 'file.deleted':
                                     if (DOES_FILE_MATCH(args[1], <ego_contracts.FileEventItem>e)) {
-                                        const SCRIPT_PATH = WORKSPACE.replaceValues(
-                                            SCRIPT_ACTION.script
-                                        );
-
-                                        const FULL_SCRIPT_PATH = WORKSPACE.getExistingFullPath(
-                                            SCRIPT_PATH
-                                        );
-
-                                        if (false === FULL_SCRIPT_PATH) {
-                                            throw new Error(`Script '${ SCRIPT_PATH }' not found!`);
-                                        }
-
-                                        const SCRIPT_MODULE = ego_helpers.loadModule<ego_contracts.FileChangeEventActionScriptModule>(
-                                            FULL_SCRIPT_PATH
-                                        );
-                                        if (SCRIPT_MODULE) {
-                                            if (SCRIPT_MODULE.execute) {
-                                                const ARGS: ego_contracts.FileChangeEventActionScriptArguments = {
-                                                    changeType: args[0],
-                                                    document: args[2],
-                                                    file: args[1],
-                                                    logger: WORKSPACE.logger,
-                                                    options: ego_helpers.cloneObject(SCRIPT_ACTION.options),
-                                                    output: WORKSPACE.output,
-                                                    replaceValues: (val) => {
-                                                        return WORKSPACE.replaceValues(val);
+                                        await WORKSPACE.executeScript<ego_contracts.FileChangeEventActionScriptArguments>(
+                                            <ego_contracts.ScriptEventAction>e.action,
+                                            (args) => {
+                                                // args.changeType
+                                                Object.defineProperty(args, 'changeType', {
+                                                    get: () => {
+                                                        return args[0];
                                                     },
-                                                    require: (id) => {
-                                                        return ego_helpers.requireModule(id);
-                                                    },
-                                                };
+                                                });
 
-                                                await Promise.resolve(
-                                                    SCRIPT_MODULE.execute(ARGS)
-                                                );
+                                                // args.document
+                                                Object.defineProperty(args, 'document', {
+                                                    get: () => {
+                                                        return args[2];
+                                                    },
+                                                });
+
+                                                // args.file
+                                                Object.defineProperty(args, 'file', {
+                                                    get: () => {
+                                                        return args[1];
+                                                    },
+                                                });
+
+                                                return args;
                                             }
-                                        }
+                                        );
                                     }
                                     break;
 
                                 case 'file.saved':
                                     if (DOES_FILE_MATCH(args[1], <ego_contracts.FileEventItem>e)) {
-                                        const SCRIPT_PATH = WORKSPACE.replaceValues(
-                                            SCRIPT_ACTION.script
-                                        );
-
-                                        const FULL_SCRIPT_PATH = WORKSPACE.getExistingFullPath(
-                                            SCRIPT_PATH
-                                        );
-
-                                        if (false === FULL_SCRIPT_PATH) {
-                                            throw new Error(`Script '${ SCRIPT_PATH }' not found!`);
-                                        }
-
-                                        const SCRIPT_MODULE = ego_helpers.loadModule<ego_contracts.FileSavedEventActionScriptModule>(
-                                            FULL_SCRIPT_PATH
-                                        );
-                                        if (SCRIPT_MODULE) {
-                                            if (SCRIPT_MODULE.execute) {
-                                                const ARGS: ego_contracts.FileSavedEventActionScriptArguments = {
-                                                    changeType: args[0],
-                                                    document: args[2],
-                                                    file: args[1],
-                                                    logger: WORKSPACE.logger,
-                                                    options: ego_helpers.cloneObject(SCRIPT_ACTION.options),
-                                                    output: WORKSPACE.output,
-                                                    replaceValues: (val) => {
-                                                        return WORKSPACE.replaceValues(val);
+                                        await WORKSPACE.executeScript<ego_contracts.FileSavedEventActionScriptArguments>(
+                                            <ego_contracts.ScriptEventAction>e.action,
+                                            (args) => {
+                                                // args.changeType
+                                                Object.defineProperty(args, 'changeType', {
+                                                    get: () => {
+                                                        return args[0];
                                                     },
-                                                    require: (id) => {
-                                                        return ego_helpers.requireModule(id);
-                                                    },
-                                                };
+                                                });
 
-                                                await Promise.resolve(
-                                                    SCRIPT_MODULE.execute(ARGS)
-                                                );
+                                                // args.document
+                                                Object.defineProperty(args, 'document', {
+                                                    get: () => {
+                                                        return args[2];
+                                                    },
+                                                });
+
+                                                // args.file
+                                                Object.defineProperty(args, 'file', {
+                                                    get: () => {
+                                                        return args[1];
+                                                    },
+                                                });
+
+                                                return args;
                                             }
-                                        }
+                                        );
                                     }
                                     break;
                             }
