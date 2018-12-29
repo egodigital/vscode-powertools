@@ -77,7 +77,7 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
      * @inheritdoc
      */
     protected onDispose() {
-        this.unsetOnAppLisUpdatedEventFunction();
+        this.unsetOnAppListUpdatedEventFunction();
 
         super.onDispose();
     }
@@ -373,7 +373,7 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
      * @inheritdoc
      */
     public async open() {
-        this.unsetOnAppLisUpdatedEventFunction();
+        this.unsetOnAppListUpdatedEventFunction();
 
         this._onAppListUpdatedEventFunction = () => {
             this.onAppListUpdated();
@@ -386,7 +386,7 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
         return await super.open();
     }
 
-    private unsetOnAppLisUpdatedEventFunction() {
+    private unsetOnAppListUpdatedEventFunction() {
         ego_helpers.tryRemoveListener(
             ego_helpers.EVENTS,
             ego_contracts.EVENT_APP_LIST_UPDATED,
