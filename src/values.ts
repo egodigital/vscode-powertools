@@ -89,6 +89,29 @@ export class CodeValue implements ego_contracts.Value {
 }
 
 /**
+ * A value from an environment variable.
+ */
+export class EnvValue implements ego_contracts.Value {
+    /**
+     * Initializes a new instance of that class.
+     *
+     * @param {string} name The name of the variable.
+     */
+    constructor(
+        public readonly name: string,
+    ) { }
+
+    /**
+     * @inheritdoc
+     */
+    public get value(): any {
+        return process.env[
+            this.name
+        ];
+    }
+}
+
+/**
  * A value that loads its value from a file.
  */
 export class FileValue implements ego_contracts.Value {
@@ -219,7 +242,7 @@ export class StaticValue implements ego_contracts.Value {
  * @return { ego_contracts.Value[]} The global values.
  */
 export function getGlobalValues(): ego_contracts.Value[] {
-    return [
+    const VALUES: ego_contracts.Value[] = [
         // ${appDir}
         new FunctionValue(() => {
             return ego_helpers.getAppsDir();
@@ -254,6 +277,15 @@ export function getGlobalValues(): ego_contracts.Value[] {
                 .username;
         }, 'userName'),
     ];
+
+    // environment variables
+    for (const ENV_NAME in process.env) {
+        VALUES.push(new EnvValue(
+            ENV_NAME
+        ));
+    }
+
+    return VALUES;
 }
 
 /**
