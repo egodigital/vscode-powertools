@@ -16,6 +16,7 @@
  */
 
 import * as _ from 'lodash';
+import * as childProcess from 'child_process';
 import * as ego_code from './code';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
@@ -23,6 +24,9 @@ import * as ego_log from './log';
 import * as fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
+
+
+const IS_LAZY_VALUE = Symbol('IS_LAZY_VALUE');
 
 
 /**
@@ -220,6 +224,49 @@ export class FunctionValue implements ego_contracts.Value {
 }
 
 /**
+ * A value that is created once on access 'value' property.
+ */
+export class LazyValue implements ego_contracts.Value {
+    private _value: any = IS_LAZY_VALUE;
+
+    /**
+     * Initializes a new instance of that class.
+     *
+     * @param {ego_contracts.Value} baseValue The base value.
+     */
+    public constructor(
+        public readonly baseValue: ego_contracts.Value
+    ) { }
+
+    /**
+     * Gets if the value has already created or not.
+     */
+    public get isValueCreated() {
+        return IS_LAZY_VALUE !== this._value;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public get name() {
+        return this.baseValue
+            .name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public get value() {
+        if (!this.isValueCreated) {
+            this._value = this.baseValue
+                .value;
+        }
+
+        return this._value;
+    }
+}
+
+/**
  * A value provided by a script.
  */
 export class ScriptValue implements ego_contracts.Value {
@@ -242,7 +289,9 @@ export class ScriptValue implements ego_contracts.Value {
         public readonly name?: string,
     ) {
         const SCRIPT_FILE = this.resolvePath(
-            script
+            replaceValuesByObjects(
+                storageToArray(this.otherValues), script
+            )
         );
         if (false !== SCRIPT_FILE) {
             this.scriptModule = ego_helpers.loadModule<ego_contracts.ScriptValueModule>(
@@ -287,6 +336,70 @@ export class ScriptValue implements ego_contracts.Value {
             return this.scriptModule
                 .getValue(ARGS);
         }
+    }
+}
+
+/**
+ * A value from a shell command.
+ */
+export class ShellCommandValue implements ego_contracts.Value {
+    /**
+     * Initializes a new instance of that class.
+     *
+     * @param {string} command The command to execute.
+     * @param {string} cwd The custom working directory.
+     * @param {boolean} trim The the result or not.
+     * @param {ego_contracts.PathResolver} resolvePath The function that resolves a (relative) path.
+     * @param {ego_contracts.ValueProvider} otherValues Provides the other values.
+     * @param {string} [name] The optional name.
+     */
+    constructor(
+        public readonly command: string,
+        public readonly cwd: string,
+        public readonly trim: boolean,
+        public readonly resolvePath: ego_contracts.PathResolver,
+        public readonly otherValues: ego_contracts.ValueProvider,
+        public readonly name?: string,
+    ) {
+        this.command = replaceValuesByObjects(
+            storageToArray(otherValues), this.command
+        );
+
+        this.cwd = replaceValuesByObjects(
+            storageToArray(otherValues), this.cwd
+        );
+
+        this.trim = ego_helpers.toBooleanSafe(this.trim, true);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public get value(): any {
+        let currentWorkDirectory: string | false;
+        if (!ego_helpers.isEmptyString(this.cwd)) {
+            currentWorkDirectory = this.resolvePath(
+                this.cwd
+            );
+        }
+        if (false === currentWorkDirectory) {
+            currentWorkDirectory = <string>undefined;
+        }
+
+        let result = ego_helpers.toStringSafe(
+            childProcess.execSync(
+                this.command,
+                {
+                    cwd: currentWorkDirectory,
+                }
+            )
+        );
+
+        if (this.trim) {
+            result = result.trim();
+        }
+
+        return result;
     }
 }
 
@@ -406,6 +519,7 @@ export function replaceValuesByObjects(
     objs: ego_contracts.Value | ego_contracts.Value[], val: any,
 ): string {
     objs = ego_helpers.asArray(objs);
+    val = ego_helpers.toStringSafe(val);
 
     // ${VALUE_NAME}
     val = val.replace(/(\$)(\{)([^\}]*)(\})/gm, (match, varIdentifier, openBracket, varName: string, closedBracked) => {
@@ -561,6 +675,25 @@ export function toValues(
                                                 GET_OTHER_VALUES,
                                                 outputProvider,
                                                 NAME,
+                                            )
+                                        );
+                                    }
+                                    break;
+
+                                case 'shell':
+                                    {
+                                        const SHELL_ITEM = <ego_contracts.ShellValueItem>valueItem;
+
+                                        VALUES.push(
+                                            new LazyValue(
+                                                new ShellCommandValue(
+                                                    SHELL_ITEM.command,
+                                                    SHELL_ITEM.cwd,
+                                                    SHELL_ITEM.trim,
+                                                    opts.pathResolver,
+                                                    GET_OTHER_VALUES,
+                                                    NAME,
+                                                )
                                             )
                                         );
                                     }

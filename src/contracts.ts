@@ -851,6 +851,24 @@ export interface ShellCommandStartupItem extends StartupItem, WithShellCommand {
 }
 
 /**
+ * Runs a shell command to provide a value.
+ */
+export interface ShellValueItem extends ValueItem {
+    /**
+     * The custom working directory.
+     */
+    cwd?: string;
+    /**
+     * The command to execute.
+     */
+    command: string;
+    /**
+     * Trim the value.
+     */
+    trim?: boolean;
+}
+
+/**
  * A startup entry.
  */
 export type StartupEntry = string | StartupItem;
