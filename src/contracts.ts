@@ -701,6 +701,22 @@ export interface JobItemShellCommandAction extends JobItemAction, WithShellComma
 }
 
 /**
+ * Provides an output channel.
+ *
+ * @return {vscode.OutputChannel} The output channel.
+ */
+export type OutputChannelProvider = () => vscode.OutputChannel;
+
+/**
+ * Resolve a full (existing) path.
+ *
+ * @param {string} path The input path.
+ *
+ * @return {string} The full path or (false) if not found.
+ */
+export type PathResolver = (path: string) => string | false;
+
+/**
  * A progress context of a 'vscode.window.withProgress()' task.
  */
 export interface ProgressContext extends vscode.Progress<{ message?: string; increment?: number }> {
@@ -800,6 +816,32 @@ export interface ScriptModule<TArgs extends ScriptArguments = ScriptArguments> {
      * @param {TArgs} args The arguments for the execution.
      */
     readonly execute: (args: TArgs) => any;
+}
+
+/**
+ * Arguments for a script value module.
+ */
+export interface ScriptValueArguments extends ScriptArguments {
+}
+
+/**
+ * A value using a script.
+ */
+export interface ScriptValueItem extends ValueItem, WithScript {
+}
+
+/**
+ * A script module providing a value.
+ */
+export interface ScriptValueModule {
+    /**
+     * Returns the value.
+     *
+     * @param {ScriptValueScriptArguments} args The arguments for the execution.
+     *
+     * @return {any} The value.
+     */
+    readonly getValue: (args: ScriptValueArguments) => any;
 }
 
 /**

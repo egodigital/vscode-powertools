@@ -19,19 +19,11 @@ import * as _ from 'lodash';
 import * as ego_code from './code';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
+import * as ego_log from './log';
 import * as fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 
-
-/**
- * Resolve a full (existing) path.
- *
- * @param {string} path The input path.
- *
- * @return {string} The full path or (false) if not found.
- */
-export type PathResolver = (path: string) => string | false;
 
 /**
  * Options for 'replaceValues()' function.
@@ -42,9 +34,13 @@ export interface ReplaceValuesOptions {
      */
     buildInValues?: ego_contracts.Value | ego_contracts.Value[];
     /**
+     * Provides an output channel.
+     */
+    outputProvider?: ego_contracts.OutputChannelProvider;
+    /**
      * The file resolver.
      */
-    pathResolver?: PathResolver;
+    pathResolver?: ego_contracts.PathResolver;
 }
 
 /**
@@ -52,9 +48,13 @@ export interface ReplaceValuesOptions {
  */
 export interface ToValuesOptions {
     /**
+     * Provides an output channel.
+     */
+    outputProvider?: ego_contracts.OutputChannelProvider;
+    /**
      * The file resolver.
      */
-    pathResolver?: PathResolver;
+    pathResolver?: ego_contracts.PathResolver;
 }
 
 
@@ -120,13 +120,13 @@ export class FileValue implements ego_contracts.Value {
      *
      * @param {string} file The path to the file.
      * @param {string} format The (target) data format.
-     * @param {PathResolver} resolvePath The function that resolves a (relative) path.
+     * @param {ego_contracts.PathResolver} resolvePath The function that resolves a (relative) path.
      * @param {string} [name] The optional name.
      */
     constructor(
         public readonly file: string,
         public readonly format: string,
-        public readonly resolvePath: PathResolver,
+        public readonly resolvePath: ego_contracts.PathResolver,
         public readonly name?: string,
     ) {
         if (!this.resolvePath) {
@@ -216,6 +216,77 @@ export class FunctionValue implements ego_contracts.Value {
      */
     public get value(): any {
         return this._FUNCTION();
+    }
+}
+
+/**
+ * A value provided by a script.
+ */
+export class ScriptValue implements ego_contracts.Value {
+    /**
+     * Initializes a new instance of that class.
+     *
+     * @param {string} script The script to execute.
+     * @param {any} options Options for the script.
+     * @param {ego_contracts.PathResolver} resolvePath The function that resolves a (relative) path.
+     * @param {ego_contracts.ValueProvider} otherValues Provides the other values.
+     * @param {ego_contracts.OutputChannelProvider} getOutput Provides the output channel.
+     * @param {string} [name] The optional name.
+     */
+    constructor(
+        public readonly script: string,
+        public readonly options: any,
+        public readonly resolvePath: ego_contracts.PathResolver,
+        public readonly otherValues: ego_contracts.ValueProvider,
+        public readonly getOutput: ego_contracts.OutputChannelProvider,
+        public readonly name?: string,
+    ) {
+        const SCRIPT_FILE = this.resolvePath(
+            script
+        );
+        if (false !== SCRIPT_FILE) {
+            this.scriptModule = ego_helpers.loadModule<ego_contracts.ScriptValueModule>(
+                SCRIPT_FILE
+            );
+        }
+    }
+
+    /**
+     * The underlying module.
+     */
+    public readonly scriptModule: ego_contracts.ScriptValueModule;
+
+    /**
+     * @inheritdoc
+     */
+    public get value(): any {
+        if (this.scriptModule) {
+            const VALUES = storageToArray(this.otherValues);
+
+            const ARGS: ego_contracts.ScriptValueArguments = {
+                logger: ego_log.CONSOLE,
+                options: ego_helpers.cloneObject(this.options),
+                output: undefined,
+                replaceValues: (val) => {
+                    return replaceValuesByObjects(
+                        VALUES, val
+                    );
+                },
+                require: (id) => {
+                    return ego_helpers.requireModule(id);
+                },
+            };
+
+            Object.defineProperty(ARGS, 'output', {
+                enumerable: true,
+                get: () => {
+                    return this.getOutput();
+                },
+            });
+
+            return this.scriptModule
+                .getValue(ARGS);
+        }
     }
 }
 
@@ -313,6 +384,7 @@ export function replaceValues(
         )
     ).concat(
         toValues(obj, {
+            outputProvider: opts.outputProvider,
             pathResolver: opts.pathResolver,
         })
     );
@@ -360,6 +432,29 @@ export function replaceValuesByObjects(
 }
 
 /**
+ * Converts a value storage to an array.
+ *
+ * @param {ego_contracts.ValueStorage} storage The storage.
+ *
+ * @return {ego_contracts.Value[]} The list of value objects.
+ */
+export function storageToArray(storage: ego_contracts.ValueStorage): ego_contracts.Value[] {
+    const VALUES: ego_contracts.Value[] = [];
+
+    if (storage) {
+        _.forIn(storage, (value, name) => {
+            VALUES.push(
+                new FunctionValue(() => {
+                    return value;
+                }, name)
+            );
+        });
+    }
+
+    return VALUES;
+}
+
+/**
  * Creates value objects from a storage of value entries.
  *
  * @param {ego_contracts.WithValues} obj The object with value entries.
@@ -375,6 +470,13 @@ export function toValues(
         opts = <any>{};
     }
 
+    let outputProvider = opts.outputProvider;
+    if (!outputProvider) {
+        outputProvider = () => {
+            return null;
+        };
+    }
+
     const VALUES: ego_contracts.Value[] = [];
 
     if (obj) {
@@ -382,6 +484,12 @@ export function toValues(
         if (ALL_ENTRIES) {
             _.forIn(ALL_ENTRIES, (entry, key) => {
                 const NAME = ego_helpers.normalizeString(key);
+
+                const GET_OTHER_VALUES: ego_contracts.ValueProvider = () => {
+                    return VALUES.filter(v => {
+                        return NAME !== ego_helpers.normalizeString(v.name);
+                    });
+                };
 
                 let valueItem: ego_contracts.ValueItem | false = false;
                 if (!_.isNil(entry)) {
@@ -419,11 +527,7 @@ export function toValues(
                                         VALUES.push(
                                             new CodeValue(
                                                 CODE_ITEM.code,
-                                                () => {
-                                                    return VALUES.filter(v => {
-                                                        return NAME !== ego_helpers.normalizeString(v.name);
-                                                    });
-                                                },
+                                                GET_OTHER_VALUES,
                                                 NAME,
                                             )
                                         );
@@ -439,6 +543,23 @@ export function toValues(
                                                 FILE_ITEM.file,
                                                 FILE_ITEM.format,
                                                 opts.pathResolver,
+                                                NAME,
+                                            )
+                                        );
+                                    }
+                                    break;
+
+                                case 'script':
+                                    {
+                                        const SCRIPT_ITEM = <ego_contracts.ScriptValueItem>valueItem;
+
+                                        VALUES.push(
+                                            new ScriptValue(
+                                                SCRIPT_ITEM.script,
+                                                SCRIPT_ITEM.options,
+                                                opts.pathResolver,
+                                                GET_OTHER_VALUES,
+                                                outputProvider,
                                                 NAME,
                                             )
                                         );

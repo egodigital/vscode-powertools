@@ -428,6 +428,9 @@ export class Workspace extends ego_helpers.WorkspaceBase {
                 ego_values.toValues(
                     this.settings,
                     {
+                        outputProvider: () => {
+                            return this.output;
+                        },
                         pathResolver: (p) => {
                             return this.resolveValuePath(p);
                         },
