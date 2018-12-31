@@ -43,7 +43,7 @@ const zip = require('node-zip');
  * Name of the key for storing app instances.
  */
 export const KEY_APPS = 'apps';
-const REGEX_APP_NAME = /^([a-z])([a-z|0-9|\_|\-]{0,})$/gm;
+// const REGEX_APP_NAME = /^([a-z])([a-z|0-9|\_|\-]{0,})$/gm;
 
 
 /**
@@ -824,20 +824,9 @@ export async function createApp() {
         await vscode.window.showInputBox({
             placeHolder: 'Enter the name of your new app here ...',
             prompt: 'App Name',
-            validateInput: (value) => {
-                value = ego_helpers.normalizeString(value);
-                if (!REGEX_APP_NAME.test(value)) {
-                    return 'Please start with a letter and use the following chars only: [a-z, 0-9, -, _]!';
-                }
-
-                const APP_DIR = path.resolve(
-                    path.join(
-                        ego_helpers.getAppsDir(),
-                        value,
-                    )
-                );
-                if (fsExtra.existsSync(APP_DIR)) {
-                    return `An app with the name '${ value }' seams already exist!`;
+            validateInput: (val) => {
+                if (ego_helpers.isEmptyString(val)) {
+                    return 'Please enter a name for the app!';
                 }
             },
         })

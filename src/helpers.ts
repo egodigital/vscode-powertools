@@ -208,7 +208,7 @@ export function filterForPlatform<TObj extends ego_contracts.ForPlatforms>(
 export function getAppsDir(): string {
     return path.resolve(
         path.join(getExtensionDirInHome(),
-                  ego_contracts.HOMEDIR_SUBFOLDER)
+                  ego_contracts.APPS_SUBFOLDER)
     );
 }
 
