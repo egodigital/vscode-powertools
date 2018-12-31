@@ -737,6 +737,9 @@ export async function buildAppPackage() {
                         });
 
                         const OUTPUT_FILE = await vscode.window.showSaveDialog({
+                            defaultUri: vscode.Uri.file(
+                                ego_helpers.getExtensionDirInHome()
+                            ),
                             filters: {
                                 'Package files (*.ego-app)': [ 'ego-app' ],
                                 'All files (*.*)': [ '*' ]

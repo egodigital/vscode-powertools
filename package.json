@@ -2,7 +2,7 @@
     "name": "vscode-powertools",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.63",
+    "version": "0.0.64",
     "engines": {
         "vscode": "^1.30.0"
     },
