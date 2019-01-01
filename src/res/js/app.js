@@ -15,6 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+/**
+ * Applies syntax highlighting to the elements of the current selector.
+ * 
+ * @param {JQuery} selector The selector.
+ */
 function ego_apply_highlight(selector) {
     if (arguments.length < 1) {
         selector = $('main');
@@ -25,6 +31,15 @@ function ego_apply_highlight(selector) {
     });
 }
 
+
+/**
+ * Creates an element from Markdown.
+ *
+ * @param {String} md The markdown content.
+ * @param {String} tag The name of the root tag. Default: div
+ * 
+ * @return {JQuery} The new element.
+ */
 function ego_from_markdown(md, tag) {
     if (arguments.length < 2) {
         tag = 'div';
@@ -99,11 +114,24 @@ function ego_from_markdown(md, tag) {
     return CONTENT;
 }
 
+/**
+ * Checks if a value is (null) or (undefined).
+ *
+ * @param {any} val The value to check.
+ * 
+ * @return {Boolean} Is (null) or (undefined).
+ */
 function ego_is_nil(val) {
     return null === val ||
            'undefined' === typeof val;
 }
 
+/**
+ * Asks the user in Visual Studio Code, if an external URL should be opened.
+ * 
+ * @param {String} url The requested URL to open.
+ * @param {String} text The display text.
+ */
 function ego_open_external_url(url, text) {
     ego_post('openExternalUrl', {
         text: ego_to_string(text),
@@ -111,6 +139,13 @@ function ego_open_external_url(url, text) {
     });
 }
 
+/**
+ * Converts a value to a string, which is NOT (null) or (undefined).
+ *
+ * @param {any} val The value to convert.
+ * 
+ * @return {String} Value as string.
+ */
 function ego_to_string(val) {
     if ('string' === typeof val) {
         return val;
