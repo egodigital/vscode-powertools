@@ -70,7 +70,7 @@ The extension makes it possible to run tasks, like scripts, on specific events.
 
 ![demo-events.gif](https://raw.githubusercontent.com/mkloubertego/vscode-powertools/master/img/demo-events.gif)
 
-For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Events)
+For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Events).
 
 #### Jobs [[&uarr;](#settings-)]
 
@@ -78,7 +78,7 @@ Jobs can be used to run tasks, like scripts or shell commands, periodically.
 
 ![demo-jobs.gif](https://raw.githubusercontent.com/mkloubertego/vscode-powertools/master/img/demo-jobs.gif)
 
-For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Jobs)
+For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Jobs).
 
 #### Scripts [[&uarr;](#settings-)]
 
@@ -86,13 +86,13 @@ Scripts can be used to any kind of custom logic for a workspace.
 
 ![demo-scripts.gif](https://raw.githubusercontent.com/mkloubertego/vscode-powertools/master/img/demo-scripts.gif)
 
-For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Scripts)
+For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Scripts).
 
 #### Startups [[&uarr;](#settings-)]
 
 *Startups* are similar to *Autostart* in Windows.
 
-For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Startups)
+For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Startups).
 
 #### Values [[&uarr;](#settings-)]
 
@@ -100,7 +100,7 @@ Values (or *placeholders*) can be used to define dynamic settings, e.g.
 
 ![demo-values.gif](https://raw.githubusercontent.com/mkloubertego/vscode-powertools/master/img/demo-values.gif)
 
-For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Values)
+For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Values).
 
 ## Contribute [[&uarr;](#table-of-contents)]
 
