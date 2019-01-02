@@ -37,7 +37,7 @@ Or search for things like `vscode-powertools` in your editor.
 
 ## How to use [[&uarr;](#table-of-contents)]
 
-### Apps [[&uarr;](#settings-)]
+### Apps [[&uarr;](#how-to-use-)]
 
 Apps are [Node.js based scripts](https://nodejs.org/), which are running with a [web view](https://code.visualstudio.com/api/extension-guides/webview) and can also interact with a [Visual Studio Code](https://code.visualstudio.com/api/references/vscode-api) instance.
 
@@ -45,7 +45,7 @@ Apps are [Node.js based scripts](https://nodejs.org/), which are running with a 
 
 For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Apps).
 
-### Buttons [[&uarr;](#settings-)]
+### Buttons [[&uarr;](#how-to-use-)]
 
 Buttons can be used to run tasks, like scripts or shell commands, by user's click.
 
@@ -53,7 +53,7 @@ Buttons can be used to run tasks, like scripts or shell commands, by user's clic
 
 For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Buttons).
 
-### Commands [[&uarr;](#settings-)]
+### Commands [[&uarr;](#how-to-use-)]
 
 To enhance your editor, you can register custom [commands](https://code.visualstudio.com/api/references/commands), which can be used from anywhere in the editor, by using the [API](https://code.visualstudio.com/api/references/vscode-api), e.g.
 
@@ -61,7 +61,7 @@ To enhance your editor, you can register custom [commands](https://code.visualst
 
 For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Commands).
 
-### Events [[&uarr;](#settings-)]
+### Events [[&uarr;](#how-to-use-)]
 
 The extension makes it possible to run tasks, like scripts, on specific events.
 
@@ -69,7 +69,7 @@ The extension makes it possible to run tasks, like scripts, on specific events.
 
 For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Events).
 
-### Jobs [[&uarr;](#settings-)]
+### Jobs [[&uarr;](#how-to-use-)]
 
 Jobs can be used to run tasks, like scripts or shell commands, periodically.
 
@@ -77,7 +77,7 @@ Jobs can be used to run tasks, like scripts or shell commands, periodically.
 
 For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Jobs).
 
-### Scripts [[&uarr;](#settings-)]
+### Scripts [[&uarr;](#how-to-use-)]
 
 Scripts can be used to any kind of custom logic for a workspace.
 
@@ -85,13 +85,13 @@ Scripts can be used to any kind of custom logic for a workspace.
 
 For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Scripts).
 
-### Startups [[&uarr;](#settings-)]
+### Startups [[&uarr;](#how-to-use-)]
 
 *Startups* are similar to *Autostart* in Windows.
 
 For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Startups).
 
-### Values [[&uarr;](#settings-)]
+### Values [[&uarr;](#how-to-use-)]
 
 Values (or *placeholders*) can be used to define dynamic settings, e.g.
 
