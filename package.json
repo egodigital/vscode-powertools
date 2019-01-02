@@ -928,11 +928,12 @@
         }
     },
     "scripts": {
-        "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
+        "doc": "(rm -r ./doc || true) && (\"./node_modules/.bin/typedoc\" --out ./doc ./src)",
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+        "watch": "tsc -watch -p ./",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test",
+        "vscode:prepublish": "npm run compile"
     },
     "devDependencies": {
         "@types/change-case": "^2.3.1",
@@ -943,7 +944,7 @@
         "@types/lodash": "^4.14.119",
         "@types/mime-types": "^2.1.0",
         "@types/mocha": "^2.2.42",
-        "@types/moment-timezone": "^0.5.9",
+        "@types/moment-timezone": "^0.5.10",
         "@types/node": "8.9.3",
         "@types/opn": "^5.1.0",
         "@types/p-queue": "^3.0.0",
@@ -951,6 +952,7 @@
         "@types/tmp": "0.0.33",
         "@types/yazl": "^2.4.1",
         "tslint": "^5.12.0",
+        "typedoc": "^0.11.1",
         "typescript": "^3.2.2",
         "vscode": "^1.1.25"
     },
