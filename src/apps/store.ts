@@ -56,7 +56,7 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
      * @inheritdoc
      */
     protected getTitle(): string {
-        return `App Store for 'vscode-powettools'`;
+        return `App Store for 'vscode-powertools'`;
     }
 
     /**
