@@ -15,11 +15,12 @@ A swiss army knife with lots of tools, extensions and (scriptable) enhancements 
 2. [How to use](#how-to-use-)
    * [Settings](#settings-)
      * [Apps](#apps-)
+     * [Buttons](#buttons-)
      * [Commands](#commands-)
+     * [Events](#events-)
      * [Jobs](#jobs-)
-       * [Actions](#actions-)
-         * [Scripts](#scripts-)
-     * [StartUps](#startups-)
+     * [Scripts](#scripts-)
+     * [Startups](#startups-)
      * [Values](#values-)
 3. [Contribute](#contribute-)
 4. [Related projects](#related-projects-)
@@ -41,203 +42,65 @@ Or search for things like `vscode-powertools` in your editor.
 
 #### Apps [[&uarr;](#settings-)]
 
-An app is a [Node.js script](https://nodejs.org/), which runs inside a web view.
+Apps are [Node.js based scripts](https://nodejs.org/), which are running with a [web view](https://code.visualstudio.com/api/extension-guides/webview) and can also interact with a [Visual Studio Code](https://code.visualstudio.com/api/references/vscode-api) instance.
 
-To register an app for a workspace, create an `apps` section in the `settings.json` file, stored in the `.vscode` sub folder:
+![demo-apps1.gif](https://raw.githubusercontent.com/mkloubertego/vscode-powertools/master/img/demo-apps1.gif)
 
-```json
-{
-    "ego.power-tools": {
-        "apps": [
-            {
-                "script": "my-app.js",
-                "name": "My app",
-                "description": "An awesome app"
-            }
-        ]
-    }
-}
-```
+For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Apps).
 
-First create a `my-app.ejs` file inside the `.vscode` sub folder of the workspace with the HTML content of your app:
+#### Buttons [[&uarr;](#settings-)]
 
-```html
-<h1><%= page_title %></h1>
+Buttons can be used to run tasks, like scripts or shell commands, by user's click.
 
-<pre id="myTestPre"></pre>
+![demo-button.gif](https://raw.githubusercontent.com/mkloubertego/vscode-powertools/master/img/demo-buttons.gif)
 
-<style>
-
-/* put your custom styles here */
-
-</style>
-
-<script>
-
-/**
- * This is called, when a command
- * has been received from the app script.
- */
-function ego_on_command(command, data) {
-    $('#myTestPre').text(
-        'Received from script: ' + JSON.stringify({
-            'command': command,
-            'data': data
-        }, null, 2)
-    );
-}
-
-/**
- * This is called, after the
- * page has been completely loaded.
- */
-function ego_on_loaded() {
-    setTimeout(() => {
-        // post a command to the script
-        // have a look at the
-        // 'onEvent()' below ('on.command')
-        ego_post(
-            'myWebViewCommand',
-            {
-                'TM': '1979-09-05',
-                'MK': '1979-09-23'
-            }
-        );
-    }, 5000);
-}
-
-</script>
-```
-
-Then create a `my-app.js` file in the same folder and use the following skeleton:
-
-```javascript
-/**
- * This returns the HTML code for the body.
- */
-exports.getHtml = (args) => {
-    return args.renderFile(
-        'my-app.ejs',
-        {
-            'page_title': 'My awesome app',
-        }
-    );
-};
-
-/**
- * This returns the title, which is displayed in the tab
- * of the web view.
- */
-exports.getTitle = () => {
-    return `My awesome app`;
-};
-
-/**
- * Is invoked on an event.
- */
-exports.onEvent = async (args) => {
-    switch (args.event) {
-        case 'on.command':
-            // is invoked, when the web view has
-            // been post a (command) message
-            // 
-            // args.data.command => (string) The name of the command.
-            // args.data.data    => (any) The data of the command.
-
-            args.require('vscode').window.showInformationMessage(
-                'Received from script: ' + JSON.stringify({
-                    'command': args.data.command,
-                    'data': args.data.data
-                }, null, 2)
-            );
-            break;
-
-        case 'on.loaded':
-            // page inside web view has been completely loaded
-
-            // post a command to web view
-            // have a look at the upper
-            // 'ego_on_command()' function
-            await args.post(
-                'myScriptCommand',
-                {
-                    'TM': 5979,
-                    'MK': 23979
-                }
-            );
-            break;
-    }
-};
-```
-
-To execute the app, press `F1`, execute `Power Tools: Apps` command and select the app.
-
-An `apps` entry in the `settings.json` file supports the following properties:
-
-| Name | Description | Required? | 
-| ---- | ----------- | :-------: |
-| `script`<sup>*</sup> | The path to the script, that should be invoked. Relative paths will be mapped to the `.vscode` sub folder inside the underlying workspace OR to the `.vscode-powertools` sub folder inside the user's home directory. | yes |
-| `description`<sup>*</sup> | A description for the app. | no |
-| `name`<sup>*</sup> | The (display) name. | no |
-| `options` | Options for the script. | no |
-
-<sup>* supports [placeholders](#values-)</sup>
+For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Buttons).
 
 #### Commands [[&uarr;](#settings-)]
 
-@TODO
+To enhance your editor, you can register custom [commands](https://code.visualstudio.com/api/references/commands), which can be used from anywhere in the editor, by using the [API](https://code.visualstudio.com/api/references/vscode-api), e.g.
+
+![demo-commands.gif](https://raw.githubusercontent.com/mkloubertego/vscode-powertools/master/img/demo-commands.gif)
+
+For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Commands).
+
+#### Events [[&uarr;](#settings-)]
+
+The extension makes it possible to run tasks, like scripts, on specific events.
+
+![demo-events.gif](https://raw.githubusercontent.com/mkloubertego/vscode-powertools/master/img/demo-events.gif)
+
+For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Events)
 
 #### Jobs [[&uarr;](#settings-)]
 
-A job is a scheduled task, which runs things, like a [Node.js based script](https://nodejs.org/) periodically.
+Jobs can be used to run tasks, like scripts or shell commands, periodically.
 
-##### Actions [[&uarr;](#jobs-)]
+![demo-jobs.gif](https://raw.githubusercontent.com/mkloubertego/vscode-powertools/master/img/demo-jobs.gif)
 
-An action describes, what is to do, when a job is executed.
+For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Jobs)
 
-###### Scripts [[&uarr;](#actions-)]
+#### Scripts [[&uarr;](#settings-)]
 
-This runs a [Node.js based script](https://nodejs.org/).
+Scripts can be used to any kind of custom logic for a workspace.
 
-Add an entry to the `jobs` section in your `settings.json` file:
+![demo-scripts.gif](https://raw.githubusercontent.com/mkloubertego/vscode-powertools/master/img/demo-scripts.gif)
 
-```json
-{
-    "ego.power-tools": {
-        "jobs": [
-            {
-                "time": "*/5 * * * * *",
-                "name": "My job",
-                "description": "Executes a script all 5 seconds",
-                "action": {
-                    "script": "my_job.js",
-                    "type": "script"
-                }
-            }
-        ]
-    }
-}
-```
+For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Scripts)
 
-Create a `my_job.js` in the `.vscode` sub folder and use the following skeleton:
+#### Startups [[&uarr;](#settings-)]
 
-```javascript
-exports.execute = async (args) => {
-    const vscode = args.require('vscode');
+*Startups* are similar to *Autostart* in Windows.
 
-    vscode.window.showInformationMessage(
-        'Hello! It is: ' + (new Date())
-    );
-};
-```
-
-#### StartUps [[&uarr;](#settings-)]
-
-@TODO
+For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Startups)
 
 #### Values [[&uarr;](#settings-)]
 
-@TODO
+Values (or *placeholders*) can be used to define dynamic settings, e.g.
+
+![demo-values.gif](https://raw.githubusercontent.com/mkloubertego/vscode-powertools/master/img/demo-values.gif)
+
+For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Values)
 
 ## Contribute [[&uarr;](#table-of-contents)]
 
