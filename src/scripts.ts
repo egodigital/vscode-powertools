@@ -20,6 +20,8 @@ import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_webview from './webview';
 import * as ego_workspace from './workspace';
+import * as ejs from 'ejs';
+import * as fsExtra from 'fs-extra';
 import * as htmlEntities from 'html-entities';
 import * as vscode from 'vscode';
 
@@ -54,28 +56,14 @@ export class ScriptConsoleWebView extends ego_webview.WebViewWithContextBase {
      * @inheritdoc
      */
     protected generateHtmlBody(): string {
-        return `
-<div class="container-fluid">
-  <div class="alert alert-danger" role="alert" style="display: none;" id="ego-error"></div>
+        const FILE = this.getFileResourceUri('tpl/ScriptConsole.ejs')
+            .fsPath;
 
-  <div class="card text-white bg-dark" id="ego-script-console">
-    <div class="card-header">
-        <span class="align-middle">
-            Script console
-        </span>
-
-        <a class="btn btn-sm btn-warning float-right text-dark" id="ego-clear-console-btn">
-            <i class="fa fa-eraser" aria-hidden="true"></i>
-        </a>
-    </div>
-    <div class="card-body"></div>
-
-    <div class="card-footer">
-        <a class="btn btn-sm btn-light float-left" id="ego-run-script-btn"></a>
-    </div>
-  </div>
-</div>
-`;
+        return ejs.render(
+            fsExtra.readFileSync(
+                FILE, 'utf8'
+            )
+        );
     }
 
     /**
