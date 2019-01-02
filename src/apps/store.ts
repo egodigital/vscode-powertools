@@ -390,6 +390,7 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
     }
 }
 
+
 /**
  * Opens the app store.
  *
