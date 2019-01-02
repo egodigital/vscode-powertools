@@ -819,7 +819,7 @@ export class Workspace extends ego_helpers.WorkspaceBase {
      */
     public async runShellCommand(settings: ego_contracts.WithShellCommand, opts?: RunShellCommandOptions) {
         if (!opts) {
-            opts = <any>opts;
+            opts = <any>{};
         }
 
         const COMMAND_TO_EXECUTE = this.replaceValues(
