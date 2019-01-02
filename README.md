@@ -21,8 +21,9 @@ A swiss army knife with lots of tools, extensions and (scriptable) enhancements 
    * [Scripts](#scripts-)
    * [Startups](#startups-)
    * [Values](#values-)
-3. [Contribute](#contribute-)
-4. [Related projects](#related-projects-)
+3. [Documentation](#documentation-)
+4. [Contribute](#contribute-)
+5. [Related projects](#related-projects-)
    * [vscode-helpers](#vscode-helpers-)
 
 ## Install [[&uarr;](#table-of-contents)]
@@ -98,6 +99,10 @@ Values (or *placeholders*) can be used to define dynamic settings, e.g.
 ![demo-values.gif](https://raw.githubusercontent.com/mkloubertego/vscode-powertools/master/img/demo-values.gif)
 
 For more information, have a look at the [wiki](https://github.com/mkloubertego/vscode-powertools/wiki/Values).
+
+## Documentation [[&uarr;](#table-of-contents)]
+
+The complete reference of classes, functions and interfaces, can be found [here](https://egodigital.github.io/vscode-powertools/api/).
 
 ## Contribute [[&uarr;](#table-of-contents)]
 
