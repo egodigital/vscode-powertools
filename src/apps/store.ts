@@ -203,83 +203,85 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
                                 .globalState
                                 .get(ego_contracts.KEY_GLOBAL_SETTING_APP_STORE_URL)
                         ).trim();
-                        if ('' !== appStoreUrl) {
-                            if (!appStoreUrl.toLowerCase().startsWith('https://') && !appStoreUrl.toLowerCase().startsWith('http://')) {
-                                appStoreUrl = 'http://' + appStoreUrl;
+                        if ('' === appStoreUrl) {
+                            appStoreUrl = ego_contracts.EGO_APP_STORE;
+                        }
+
+                        if (!appStoreUrl.toLowerCase().startsWith('https://') && !appStoreUrl.toLowerCase().startsWith('http://')) {
+                            appStoreUrl = 'http://' + appStoreUrl;
+                        }
+
+                        await vscode.window.withProgress({
+                            location: vscode.ProgressLocation.Notification,
+                        }, async (progress) => {
+                            progress.report({
+                                message: `Loading app list from '${ appStoreUrl }' ...`,
+                            });
+
+                            const RESPONSE = await ego_helpers.GET(appStoreUrl);
+                            if (RESPONSE.code < 200 || RESPONSE.code >= 300) {
+                                throw new Error(`Unexpected response: [${ RESPONSE.code }] '${ RESPONSE.status }'`);
                             }
 
-                            await vscode.window.withProgress({
-                                location: vscode.ProgressLocation.Notification,
-                            }, async (progress) => {
-                                progress.report({
-                                    message: `Loading app store from ${ appStoreUrl } ...`,
-                                });
-
-                                const RESPONSE = await ego_helpers.GET(appStoreUrl);
-                                if (RESPONSE.code < 200 || RESPONSE.code >= 300) {
-                                    throw new Error(`Unexpected response: [${ RESPONSE.code }] '${ RESPONSE.status }'`);
-                                }
-
-                                const APP_STORE: ego_contracts.AppStore = JSON.parse(
-                                    (await RESPONSE.readBody()).toString('utf8')
+                            const APP_STORE: ego_contracts.AppStore = JSON.parse(
+                                (await RESPONSE.readBody()).toString('utf8')
+                            );
+                            if (_.isObjectLike(APP_STORE)) {
+                                const APPS_FROM_STORE = ego_helpers.asArray(
+                                    APP_STORE.apps
                                 );
-                                if (_.isObjectLike(APP_STORE)) {
-                                    const APPS_FROM_STORE = ego_helpers.asArray(
-                                        APP_STORE.apps
-                                    );
 
-                                    for (const A of APPS_FROM_STORE) {
-                                        try {
-                                            let name = ego_helpers.normalizeString(A.name);
-                                            if ('' === name) {
-                                                continue;
-                                            }
+                                for (const A of APPS_FROM_STORE) {
+                                    try {
+                                        let name = ego_helpers.normalizeString(A.name);
+                                        if ('' === name) {
+                                            continue;
+                                        }
 
-                                            let source = ego_helpers.toStringSafe(A.source)
-                                                .trim();
-                                            if ('' === source) {
-                                                continue;
-                                            }
+                                        let source = ego_helpers.toStringSafe(A.source)
+                                            .trim();
+                                        if ('' === source) {
+                                            continue;
+                                        }
 
-                                            if (!source.toLowerCase().startsWith('https://') && !source.toLowerCase().startsWith('http://')) {
-                                                source = 'http://' + source;
-                                            }
+                                        if (!source.toLowerCase().startsWith('https://') && !source.toLowerCase().startsWith('http://')) {
+                                            source = 'http://' + source;
+                                        }
 
-                                            let displayName = ego_helpers.toStringSafe(
-                                                A.displayName
-                                            ).trim();
-                                            if ('' === displayName) {
-                                                displayName = name;
-                                            }
+                                        let displayName = ego_helpers.toStringSafe(
+                                            A.displayName
+                                        ).trim();
+                                        if ('' === displayName) {
+                                            displayName = name;
+                                        }
 
-                                            let description = ego_helpers.toStringSafe(
-                                                A.description
-                                            ).trim();
-                                            if ('' === description) {
-                                                description = undefined;
-                                            }
+                                        let description = ego_helpers.toStringSafe(
+                                            A.description
+                                        ).trim();
+                                        if ('' === description) {
+                                            description = undefined;
+                                        }
 
-                                            let icon = ego_helpers.toStringSafe(
-                                                A.icon
-                                            ).trim();
-                                            if ('' === icon) {
-                                                icon = undefined;
-                                            }
+                                        let icon = ego_helpers.toStringSafe(
+                                            A.icon
+                                        ).trim();
+                                        if ('' === icon) {
+                                            icon = undefined;
+                                        }
 
-                                            APPS.push({
-                                                'name': name,
-                                                'displayName': displayName,
-                                                'description': description,
-                                                'details': undefined,
-                                                'icon': icon,
-                                                'isInstalled': false,
-                                                'source': source,
-                                            });
-                                        } catch { }
-                                    }
+                                        APPS.push({
+                                            'name': name,
+                                            'displayName': displayName,
+                                            'description': description,
+                                            'details': undefined,
+                                            'icon': icon,
+                                            'isInstalled': false,
+                                            'source': source,
+                                        });
+                                    } catch { }
                                 }
-                            });
-                        }
+                            }
+                        });
                     } catch { }
 
                     await this.postMessage(

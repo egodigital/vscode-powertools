@@ -28,6 +28,9 @@ interface SettingsFromWebView {
     appStoreUrl: string;
 }
 
+interface SettingsForWebView extends SettingsFromWebView {
+}
+
 
 /**
  * A web view for global settings.
@@ -69,7 +72,7 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
             case 'reloadSettings':
                 {
                     let err: any;
-                    let settings: SettingsFromWebView;
+                    let settings: SettingsForWebView;
                     try {
                         settings = {
                             appStoreUrl: ego_helpers.toStringSafe(

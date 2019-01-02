@@ -1203,6 +1203,11 @@ export enum FileChangeType {
 export const APPS_SUBFOLDER = '.apps';
 
 /**
+ * The URL to the (default) app store.
+ */
+export const EGO_APP_STORE = 'https://egodigital.github.io/vscode-powertools/apps/store.json';
+
+/**
  * Name of the event for a new app.
  */
 export const EVENT_APP_LIST_UPDATED = 'apps.updated-list';
