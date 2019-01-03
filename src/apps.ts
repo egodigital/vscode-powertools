@@ -305,10 +305,10 @@ export abstract class AppWebViewBase extends ego_webview.WebViewWithContextBase 
      * @inheritdoc
      */
     protected async onWebViewDisposed() {
-        const ARGS = this.createScriptArguments('on.disposed');
-
         const FUNC = this.getEventFunction(m => m.onDisposed);
         if (FUNC) {
+            const ARGS = this.createScriptArguments('on.disposed');
+
             await Promise.resolve(
                 FUNC(ARGS)
             );
@@ -336,6 +336,28 @@ export abstract class AppWebViewBase extends ego_webview.WebViewWithContextBase 
         }
 
         return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected async onWebViewVisibilityChanged(isVisible: boolean) {
+        let func: ego_contracts.AppEventFunction;
+        let args: ego_contracts.AppEventScriptArguments;
+
+        if (isVisible) {
+            func = this.getEventFunction(m => m.onShown);
+            args = this.createScriptArguments('on.shown');
+        } else {
+            func = this.getEventFunction(m => m.onHidden);
+            args = this.createScriptArguments('on.hidden');
+        }
+
+        if (func) {
+            await Promise.resolve(
+                func(args)
+            );
+        }
     }
 
     /**
@@ -1102,6 +1124,13 @@ exports.onEvent = async (args) => {
 
         case 'on.loaded':
             // page inside web view has been completely loaded
+            break;
+
+        case 'on.hidden':
+            // web view has went to the background
+            break;
+        case 'on.shown':
+            // web view has went to the foreground
             break;
 
         case 'on.close':

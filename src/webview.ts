@@ -393,6 +393,11 @@ ${ this.generateHtmlFooter() }`;
                 });
 
                 newPanel.onDidChangeViewState((e) => {
+                    this.onWebViewVisibilityChanged(e.webviewPanel.visible).then(() => {
+                    }).catch(err => {
+                        ego_log.CONSOLE
+                            .trace(err, 'webview.WebViewBase.open(onDidChangeViewState)');
+                    });
                 });
 
                 newPanel.onDidDispose(() => {
@@ -401,7 +406,7 @@ ${ this.generateHtmlFooter() }`;
                     }).then(() => {
                     }).catch(err => {
                         ego_log.CONSOLE
-                               .trace(err, 'webview.WebViewBase.open(onDidDispose)');
+                            .trace(err, 'webview.WebViewBase.open(onDidDispose)');
                     });
                 });
 
@@ -463,6 +468,14 @@ ${ this.generateHtmlFooter() }`;
      */
     protected async onWebViewMessage(msg: ego_contracts.WebViewMessage): Promise<boolean> {
         return false;
+    }
+
+    /**
+     * Is invoked after the visibility of the web view has been changed.
+     *
+     * @param {boolean} isVisible Content is currently visible or not.
+     */
+    protected async onWebViewVisibilityChanged(isVisible: boolean) {
     }
 
     /**

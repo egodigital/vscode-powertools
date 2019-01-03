@@ -248,6 +248,12 @@ export interface AppModule {
      */
     readonly onEvent?: (args: AppEventScriptArguments) => any;
     /**
+     * Is invoked after the web view has been gone to the background.
+     *
+     * @param {AppEventScriptArguments} args Arguments for the event.
+     */
+    readonly onHidden?: (args: AppEventScriptArguments) => any;
+    /**
      * Is invoked after web page inside view has been loaded.
      *
      * @param {AppEventScriptArguments} args Arguments for the event.
@@ -257,6 +263,12 @@ export interface AppModule {
      * Is invoked when a message received from the web view.
      */
     readonly onMessage?: (args: AppEventScriptArguments) => any;
+    /**
+     * Is invoked after the web view has became visible again.
+     *
+     * @param {AppEventScriptArguments} args Arguments for the event.
+     */
+    readonly onShown?: (args: AppEventScriptArguments) => any;
 }
 
 /**
