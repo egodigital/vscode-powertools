@@ -106,6 +106,7 @@ function ego_from_markdown(md, tag) {
         }
 
         A.attr('href', '#');
+        A.attr('ego-href', href);
         A.on('click', function() {
             ego_open_external_url(href, text);
         });

@@ -144,6 +144,16 @@ export function registerCommands(
             }
         }),
 
+        // help
+        vscode.commands.registerCommand('ego.power-tools.help', async () => {
+            try {
+                await require('./help')
+                    .openHelp(context);
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }),
+
         // jobs
         vscode.commands.registerCommand('ego.power-tools.jobs', async () => {
             try {

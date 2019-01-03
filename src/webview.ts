@@ -42,7 +42,7 @@ export abstract class WebViewBase extends ego_helpers.DisposableBase {
      *
      * @return {Promise<boolean>} A promise that indicates if operation was successful or not.
      */
-    public close() {
+    public close(): Promise<boolean> {
         return this._QUEUE.add(async () => {
             if (!this._panel) {
                 return false;
@@ -62,7 +62,7 @@ export abstract class WebViewBase extends ego_helpers.DisposableBase {
      *
      * @returns {string} The HTML.
      */
-    protected generateHtml() {
+    protected generateHtml(): string {
         return `${ this.generateHtmlHeader() }
 
 ${ this.generateHtmlBody() }
@@ -82,7 +82,7 @@ ${ this.generateHtmlFooter() }`;
      *
      * @returns {string} The HTML footer.
      */
-    protected generateHtmlFooter() {
+    protected generateHtmlFooter(): string {
         const WEBVIEW_JAVASCRIPT_URI = this.getFileResourceUri('js/app.' + this.getType() + '.js');
 
         return `
@@ -112,7 +112,7 @@ ${ this.generateHtmlFooter() }`;
      *
      * @returns {string} The HTML header.
      */
-    protected generateHtmlHeader() {
+    protected generateHtmlHeader(): string {
         const HTML_ENTITIES = new htmlEntities.AllHtmlEntities();
         const WEBVIEW_STYLE_URI = this.getFileResourceUri('css/app.' + this.getType() + '.css');
 
@@ -253,9 +253,9 @@ ${ this.generateHtmlFooter() }`;
     /**
      * Returns the URIs for the web view's resources.
      *
-     * @return {scode.Uri[]} The list of resources.
+     * @return {vscode.Uri[]} The list of resources.
      */
-    protected getResourceUris() {
+    protected getResourceUris(): vscode.Uri[] {
         const URIs: vscode.Uri[] = [];
 
         // 'res' folder inside extension's root directory
