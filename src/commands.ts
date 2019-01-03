@@ -47,17 +47,9 @@ export function registerCommands(
                     {
                         action: () => {
                             return require('./apps')
-                                .openApp(context, output);
-                        },
-                        label: 'Open App ...',
-                        description: 'Opens a global or workspace app.',
-                    },
-                    {
-                        action: () => {
-                            return require('./apps')
                                 .buildAppPackage();
                         },
-                        label: 'Build App Package ...',
+                        label: `$(gift)  Build App Package ...`,
                         description: 'Builds a package file for an app.',
                     },
                     {
@@ -65,7 +57,7 @@ export function registerCommands(
                             return require('./apps')
                                 .createApp();
                         },
-                        label: 'Create App ...',
+                        label: `$(plus)  Create App ...`,
                         description: 'Creates a new app.',
                     },
                     {
@@ -73,15 +65,23 @@ export function registerCommands(
                             return require('./apps')
                                 .installApp();
                         },
-                        label: 'Install App ...',
+                        label: `$(diff-added)  Install App ...`,
                         description: 'Installs an app from a package.',
+                    },
+                    {
+                        action: () => {
+                            return require('./apps')
+                                .openApp(context, output);
+                        },
+                        label: `$(zap)  Open App ...`,
+                        description: 'Opens a global or workspace app.',
                     },
                     {
                         action: () => {
                             return require('./apps/store')
                                 .openAppStore(context);
                         },
-                        label: 'Open Store ...',
+                        label: `$(database)  Open Store ...`,
                         description: 'Opens a store, where you can install apps from.',
                     }
                 ];
@@ -124,11 +124,21 @@ export function registerCommands(
                         },
                         description: x.command.description,
                         detail: x.workspace.rootPath,
-                        label: `$(zap)  ${ x.command.name }`,
+                        label: x.command.name,
                     };
                 }).orderBy(qp => {
                     return ego_helpers.normalizeString(qp.label);
+                }).pipe(qp => {
+                    qp.label = `$(zap)  ${ qp.label }`.trim();
                 }).toArray();
+
+                if (QUICK_PICKS.length < 1) {
+                    vscode.window.showWarningMessage(
+                        'No commands found!'
+                    );
+
+                    return;
+                }
 
                 const SELECT_ITEM = await vscode.window.showQuickPick(
                     QUICK_PICKS,
@@ -157,103 +167,99 @@ export function registerCommands(
         // jobs
         vscode.commands.registerCommand('ego.power-tools.jobs', async () => {
             try {
-                try {
-                    const ALL_WORKSPACES = ego_workspace.getAllWorkspaces();
+                const ALL_WORKSPACES = ego_workspace.getAllWorkspaces();
 
-                    const QUICK_PICKS: ego_contracts.ActionQuickPickItem<ego_contracts.WorkspaceJob>[] = ego_helpers.from(
-                        ALL_WORKSPACES
-                    ).selectMany(ws => {
-                        return ego_helpers.from(
-                            ws.getJobs()
-                        ).select(j => {
-                            return {
-                                job: j,
-                                workspace: ws,
-                            };
-                        });
-                    }).select(x => {
-                        let label = '  ' + x.job.name;
-                        if (x.job.isRunning) {
-                            label = '$(primitive-square)' + label;
-                        } else {
-                            label = '$(triangle-right)' + label;
-                        }
-
+                const QUICK_PICKS: ego_contracts.ActionQuickPickItem<ego_contracts.WorkspaceJob>[] = ego_helpers.from(
+                    ALL_WORKSPACES
+                ).selectMany(ws => {
+                    return ego_helpers.from(
+                        ws.getJobs()
+                    ).select(j => {
                         return {
-                            action: () => {
-                                if (x.job.isRunning) {
-                                    x.job.stop();
-                                } else {
-                                    x.job.start();
-                                }
-                            },
-                            description: x.job.description,
-                            detail: x.workspace.rootPath,
-                            label: label,
-                            tag: x.job,
+                            job: j,
+                            workspace: ws,
                         };
-                    }).orderBy(qp => {
-                        return ego_helpers.normalizeString(qp.label);
-                    }).toArray();
-
-                    if (QUICK_PICKS.length < 1) {
-                        vscode.window.showWarningMessage(
-                            `No jobs found!`
-                        );
-
-                        return;
+                    });
+                }).select(x => {
+                    return {
+                        action: () => {
+                            if (x.job.isRunning) {
+                                x.job.stop();
+                            } else {
+                                x.job.start();
+                            }
+                        },
+                        description: x.job.description,
+                        detail: x.workspace.rootPath,
+                        label: x.job.name,
+                        tag: x.job,
+                    };
+                }).orderBy(qp => {
+                    return ego_helpers.normalizeString(qp.label);
+                }).pipe(qp => {
+                    if (qp.tag.isRunning) {
+                        qp.label = '$(primitive-square)  ' + qp.label;
+                    } else {
+                        qp.label = '$(triangle-right)  ' + qp.label;
                     }
 
-                    const ALL_JOBS = QUICK_PICKS.map(qp => qp.tag);
+                    qp.label = qp.label.trim();
+                }).toArray();
 
-                    // stop jobs
-                    if (ALL_JOBS.some(j => j.isRunning)) {
-                        QUICK_PICKS.unshift({
-                            action: () => {
-                                return require('./workspaces/jobs')
-                                    .stopAllJobs
-                                    .apply();
-                            },
-                            label: '$(circle-slash)  Stop ALL jobs ...',
-                            description: 'Stops all running jobs.',
-                        });
-                    }
-
-                    // start jobs
-                    if (ALL_JOBS.some(j => !j.isRunning)) {
-                        QUICK_PICKS.unshift({
-                            action: () => {
-                                return require('./workspaces/jobs')
-                                    .startAllJobs();
-                            },
-                            label: '$(rocket)  Start ALL jobs ...',
-                            description: 'Start all jobs, which are not running yet.',
-                        });
-                    }
-
-                    // restart jobs
-                    if (ALL_JOBS.some(j => j.isRunning)) {
-                        QUICK_PICKS.unshift({
-                            action: () => {
-                                return require('./workspaces/jobs')
-                                    .restartAllJobs();
-                            },
-                            label: '$(issue-reopened)  Re-Start ALL jobs ...',
-                            description: 'Restarts all running jobs.',
-                        });
-                    }
-
-                    const SELECT_ITEM = await vscode.window.showQuickPick(
-                        QUICK_PICKS,
+                if (QUICK_PICKS.length < 1) {
+                    vscode.window.showWarningMessage(
+                        `No jobs found!`
                     );
 
-                    if (SELECT_ITEM) {
-                        await Promise.resolve(
-                            SELECT_ITEM.action()
-                        );
-                    }
-                } catch (e) {
-                    ego_helpers.showErrorMessage(e);
+                    return;
+                }
+
+                const ALL_JOBS = QUICK_PICKS.map(qp => qp.tag);
+
+                // stop jobs
+                if (ALL_JOBS.some(j => j.isRunning)) {
+                    QUICK_PICKS.unshift({
+                        action: () => {
+                            return require('./workspaces/jobs')
+                                .stopAllJobs();
+                        },
+                        label: '$(circle-slash)  Stop All Jobs ...',
+                        description: 'Stops all running jobs.',
+                    });
+                }
+
+                // start jobs
+                if (ALL_JOBS.some(j => !j.isRunning)) {
+                    QUICK_PICKS.unshift({
+                        action: () => {
+                            return require('./workspaces/jobs')
+                                .startAllJobs();
+                        },
+                        label: '$(rocket)  Start All Jobs ...',
+                        description: 'Start all jobs, which are not running yet.',
+                    });
+                }
+
+                // restart jobs
+                if (ALL_JOBS.some(j => j.isRunning)) {
+                    QUICK_PICKS.unshift({
+                        action: () => {
+                            return require('./workspaces/jobs')
+                                .restartAllJobs();
+                        },
+                        label: '$(issue-reopened)  Re-Start All Jobs ...',
+                        description: 'Restarts all running jobs.',
+                    });
+                }
+
+                const SELECT_ITEM = await vscode.window.showQuickPick(
+                    QUICK_PICKS,
+                );
+
+                if (SELECT_ITEM) {
+                    await Promise.resolve(
+                        SELECT_ITEM.action()
+                    );
                 }
             } catch (e) {
                 ego_helpers.showErrorMessage(e);
@@ -331,7 +337,7 @@ export function registerCommands(
                             );
                         },
                         detail: `Last Change: ${ moment(lf.stats.mtime).format('YYYY-MM-DD HH:mm:ss') }`,
-                        label: lf.date
+                        label: '$(book)  ' + lf.date
                             .format('YYYY-MM-DD'),
                     };
                 }).toArray();
@@ -347,7 +353,6 @@ export function registerCommands(
                     QUICK_PICKS,
                     {
                         canPickMany: false,
-                        placeHolder: 'Select the log file, you would like to open ...',
                     }
                 );
 
@@ -378,14 +383,14 @@ export function registerCommands(
 
                             await WEB_VIEW.open();
                         },
-                        label: 'New script ...',
+                        label: 'New Script ...',
                         description: 'Opens a new editor for running a script.',
                     },
 
                     {
                         action: async () => {
                             const FILE = await vscode.window.showOpenDialog({
-                                openLabel: 'Open script ...',
+                                openLabel: 'Open Script ...',
                                 canSelectFiles: true,
                                 canSelectFolders: false,
                                 canSelectMany: false,
@@ -409,7 +414,7 @@ export function registerCommands(
 
                             await WEB_VIEW.open();
                         },
-                        label: 'Open script ...',
+                        label: 'Open Script ...',
                         description: 'Opens an existing script file in a new editor.',
                     }
                 ];
@@ -425,7 +430,7 @@ export function registerCommands(
 
                                 await WEB_VIEW.open();
                             },
-                            label: 'Run script ...',
+                            label: 'Run Script ...',
                             description: 'Runs the script in the current editor.',
                         });
                     }
