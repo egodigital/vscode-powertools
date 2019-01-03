@@ -73,7 +73,7 @@ export function registerCommands(
                             return require('./apps')
                                 .openApp(context, output);
                         },
-                        label: `$(zap)  Open App ...`,
+                        label: `$(plug)  Open App ...`,
                         description: 'Opens a global or workspace app.',
                     },
                     {
