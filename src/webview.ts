@@ -320,7 +320,7 @@ ${ this.generateHtmlFooter() }`;
                 );
 
                 newPanel.webview.onDidReceiveMessage((msg: ego_contracts.WebViewMessage) => {
-                    this._QUEUE.add(async () => {
+                    (async () => {
                         if (this.isInFinalizeState) {
                             return;
                         }
@@ -391,7 +391,7 @@ ${ this.generateHtmlFooter() }`;
                                 action()
                             );
                         }
-                    }).then(() => {
+                    })().then(() => {
                     }).catch(err => {
                         ego_log.CONSOLE
                             .trace(err, 'webview.WebViewBase.open(onDidReceiveMessage)');
@@ -399,13 +399,13 @@ ${ this.generateHtmlFooter() }`;
                 });
 
                 newPanel.onDidChangeViewState((e) => {
-                    this._QUEUE.add(async () => {
+                    (async () => {
                         if (this.isInFinalizeState) {
                             return;
                         }
 
                         await this.onWebViewVisibilityChanged(e.webviewPanel.visible);
-                    }).then(() => {
+                    })().then(() => {
                     }).catch(err => {
                         ego_log.CONSOLE
                             .trace(err, 'webview.WebViewBase.open(onDidChangeViewState)');
@@ -414,10 +414,6 @@ ${ this.generateHtmlFooter() }`;
 
                 newPanel.onDidDispose(() => {
                     this._QUEUE.add(async () => {
-                        if (this.isInFinalizeState) {
-                            return;
-                        }
-
                         await this.onWebViewDisposed();
                     }).then(() => {
                     }).catch(err => {
@@ -510,26 +506,24 @@ ${ this.generateHtmlFooter() }`;
      * @returns {Promise<boolean>} The promise that indicates if operation was successful or not.
      */
     public async postMessage<TData = any>(command: string, data?: TData): Promise<boolean> {
-        return await this._QUEUE.add(async () => {
-            try {
-                if (this.isInFinalizeState) {
-                    return;
-                }
-
-                const MSG: ego_contracts.WebViewMessage<TData> = {
-                    command: ego_helpers.toStringSafe(command).trim(),
-                    data: data,
-                };
-
-                return await this.view
-                    .postMessage(MSG);
-            } catch (e) {
-                ego_log.CONSOLE
-                    .trace(e, 'webview.WebViewBase.postMessage(1)');
-
-                return false;
+        try {
+            if (this.isInFinalizeState) {
+                return;
             }
-        });
+
+            const MSG: ego_contracts.WebViewMessage<TData> = {
+                command: ego_helpers.toStringSafe(command).trim(),
+                data: data,
+            };
+
+            return await this.view
+                .postMessage(MSG);
+        } catch (e) {
+            ego_log.CONSOLE
+                .trace(e, 'webview.WebViewBase.postMessage(1)');
+
+            return false;
+        }
     }
 
     /**
