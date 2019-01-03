@@ -124,7 +124,7 @@ export function registerCommands(
                         },
                         description: x.command.description,
                         detail: x.workspace.rootPath,
-                        label: x.command.name,
+                        label: `$(zap)  ${ x.command.name }`,
                     };
                 }).orderBy(qp => {
                     return ego_helpers.normalizeString(qp.label);
@@ -132,9 +132,6 @@ export function registerCommands(
 
                 const SELECT_ITEM = await vscode.window.showQuickPick(
                     QUICK_PICKS,
-                    {
-                        placeHolder: 'Select the command, you would like to execute ...',
-                    }
                 );
 
                 if (SELECT_ITEM) {
