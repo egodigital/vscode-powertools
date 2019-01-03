@@ -377,3 +377,118 @@ export async function reloadJobs() {
         }
     });
 }
+
+/**
+ * Restarts all running workspace jobs.
+ */
+export async function restartAllJobs() {
+    const JOBS = ego_helpers.from(
+        ego_workspace.getAllWorkspaces()
+    ).selectMany(ws => ws.getJobs())
+     .where(j => j.isRunning)
+     .toArray();
+
+    await vscode.window.withProgress({
+        cancellable: true,
+        location: vscode.ProgressLocation.Notification,
+    }, async (progress, token) => {
+        for (let i = 0; i < JOBS.length; i++) {
+            if (token.isCancellationRequested) {
+                return;
+            }
+
+            const J = JOBS[i];
+
+            try {
+                progress.report({
+                    message: `Restarting job '${ J.name }' ...`,
+                    increment: 1 / JOBS.length * 100.0,
+                });
+
+                if (J.isRunning) {
+                    J.stop();
+                }
+
+                if (!J.isRunning) {
+                    J.start();
+                }
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }
+    });
+}
+
+/**
+ * Starts all non-running workspace jobs.
+ */
+export async function startAllJobs() {
+    const JOBS = ego_helpers.from(
+        ego_workspace.getAllWorkspaces()
+    ).selectMany(ws => ws.getJobs())
+     .where(j => !j.isRunning)
+     .toArray();
+
+    await vscode.window.withProgress({
+        cancellable: true,
+        location: vscode.ProgressLocation.Notification,
+    }, async (progress, token) => {
+        for (let i = 0; i < JOBS.length; i++) {
+            if (token.isCancellationRequested) {
+                return;
+            }
+
+            const J = JOBS[i];
+
+            try {
+                progress.report({
+                    message: `Starting job '${ J.name }' ...`,
+                    increment: 1 / JOBS.length * 100.0,
+                });
+
+                if (!J.isRunning) {
+                    J.start();
+                }
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }
+    });
+}
+
+/**
+ * Stops all running workspace jobs.
+ */
+export async function stopAllJobs() {
+    const JOBS = ego_helpers.from(
+        ego_workspace.getAllWorkspaces()
+    ).selectMany(ws => ws.getJobs())
+     .where(j => j.isRunning)
+     .toArray();
+
+    await vscode.window.withProgress({
+        cancellable: true,
+        location: vscode.ProgressLocation.Notification,
+    }, async (progress, token) => {
+        for (let i = 0; i < JOBS.length; i++) {
+            if (token.isCancellationRequested) {
+                return;
+            }
+
+            const J = JOBS[i];
+
+            try {
+                progress.report({
+                    message: `Stopping job '${ J.name }' ...`,
+                    increment: 1 / JOBS.length * 100.0,
+                });
+
+                if (J.isRunning) {
+                    J.stop();
+                }
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }
+    });
+}

@@ -153,7 +153,7 @@ export function registerCommands(
                 try {
                     const ALL_WORKSPACES = ego_workspace.getAllWorkspaces();
 
-                    const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = ego_helpers.from(
+                    const QUICK_PICKS: ego_contracts.ActionQuickPickItem<ego_contracts.WorkspaceJob>[] = ego_helpers.from(
                         ALL_WORKSPACES
                     ).selectMany(ws => {
                         return ego_helpers.from(
@@ -183,16 +183,61 @@ export function registerCommands(
                             description: x.job.description,
                             detail: x.workspace.rootPath,
                             label: label,
+                            tag: x.job,
                         };
                     }).orderBy(qp => {
                         return ego_helpers.normalizeString(qp.label);
                     }).toArray();
 
+                    if (QUICK_PICKS.length < 1) {
+                        vscode.window.showWarningMessage(
+                            `No jobs found!`
+                        );
+
+                        return;
+                    }
+
+                    const ALL_JOBS = QUICK_PICKS.map(qp => qp.tag);
+
+                    // stop jobs
+                    if (ALL_JOBS.some(j => j.isRunning)) {
+                        QUICK_PICKS.unshift({
+                            action: () => {
+                                return require('./workspaces/jobs')
+                                    .stopAllJobs
+                                    .apply();
+                            },
+                            label: '$(circle-slash)  Stop ALL jobs ...',
+                            description: 'Stops all running jobs.',
+                        });
+                    }
+
+                    // start jobs
+                    if (ALL_JOBS.some(j => !j.isRunning)) {
+                        QUICK_PICKS.unshift({
+                            action: () => {
+                                return require('./workspaces/jobs')
+                                    .startAllJobs();
+                            },
+                            label: '$(rocket)  Start ALL jobs ...',
+                            description: 'Start all jobs, which are not running yet.',
+                        });
+                    }
+
+                    // restart jobs
+                    if (ALL_JOBS.some(j => j.isRunning)) {
+                        QUICK_PICKS.unshift({
+                            action: () => {
+                                return require('./workspaces/jobs')
+                                    .restartAllJobs();
+                            },
+                            label: '$(issue-reopened)  Re-Start ALL jobs ...',
+                            description: 'Restarts all running jobs.',
+                        });
+                    }
+
                     const SELECT_ITEM = await vscode.window.showQuickPick(
                         QUICK_PICKS,
-                        {
-                            placeHolder: 'Start or stop a job, by selecting it ...',
-                        }
                     );
 
                     if (SELECT_ITEM) {

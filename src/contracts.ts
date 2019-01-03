@@ -34,11 +34,15 @@ export interface ActionMessageItem extends vscode.MessageItem {
 /**
  * A quick pick item with an action.
  */
-export interface ActionQuickPickItem extends vscode.QuickPickItem {
+export interface ActionQuickPickItem<TTag = any> extends vscode.QuickPickItem {
     /**
      * The (optional) action to invoke.
      */
-    action?: () => any;
+    action?: Function;
+    /**
+     * Something that should be linked with that item.
+     */
+    tag?: TTag;
 }
 
 /**
