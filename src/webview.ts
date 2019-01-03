@@ -320,80 +320,92 @@ ${ this.generateHtmlFooter() }`;
                 );
 
                 newPanel.webview.onDidReceiveMessage((msg: ego_contracts.WebViewMessage) => {
-                    (async () => {
-                        try {
-                            let action: false | Function = false;
+                    this._QUEUE.add(async () => {
+                        if (this.isInFinalizeState) {
+                            return;
+                        }
 
-                            const MSG_ALREADY_HANDLED = await Promise.resolve(
-                                this.onWebViewMessage(msg)
+                        let action: false | Function = false;
+
+                        const MSG_ALREADY_HANDLED = await Promise.resolve(
+                            this.onWebViewMessage(msg)
+                        );
+
+                        if (!MSG_ALREADY_HANDLED) {
+                            switch (msg.command) {
+                                case 'onLoaded':
+                                    action = async () => {
+                                        await this.onLoaded();
+                                    };
+                                    break;
+
+                                case 'log':
+                                    action = async () => {
+                                        await this.onLog(msg.data);
+                                    };
+                                    break;
+
+                                case 'openExternalUrl':
+                                    action = async () => {
+                                        const URL_TO_OPEN = ego_helpers.toStringSafe(msg.data.url);
+                                        const URL_TEXT = ego_helpers.toStringSafe(msg.data.text).trim();
+
+                                        // check if "parsable"
+                                        url.parse( URL_TO_OPEN );
+
+                                        let urlPromptText: string;
+                                        if ('' === URL_TEXT) {
+                                            urlPromptText = `'${ URL_TO_OPEN }'`;
+                                        } else {
+                                            urlPromptText = `'${ URL_TEXT }' (${ URL_TO_OPEN })`;
+                                        }
+
+                                        const SELECTED_ITEM = await vscode.window.showWarningMessage<ego_contracts.ActionMessageItem>(
+                                            `Do you really want to open the URL ${ urlPromptText }?`,
+                                            {
+                                                title: 'Yes',
+                                                action: async () => {
+                                                    await opn(URL_TO_OPEN, {
+                                                        wait: false,
+                                                    });
+                                                }
+                                            },
+                                            {
+                                                title: 'No',
+                                                isCloseAffordance: true
+                                            }
+                                        );
+
+                                        if (SELECTED_ITEM) {
+                                            if (SELECTED_ITEM.action) {
+                                                await SELECTED_ITEM.action();
+                                            }
+                                        }
+                                    };
+                                    break;
+                            }
+                        }
+
+                        if (action) {
+                            await Promise.resolve(
+                                action()
                             );
-
-                            if (!MSG_ALREADY_HANDLED) {
-                                switch (msg.command) {
-                                    case 'onLoaded':
-                                        action = async () => {
-                                            await this.onLoaded();
-                                        };
-                                        break;
-
-                                    case 'log':
-                                        action = async () => {
-                                            await this.onLog(msg.data);
-                                        };
-                                        break;
-
-                                    case 'openExternalUrl':
-                                        action = async () => {
-                                            const URL_TO_OPEN = ego_helpers.toStringSafe(msg.data.url);
-                                            const URL_TEXT = ego_helpers.toStringSafe(msg.data.text).trim();
-
-                                            // check if "parsable"
-                                            url.parse( URL_TO_OPEN );
-
-                                            let urlPromptText: string;
-                                            if ('' === URL_TEXT) {
-                                                urlPromptText = `'${ URL_TO_OPEN }'`;
-                                            } else {
-                                                urlPromptText = `'${ URL_TEXT }' (${ URL_TO_OPEN })`;
-                                            }
-
-                                            const SELECTED_ITEM = await vscode.window.showWarningMessage<ego_contracts.ActionMessageItem>(
-                                                `Do you really want to open the URL ${ urlPromptText }?`,
-                                                {
-                                                    title: 'Yes',
-                                                    action: async () => {
-                                                        await opn(URL_TO_OPEN, {
-                                                            wait: false,
-                                                        });
-                                                    }
-                                                },
-                                                {
-                                                    title: 'No',
-                                                    isCloseAffordance: true
-                                                }
-                                            );
-
-                                            if (SELECTED_ITEM) {
-                                                if (SELECTED_ITEM.action) {
-                                                    await SELECTED_ITEM.action();
-                                                }
-                                            }
-                                        };
-                                        break;
-                                }
-                            }
-
-                            if (action) {
-                                await Promise.resolve(
-                                    action()
-                                );
-                            }
-                        } catch { }
-                    })();
+                        }
+                    }).then(() => {
+                    }).catch(err => {
+                        ego_log.CONSOLE
+                            .trace(err, 'webview.WebViewBase.open(onDidReceiveMessage)');
+                    });
                 });
 
                 newPanel.onDidChangeViewState((e) => {
-                    this.onWebViewVisibilityChanged(e.webviewPanel.visible).then(() => {
+                    this._QUEUE.add(async () => {
+                        if (this.isInFinalizeState) {
+                            return;
+                        }
+
+                        await this.onWebViewVisibilityChanged(e.webviewPanel.visible);
+                    }).then(() => {
                     }).catch(err => {
                         ego_log.CONSOLE
                             .trace(err, 'webview.WebViewBase.open(onDidChangeViewState)');
@@ -402,6 +414,10 @@ ${ this.generateHtmlFooter() }`;
 
                 newPanel.onDidDispose(() => {
                     this._QUEUE.add(async () => {
+                        if (this.isInFinalizeState) {
+                            return;
+                        }
+
                         await this.onWebViewDisposed();
                     }).then(() => {
                     }).catch(err => {
@@ -493,16 +509,27 @@ ${ this.generateHtmlFooter() }`;
      *
      * @returns {Promise<boolean>} The promise that indicates if operation was successful or not.
      */
-    public async postMessage<TData = any>(command: string, data?: TData) {
-        const MSG: ego_contracts.WebViewMessage<TData> = {
-            command: ego_helpers.toStringSafe(command).trim(),
-            data: data,
-        };
+    public async postMessage<TData = any>(command: string, data?: TData): Promise<boolean> {
+        return await this._QUEUE.add(async () => {
+            try {
+                if (this.isInFinalizeState) {
+                    return;
+                }
 
-        return await Promise.resolve(
-            this.view
-                .postMessage(MSG)
-        );
+                const MSG: ego_contracts.WebViewMessage<TData> = {
+                    command: ego_helpers.toStringSafe(command).trim(),
+                    data: data,
+                };
+
+                return await this.view
+                    .postMessage(MSG);
+            } catch (e) {
+                ego_log.CONSOLE
+                    .trace(e, 'webview.WebViewBase.postMessage(1)');
+
+                return false;
+            }
+        });
     }
 
     /**
