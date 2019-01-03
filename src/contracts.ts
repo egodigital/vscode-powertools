@@ -224,6 +224,18 @@ export interface AppModule {
      */
     readonly getTitle: (args: AppEventScriptArguments) => string;
     /**
+     * Is invoked, when the web view gets to be closed.
+     *
+     * @param {AppEventScriptArguments} args Arguments for the event.
+     */
+    readonly onClose?: (args: AppEventScriptArguments) => any;
+    /**
+     * Is invoked, when the web view gets disposed.
+     *
+     * @param {AppEventScriptArguments} args Arguments for the event.
+     */
+    readonly onDispose?: (args: AppEventScriptArguments) => any;
+    /**
      * Is invoked on an app event.
      *
      * @param {AppEventScriptArguments} args Arguments for the event.

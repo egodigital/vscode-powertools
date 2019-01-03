@@ -79,6 +79,22 @@ export abstract class AppWebViewBase extends ego_webview.WebViewWithContextBase 
     }
 
     /**
+     * @inheritdoc
+     */
+    public async close(): Promise<boolean> {
+        const ARGS = this.createScriptArguments('on.close');
+
+        const FUNC = this.getEventFunction(m => m.onClose);
+        if (FUNC) {
+            await Promise.resolve(
+                FUNC(ARGS)
+            );
+        }
+
+        return await super.close();
+    }
+
+    /**
      * Creates a new temp file, inside the '.temp' sub folder.
      *
      * @return {string} The full path of the new file.
@@ -256,6 +272,20 @@ export abstract class AppWebViewBase extends ego_webview.WebViewWithContextBase 
      * Gets the underlying module.
      */
     public abstract get module(): ego_contracts.AppModule;
+
+    /**
+     * @inheritdoc
+     */
+    protected onDispose() {
+        const ARGS = this.createScriptArguments('on.dispose');
+
+        const FUNC = this.module.onDispose;
+        if (FUNC) {
+            FUNC(ARGS);
+        }
+
+        super.onDispose();
+    }
 
     /**
      * @inheritdoc
@@ -1059,8 +1089,19 @@ exports.onEvent = async (args) => {
         case 'on.loaded':
             // page inside web view has been completely loaded
             break;
+
+        case 'on.close':
+            // the web view is going to be closed
+            break;
     }
 };
+
+/**
+ * The web view is going to be disposed.
+ */
+exports.onDispose = (args) => {
+};
+
 
 /**
  * This returns the title, which is displayed in the tab
