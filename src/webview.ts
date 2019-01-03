@@ -395,6 +395,16 @@ ${ this.generateHtmlFooter() }`;
                 newPanel.onDidChangeViewState((e) => {
                 });
 
+                newPanel.onDidDispose(() => {
+                    this._QUEUE.add(async () => {
+                        await this.onWebViewDisposed();
+                    }).then(() => {
+                    }).catch(err => {
+                        ego_log.CONSOLE
+                               .trace(err, 'webview.WebViewBase.open(onDidDispose)');
+                    });
+                });
+
                 newPanel.webview.html = this.generateHtml();
 
                 this._panel = newPanel;
@@ -436,6 +446,12 @@ ${ this.generateHtmlFooter() }`;
         );
 
         this.emit('webview.log', MSG);
+    }
+
+    /**
+     * Is invoked, after the web view (panel) has been disposed.
+     */
+    protected async onWebViewDisposed() {
     }
 
     /**

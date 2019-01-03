@@ -230,11 +230,17 @@ export interface AppModule {
      */
     readonly onClose?: (args: AppEventScriptArguments) => any;
     /**
-     * Is invoked, when the web view gets disposed.
+     * Is invoked, when the web view is going to be disposed.
      *
      * @param {AppEventScriptArguments} args Arguments for the event.
      */
     readonly onDispose?: (args: AppEventScriptArguments) => any;
+    /**
+     * Is invoked, when the web view has been disposed.
+     *
+     * @param {AppEventScriptArguments} args Arguments for the event.
+     */
+    readonly onDisposed?: (args: AppEventScriptArguments) => any;
     /**
      * Is invoked on an app event.
      *

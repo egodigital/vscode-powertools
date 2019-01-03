@@ -304,6 +304,20 @@ export abstract class AppWebViewBase extends ego_webview.WebViewWithContextBase 
     /**
      * @inheritdoc
      */
+    protected async onWebViewDisposed() {
+        const ARGS = this.createScriptArguments('on.disposed');
+
+        const FUNC = this.getEventFunction(m => m.onDisposed);
+        if (FUNC) {
+            await Promise.resolve(
+                FUNC(ARGS)
+            );
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected async onWebViewMessage(msg: ego_contracts.WebViewMessage): Promise<boolean> {
         const FUNC = this.getEventFunction(
             m => m.onMessage
@@ -1092,6 +1106,10 @@ exports.onEvent = async (args) => {
 
         case 'on.close':
             // the web view is going to be closed
+            break;
+
+        case 'on.disposed':
+            // the web view has been disposed
             break;
     }
 };
