@@ -19,6 +19,7 @@ import * as _ from 'lodash';
 import * as ego_apps from '../apps';
 import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
+import * as ego_log from '../log';
 import * as ego_webview from '../webview';
 import * as ejs from 'ejs';
 import * as fsExtra from 'fs-extra';
@@ -64,6 +65,91 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
      */
     protected getType(): string {
         return `AppStore`;
+    }
+
+    private async loadStoreFromUrl(appStoreUrl?: string): Promise<ego_contracts.AppStore> {
+        try {
+            if (arguments.length < 1) {
+                appStoreUrl = ego_helpers.toStringSafe(
+                    this.extension
+                        .globalState
+                        .get(ego_contracts.KEY_GLOBAL_SETTING_APP_STORE_URL)
+                );
+            }
+
+            appStoreUrl = ego_helpers.toStringSafe(
+                appStoreUrl
+            ).trim();
+            if ('' === appStoreUrl) {
+                appStoreUrl = ego_contracts.EGO_APP_STORE;
+            }
+
+            if (!appStoreUrl.toLowerCase().startsWith('https://') && !appStoreUrl.toLowerCase().startsWith('http://')) {
+                appStoreUrl = 'http://' + appStoreUrl;
+            }
+
+            return await vscode.window.withProgress({
+                location: vscode.ProgressLocation.Notification,
+            }, async (progress) => {
+                progress.report({
+                    message: `Loading app list from '${ appStoreUrl }' ...`,
+                });
+
+                const RESPONSE = await ego_helpers.GET(appStoreUrl, null, {
+                    timeout: 5000,
+                });
+                if (RESPONSE.code < 200 || RESPONSE.code >= 300) {
+                    throw new Error(`Unexpected response: [${ RESPONSE.code }] '${ RESPONSE.status }'`);
+                }
+
+                const APP_STORE: ego_contracts.AppStore = JSON.parse(
+                    (await RESPONSE.readBody()).toString('utf8')
+                );
+
+                if (APP_STORE) {
+                    APP_STORE.apps = ego_helpers.asArray(
+                        APP_STORE.apps
+                    );
+
+                    for (const A of APP_STORE.apps) {
+                        A.__source = {
+                            app: A,
+                            store: APP_STORE,
+                            url: appStoreUrl,
+                        };
+                    }
+
+                    if (arguments.length < 1) {
+                        const IMPORTS = ego_helpers.from(
+                            ego_helpers.asArray(APP_STORE.imports)
+                        ).select(x => ego_helpers.toStringSafe(x).trim())
+                         .where(x => '' !== x)
+                         .distinct()
+                         .take(5)
+                         .toArray();
+
+                        for (const I of IMPORTS) {
+                            const SUB_STORE = await this.loadStoreFromUrl(I);
+                            if (SUB_STORE) {
+                                ego_helpers.from(
+                                    ego_helpers.asArray(SUB_STORE.apps)
+                                ).pushTo( APP_STORE.apps );
+                            }
+                        }
+                    }
+                }
+
+                return APP_STORE;
+            });
+        } catch (e) {
+            if (arguments.length < 1) {
+                throw e;
+            } else {
+                ego_log.CONSOLE.trace(
+                    e, `apps.AppStoreWebView.loadStoreFromUrl(${ appStoreUrl })`
+                );
+            }
+        }
     }
 
     private onAppListUpdated() {
@@ -198,90 +284,58 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
 
                     // store apps
                     try {
-                        let appStoreUrl = ego_helpers.toStringSafe(
-                            this.extension
-                                .globalState
-                                .get(ego_contracts.KEY_GLOBAL_SETTING_APP_STORE_URL)
-                        ).trim();
-                        if ('' === appStoreUrl) {
-                            appStoreUrl = ego_contracts.EGO_APP_STORE;
-                        }
+                        const APP_STORE = await this.loadStoreFromUrl();
+                        if (_.isObjectLike(APP_STORE)) {
+                            for (const A of APP_STORE.apps) {
+                                try {
+                                    let name = ego_helpers.normalizeString(A.name);
+                                    if ('' === name) {
+                                        continue;
+                                    }
 
-                        if (!appStoreUrl.toLowerCase().startsWith('https://') && !appStoreUrl.toLowerCase().startsWith('http://')) {
-                            appStoreUrl = 'http://' + appStoreUrl;
-                        }
+                                    let source = ego_helpers.toStringSafe(A.source)
+                                        .trim();
+                                    if ('' === source) {
+                                        continue;
+                                    }
 
-                        await vscode.window.withProgress({
-                            location: vscode.ProgressLocation.Notification,
-                        }, async (progress) => {
-                            progress.report({
-                                message: `Loading app list from '${ appStoreUrl }' ...`,
-                            });
+                                    if (!source.toLowerCase().startsWith('https://') && !source.toLowerCase().startsWith('http://')) {
+                                        source = 'http://' + source;
+                                    }
 
-                            const RESPONSE = await ego_helpers.GET(appStoreUrl);
-                            if (RESPONSE.code < 200 || RESPONSE.code >= 300) {
-                                throw new Error(`Unexpected response: [${ RESPONSE.code }] '${ RESPONSE.status }'`);
+                                    let displayName = ego_helpers.toStringSafe(
+                                        A.displayName
+                                    ).trim();
+                                    if ('' === displayName) {
+                                        displayName = name;
+                                    }
+
+                                    let description = ego_helpers.toStringSafe(
+                                        A.description
+                                    ).trim();
+                                    if ('' === description) {
+                                        description = undefined;
+                                    }
+
+                                    let icon = ego_helpers.toStringSafe(
+                                        A.icon
+                                    ).trim();
+                                    if ('' === icon) {
+                                        icon = undefined;
+                                    }
+
+                                    APPS.push({
+                                        'name': name,
+                                        'displayName': displayName,
+                                        'description': description,
+                                        'details': undefined,
+                                        'icon': icon,
+                                        'isInstalled': false,
+                                        'source': source,
+                                    });
+                                } catch { }
                             }
-
-                            const APP_STORE: ego_contracts.AppStore = JSON.parse(
-                                (await RESPONSE.readBody()).toString('utf8')
-                            );
-                            if (_.isObjectLike(APP_STORE)) {
-                                const APPS_FROM_STORE = ego_helpers.asArray(
-                                    APP_STORE.apps
-                                );
-
-                                for (const A of APPS_FROM_STORE) {
-                                    try {
-                                        let name = ego_helpers.normalizeString(A.name);
-                                        if ('' === name) {
-                                            continue;
-                                        }
-
-                                        let source = ego_helpers.toStringSafe(A.source)
-                                            .trim();
-                                        if ('' === source) {
-                                            continue;
-                                        }
-
-                                        if (!source.toLowerCase().startsWith('https://') && !source.toLowerCase().startsWith('http://')) {
-                                            source = 'http://' + source;
-                                        }
-
-                                        let displayName = ego_helpers.toStringSafe(
-                                            A.displayName
-                                        ).trim();
-                                        if ('' === displayName) {
-                                            displayName = name;
-                                        }
-
-                                        let description = ego_helpers.toStringSafe(
-                                            A.description
-                                        ).trim();
-                                        if ('' === description) {
-                                            description = undefined;
-                                        }
-
-                                        let icon = ego_helpers.toStringSafe(
-                                            A.icon
-                                        ).trim();
-                                        if ('' === icon) {
-                                            icon = undefined;
-                                        }
-
-                                        APPS.push({
-                                            'name': name,
-                                            'displayName': displayName,
-                                            'description': description,
-                                            'details': undefined,
-                                            'icon': icon,
-                                            'isInstalled': false,
-                                            'source': source,
-                                        });
-                                    } catch { }
-                                }
-                            }
-                        });
+                        }
                     } catch { }
 
                     await this.postMessage(

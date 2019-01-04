@@ -335,6 +335,10 @@ export interface AppStore {
      */
     apps: AppStoreApp[];
     /**
+     * A list of external app stores.
+     */
+    imports?: string | string[];
+    /**
      * The name of the store.
      */
     name: string;
@@ -344,6 +348,10 @@ export interface AppStore {
  * An app entry in an spp atore.
  */
 export interface AppStoreApp {
+    /**
+     * [INTERNAL] Source of the app.
+     */
+    __source: AppStoreAppSource;
     /**
      * A description of the app.
      */
@@ -364,6 +372,24 @@ export interface AppStoreApp {
      * The source, where the package can downloaded.
      */
     source: string;
+}
+
+/**
+ * Source information of an app store app.
+ */
+export interface AppStoreAppSource {
+    /**
+     * The underlying app.
+     */
+    app: AppStoreApp;
+    /**
+     * The underlying store.
+     */
+    store: AppStore;
+    /**
+     * The URL to the store.
+     */
+    url: string;
 }
 
 /**
