@@ -397,9 +397,12 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
  * Opens the app store.
  *
  * @param {vscode.ExtensionContext} extension The extension context.
+ *
+ * @return {Promise<AppStoreWebView>} The new web view.
  */
-export async function openAppStore(extension: vscode.ExtensionContext) {
+export async function openAppStore(extension: vscode.ExtensionContext): Promise<AppStoreWebView> {
     const APP_STORE = new AppStoreWebView(extension);
+    await APP_STORE.open();
 
-    return await APP_STORE.open();
+    return APP_STORE;
 }
