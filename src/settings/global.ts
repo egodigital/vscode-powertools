@@ -144,8 +144,10 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
  * Opens the web view with the global settings.
  *
  * @param {vscode.ExtensionContext} extension The extension context.
+ *
+ * @return {Promise<GlobalSettingsWebView>} The web view.
  */
-export async function openGlobalSettings(extension: vscode.ExtensionContext) {
+export async function openGlobalSettings(extension: vscode.ExtensionContext): Promise<GlobalSettingsWebView> {
     const NEW_VIEW = new GlobalSettingsWebView(extension);
     await NEW_VIEW.open();
 
