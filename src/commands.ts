@@ -366,6 +366,16 @@ export function registerCommands(
             }
         }),
 
+        // openApp
+        vscode.commands.registerCommand('ego.power-tools.openApp', async () => {
+            try {
+                await require('./apps')
+                    .openApp(context, output);
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }),
+
         // scripts
         vscode.commands.registerCommand('ego.power-tools.scripts', async () => {
             try {
