@@ -1227,11 +1227,11 @@ SOFTWARE.`,
 
 ${ ego_helpers.isEmptyString(description) ? 'This is an app for the [Visual Studio Code](https://code.visualstudio.com/) extension [Power Tools](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools).' : HTML_ENCODER.encode(description) }
 
-## Install
+## Usage
 
 Keep sure to have [vscode-powertools](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools) installed.
 
-Then following these steps:
+Then follow these steps:
 
 * press \`F1\` in [Visual Studio Code](https://code.visualstudio.com/) to open the command list
 * select command \`Power Tools: Apps\`
