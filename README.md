@@ -4,8 +4,6 @@
 
 
 [![Latest Release](https://vsmarketplacebadge.apphb.com/version-short/egodigital.vscode-powertools.svg)](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools)
-[![Installs](https://vsmarketplacebadge.apphb.com/installs/egodigital.vscode-powertools.svg)](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools)
-[![Rating](https://vsmarketplacebadge.apphb.com/rating-short/egodigital.vscode-powertools.svg)](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools#review-details)
 
 A swiss army knife with lots of tools, extensions and (scriptable) enhancements for [Visual Studio Code](https://code.visualstudio.com/).
 
