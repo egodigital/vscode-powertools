@@ -354,7 +354,7 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
                         'appsLoaded',
                         {
                             'success': false,
-                            'error': ego_helpers.toStringSafe(e),
+                            'error': ego_helpers.errorToString(e),
                         }
                     );
                 }
