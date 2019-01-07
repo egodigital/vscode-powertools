@@ -1,9 +1,9 @@
 {
     "name": "vscode-powertools",
-    "publisher": "egodigital",
+    "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.0.81",
+    "version": "0.1.0",
     "engines": {
         "vscode": "^1.30.0"
     },
