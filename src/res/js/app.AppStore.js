@@ -76,8 +76,23 @@ function ego_update_app_list(data) {
                                    '<div class="card-body">' + 
                                    '<h4 class="card-title" />' + 
                                    '</div>' + 
+                                   '<div class="card-footer" />' + 
                                    '</div>' +
                                    '</div>');
+
+                const CARD_BODY = NEW_CARD.find('.card-body');
+                const CARD_FOOTER = NEW_CARD.find('.card-footer');
+
+                const CARD_MORE_BTN = $('<div class="btn-group ego-btn-group" role="group">' + 
+                                        '<a class="btn btn-dark btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' + 
+                                        '<i class="fa fa-bars" aria-hidden="true"></i>' + 
+                                        '</a>' + 
+                                        '<div class="dropdown-menu" />' + 
+                                        '</div>');
+
+                CARD_MORE_BTN.appendTo(
+                    CARD_FOOTER
+                );
 
                 const DISPLAY_NAME = ego_to_string(a.displayName).trim();
                 NEW_CARD.find('.card-title')
@@ -90,7 +105,7 @@ function ego_update_app_list(data) {
                     );
 
                     DESCRIPTION.appendTo(
-                        NEW_CARD.find('.card-body')
+                        CARD_BODY
                     );
                 }
 
@@ -104,16 +119,43 @@ function ego_update_app_list(data) {
                     );
                 }
 
-                // install / uninstall button
-                const INSTALL_BTN = $('<a class="btn btn-sm ego-btn" />');
-                if (a.isInstalled) {
-                    INSTALL_BTN.append(
-                        '<i class="fa fa-minus" aria-hidden="true"></i>'
-                    );
-                    INSTALL_BTN.attr('title', 'Uninstall ...');
-                    INSTALL_BTN.addClass('btn-danger');
+                // show details button
+                const DETAILS_MARKDOWN = ego_to_string(a.details).trim();
+                if ('' !== DETAILS_MARKDOWN) {
+                    const INFO_ITEM = $('<a class="dropdown-item" href="#">' + 
+                                        '<i class="fa fa-info-circle" aria-hidden="true"></i>' + 
+                                        'Details' + 
+                                        '</a>');
 
-                    INSTALL_BTN.on('click', function() {
+                    INFO_ITEM.on('click', function() {
+                        const DETAIL_MODAL = $('#ego-app-details-modal');
+
+                        DETAIL_MODAL.find('.modal-title')
+                                    .text(`App '${ DISPLAY_NAME }'`);
+
+                        const DETAILS = ego_from_markdown(DETAILS_MARKDOWN);
+
+                        DETAIL_MODAL.find('.modal-body')
+                                    .html('')
+                                    .append(DETAILS);
+                        ego_apply_highlight(DETAILS);
+
+                        DETAIL_MODAL.modal('show');
+                    });
+
+                    CARD_MORE_BTN.find('.dropdown-menu').append(
+                        INFO_ITEM
+                    );
+                }
+
+                // install / uninstall button
+                if (a.isInstalled) {
+                    const UNINSTALL_ITEM = $('<a class="dropdown-item" href="#">' + 
+                                             '<i class="fa fa-trash" aria-hidden="true"></i>' + 
+                                             'Uninstall' + 
+                                             '</a>');
+
+                    UNINSTALL_ITEM.on('click', function() {
                         const UNINSTALL_MODAL = $('#ego-uninstall-app-modal');
 
                         const MODAL_BODY = $('<div>' + 
@@ -138,50 +180,13 @@ function ego_update_app_list(data) {
 
                         UNINSTALL_MODAL.modal('show');
                     });
-                } else {
-                    INSTALL_BTN.append(
-                        '<i class="fa fa-plus" aria-hidden="true"></i>'
-                    );
-                    INSTALL_BTN.attr('title', 'Install ...');
-                    INSTALL_BTN.addClass('btn-primary');
 
-                    INSTALL_BTN.on('click', function() {
-                        ego_install_app(a);
-                    });
-                }
-                INSTALL_BTN.appendTo(
-                    NEW_CARD.find('.card-body')
-                );
-
-                // show details button
-                const DETAILS_MARKDOWN = ego_to_string(a.details).trim();
-                if ('' !== DETAILS_MARKDOWN) {
-                    const INFO_BTN = $('<a class="btn btn-sm btn-info ego-btn" title="Show Details ...">' + 
-                                       '<i class="fa fa-info-circle" aria-hidden="true"></i>' + 
-                                       '</a>');
-
-                    INFO_BTN.on('click', function() {
-                        const DETAIL_MODAL = $('#ego-app-details-modal');
-
-                        DETAIL_MODAL.find('.modal-title')
-                                    .text(`App '${ DISPLAY_NAME }'`);
-
-                        const DETAILS = ego_from_markdown(DETAILS_MARKDOWN);
-
-                        DETAIL_MODAL.find('.modal-body')
-                                    .html('')
-                                    .append(DETAILS);
-                        ego_apply_highlight(DETAILS);
-
-                        DETAIL_MODAL.modal('show');
-                    });
-
-                    INFO_BTN.appendTo(
-                        NEW_CARD.find('.card-body')
+                    CARD_MORE_BTN.find('.dropdown-menu').append(
+                        UNINSTALL_ITEM
                     );
                 }
 
-                // open app button
+                // open app or install button
                 if (a.isInstalled) {
                     const OPEN_BTN = $('<a class="btn btn-sm btn-primary ego-btn" title="Open App ...">' + 
                                        '<i class="fa fa-play" aria-hidden="true"></i>' + 
@@ -192,8 +197,44 @@ function ego_update_app_list(data) {
                     });
 
                     OPEN_BTN.appendTo(
-                        NEW_CARD.find('.card-body')
+                        CARD_FOOTER
                     );
+                } else {
+                    const INSTALL_BTN = $('<a class="btn btn-sm ego-btn" />');
+
+                    INSTALL_BTN.append(
+                        '<i class="fa fa-plus" aria-hidden="true"></i>'
+                    );
+                    INSTALL_BTN.attr('title', 'Install ...');
+                    INSTALL_BTN.addClass('btn-primary');
+
+                    INSTALL_BTN.on('click', function() {
+                        ego_install_app(a);
+                    });
+
+                    INSTALL_BTN.appendTo(
+                        CARD_FOOTER
+                    );
+                }
+
+                const UPGRADE_SOURCE = ego_to_string(a.upgradeSource)
+                    .trim();
+                if ('' !== UPGRADE_SOURCE) {
+                    const UPGRADE_BTN = $('<a class="btn btn-sm btn-primary ego-btn" title="Upgrade App ...">' + 
+                                          '<i class="fa fa-arrow-circle-up" aria-hidden="true"></i>' + 
+                                          '</a>');
+
+                    UPGRADE_BTN.on('click', function() {
+                        ego_upgrade_app(a);
+                    });
+
+                    UPGRADE_BTN.appendTo(
+                        CARD_FOOTER
+                    );
+                }
+
+                if (CARD_MORE_BTN.find('.dropdown-menu .dropdown-item').length < 1) {
+                    CARD_MORE_BTN.remove();
                 }
 
                 NEW_CARD.appendTo(CARD_LIST);
@@ -211,4 +252,11 @@ function ego_update_app_list(data) {
 
         ALERT.appendTo(LIST);
     }
+}
+
+function ego_upgrade_app(app) {
+    ego_post('upgradeApp', {
+        name: app.name,
+        source: app.upgradeSource,
+    });
 }

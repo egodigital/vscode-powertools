@@ -20,8 +20,18 @@
     margin-top: 32px;
 }
 
-.ego-app-card .ego-btn {
+.ego-app-card .card-footer .ego-btn,
+.ego-app-card .card-footer .ego-btn-group {
     float: right;
+}
+
+.ego-app-card .card-footer .ego-btn-group .dropdown-menu .dropdown-item .fa {
+    margin-right: 16px;
+}
+
+.ego-app-card .card-footer .ego-btn-group {
+    margin-left: 8px;
+    margin-top: 6px;
 }
 
 .ego-app-card .ego-app-icon {

@@ -35,6 +35,7 @@ interface App {
     icon?: string;
     isInstalled: boolean;
     source: string;
+    upgradeSource?: string;
 }
 
 interface UninstallAppData {
@@ -196,6 +197,7 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
     protected async onWebViewMessage(msg: ego_contracts.WebViewMessage): Promise<boolean> {
         switch (msg.command) {
             case 'installApp':
+            case 'upgradeApp':
                 {
                     let err: any;
                     try {
@@ -396,10 +398,28 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
                             'apps': ego_helpers.from(APPS)
                                 .orderBy(a => a.isInstalled ? 0 : 1)
                                 .groupBy(a => ego_helpers.normalizeString(a.name))
-                                .select(grp => grp.first())
+                                .select(grp => {
+                                    const APPS_OF_GROUP = grp.toArray();
+
+                                    return {
+                                        apps: APPS_OF_GROUP,
+                                    };
+                                })
+                                .where(x => x.apps.length > 0)
+                                .pipe(x => {
+                                    const STORE_APPS = x.apps
+                                        .filter(a => !a.isInstalled && !ego_helpers.isEmptyString(a.source));
+
+                                    x.apps[0].upgradeSource =
+                                        STORE_APPS.length > 1 ? STORE_APPS[0].source : undefined;
+                                })
+                                .select(x => {
+                                    return x.apps[0];
+                                })
                                 .orderBy(x => ego_helpers.normalizeString(x.displayName))
                                 .thenBy(x => ego_helpers.normalizeString(x.name))
                                 .thenBy(x => ego_helpers.normalizeString(x.source))
+                                .thenBy(x => ego_helpers.normalizeString(x.upgradeSource))
                                 .toArray(),
                         }
                     );
