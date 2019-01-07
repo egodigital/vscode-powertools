@@ -16,6 +16,13 @@
  */
 
 
+function ego_install_app(app) {
+    ego_post('installApp', {
+        name: app.name,
+        source: app.source,
+    });
+}
+
 function ego_on_command(command, data) {
     switch (command) {
         case 'appListUpdated':
@@ -38,10 +45,9 @@ function ego_on_loaded() {
     ego_reload_apps();
 }
 
-function ego_install_app(app) {
-    ego_post('installApp', {
-        name: app.name,
-        source: app.source,
+function ego_open_app(app) {
+    ego_post('openApp', {
+        name: app.name
     });
 }
 
@@ -65,13 +71,13 @@ function ego_update_app_list(data) {
             const CARD_LIST = $('<div class="row" />');
 
             data.apps.forEach(a => {
-                const NEW_CARD = $('<div class="col col-3">' + 
-                                    '<div class="card ego-app-card">' + 
-                                    '<div class="card-body">' + 
-                                    '<h4 class="card-title" />' + 
-                                    '</div>' + 
-                                    '</div>' +
-                                    '</div>');
+                const NEW_CARD = $('<div class="col col-4">' + 
+                                   '<div class="card ego-app-card">' + 
+                                   '<div class="card-body">' + 
+                                   '<h4 class="card-title" />' + 
+                                   '</div>' + 
+                                   '</div>' +
+                                   '</div>');
 
                 const DISPLAY_NAME = ego_to_string(a.displayName).trim();
                 NEW_CARD.find('.card-title')
@@ -98,6 +104,7 @@ function ego_update_app_list(data) {
                     );
                 }
 
+                // install / uninstall button
                 const INSTALL_BTN = $('<a class="btn btn-sm ego-btn" />');
                 if (a.isInstalled) {
                     INSTALL_BTN.append(
@@ -110,15 +117,15 @@ function ego_update_app_list(data) {
                         const UNINSTALL_MODAL = $('#ego-uninstall-app-modal');
 
                         const MODAL_BODY = $('<div>' + 
-                                                'Do you really want to UNINSTALL the app <strong />?' + 
-                                                '</div>');
+                                             'Do you really want to UNINSTALL the app <strong />?' + 
+                                             '</div>');
 
                         MODAL_BODY.find('strong')
-                                    .text(DISPLAY_NAME);
+                                  .text(DISPLAY_NAME);
 
                         UNINSTALL_MODAL.find('.modal-body')
-                                        .html('')
-                                        .append(MODAL_BODY);
+                                       .html('')
+                                       .append(MODAL_BODY);
 
                         UNINSTALL_MODAL.find('.ego-yes-btn').off('click').on('click', function() {
                             ego_post('uninstallApp', {
@@ -146,11 +153,12 @@ function ego_update_app_list(data) {
                     NEW_CARD.find('.card-body')
                 );
 
+                // show details button
                 const DETAILS_MARKDOWN = ego_to_string(a.details).trim();
                 if ('' !== DETAILS_MARKDOWN) {
                     const INFO_BTN = $('<a class="btn btn-sm btn-info ego-btn" title="Show Details ...">' + 
-                                        '<i class="fa fa-info-circle" aria-hidden="true"></i>' + 
-                                        '</a>');
+                                       '<i class="fa fa-info-circle" aria-hidden="true"></i>' + 
+                                       '</a>');
 
                     INFO_BTN.on('click', function() {
                         const DETAIL_MODAL = $('#ego-app-details-modal');
@@ -169,6 +177,21 @@ function ego_update_app_list(data) {
                     });
 
                     INFO_BTN.appendTo(
+                        NEW_CARD.find('.card-body')
+                    );
+                }
+
+                // open app button
+                if (a.isInstalled) {
+                    const OPEN_BTN = $('<a class="btn btn-sm btn-primary ego-btn" title="Open App ...">' + 
+                                       '<i class="fa fa-play" aria-hidden="true"></i>' + 
+                                       '</a>');
+
+                    OPEN_BTN.on('click', function() {
+                        ego_open_app(a);
+                    });
+
+                    OPEN_BTN.appendTo(
                         NEW_CARD.find('.card-body')
                     );
                 }

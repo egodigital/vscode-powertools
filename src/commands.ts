@@ -79,7 +79,7 @@ export function registerCommands(
                     {
                         action: () => {
                             return require('./apps/store')
-                                .openAppStore(context);
+                                .openAppStore(context, output);
                         },
                         label: `$(database)  Open Store ...`,
                         description: 'Opens a store, where you can install apps from.',

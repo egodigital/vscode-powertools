@@ -1658,57 +1658,11 @@ export async function openApp(
     );
     GLOBAL_APPS.forEach(a => {
         QUICK_PICKS.push({
-            action: async () => {
-                await vscode.window.withProgress({
-                    location: vscode.ProgressLocation.Notification,
-                    cancellable: false,
-                }, async (progress) => {
-                    progress.report({
-                        message: `Opening app '${ a.displayName }' ...`,
-                    });
-
-                    if (a.packageJSON) {
-                        if (a.packageJSON.dependencies || a.packageJSON.devDependencies) {
-                            const NODE_MODULES = path.resolve(
-                                path.join(
-                                    path.dirname(a.scriptFile), 'node_modules'
-                                )
-                            );
-
-                            if (!(await ego_helpers.exists(NODE_MODULES))) {
-                                progress.report({
-                                    message: `Installing dependencies for app '${ a.displayName }' ...`,
-                                });
-
-                                const CWD = path.resolve(
-                                    path.dirname(a.scriptFile)
-                                );
-
-                                // run 'npm install'
-                                await (() => {
-                                    return new Promise<void>((resolve, reject) => {
-                                        try {
-                                            childProcess.exec('npm install', {
-                                                cwd: CWD,
-                                            }, (err) => {
-                                                if (err) {
-                                                    reject(err);
-                                                } else {
-                                                    resolve();
-                                                }
-                                            });
-                                        } catch (e) {
-                                            reject(e);
-                                        }
-                                    });
-                                })();
-                            }
-                        }
-                    }
-                });
-
-                await a.initialize();
-                return await a.open();
+            action: () => {
+                return openAppByName(
+                    extension, output,
+                    a.name
+                );
             },
             description: a.description,
             detail: a.scriptFile,
@@ -1760,6 +1714,102 @@ export async function openApp(
             SELECTED_ITEM.action()
         );
     }
+}
+
+/**
+ * Opens an app by its name.
+ *
+ * @param {vscode.ExtensionContext} extension The underlying extension context.
+ * @param {vscode.OutputChannel} output The output channel.
+ * @param {string} name The name of the app.
+ *
+ * @return {Promise<AppWebView|false>} The promise with the web view or (false) if falied.
+ */
+export async function openAppByName(
+    extension: vscode.ExtensionContext,
+    output: vscode.OutputChannel,
+    name: string,
+): Promise<AppWebView | false> {
+    try {
+        const NAME = sanitizeFilename(
+            ego_helpers.normalizeString(name)
+        );
+        if ('' !== NAME) {
+            const APP_DIR = path.resolve(
+                path.join(
+                    ego_helpers.getAppsDir(), NAME
+                )
+            );
+            const INDEX_JS = path.resolve(
+                path.join(
+                    APP_DIR, 'index.js'
+                )
+            );
+
+            if (await ego_helpers.isFile(INDEX_JS, false)) {
+                await vscode.window.withProgress({
+                    cancellable: false,
+                    location: vscode.ProgressLocation.Notification,
+                }, async (progress) => {
+                    const APP = new AppWebView(
+                        extension, output,
+                        INDEX_JS,
+                    );
+
+                    if (APP.packageJSON) {
+                        if (APP.packageJSON.dependencies || APP.packageJSON.devDependencies) {
+                            const NODE_MODULES = path.resolve(
+                                path.join(
+                                    path.dirname(APP.scriptFile), 'node_modules'
+                                )
+                            );
+
+                            if (!(await ego_helpers.exists(NODE_MODULES))) {
+                                if (progress) {
+                                    progress.report({
+                                        message: `Installing dependencies for app '${ APP.displayName }' ...`,
+                                    });
+                                }
+
+                                const CWD = path.resolve(
+                                    path.dirname(APP.scriptFile)
+                                );
+
+                                // run 'npm install'
+                                await (() => {
+                                    return new Promise<void>((resolve, reject) => {
+                                        try {
+                                            childProcess.exec('npm install', {
+                                                cwd: CWD,
+                                            }, (err) => {
+                                                if (err) {
+                                                    reject(err);
+                                                } else {
+                                                    resolve();
+                                                }
+                                            });
+                                        } catch (e) {
+                                            reject(e);
+                                        }
+                                    });
+                                })();
+                            }
+                        }
+                    }
+
+                    await APP.initialize();
+                    if (await APP.open()) {
+                        return APP;
+                    }
+                });
+            }
+        }
+    } catch (e) {
+        ego_log.CONSOLE
+            .trace(e, 'apps.openAppByName(1)');
+    }
+
+    return false;
 }
 
 /**

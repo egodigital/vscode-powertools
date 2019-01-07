@@ -27,6 +27,16 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 
+interface App {
+    name: string;
+    displayName: string;
+    description?: string;
+    details?: string;
+    icon?: string;
+    isInstalled: boolean;
+    source: string;
+}
+
 interface UninstallAppData {
     name: string;
     source: string;
@@ -38,6 +48,19 @@ interface UninstallAppData {
   */
 export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
     private _onAppListUpdatedEventFunction: (...args: any[]) => void;
+
+    /**
+     * Initializes a new instance of that class.
+     *
+     * @param {vscode.ExtensionContext} extension The extension context.
+     * @param {vscode.OutputChannel} output The output channel.
+     */
+    public constructor(
+        public readonly extension: vscode.ExtensionContext,
+        public readonly output: vscode.OutputChannel,
+    ) {
+        super(extension);
+    }
 
     /**
      * @inheritdoc
@@ -211,9 +234,37 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
                 }
                 break;
 
+            case 'openApp':
+                {
+                    let err: any;
+                    try {
+                        const INSTALLED_APPS = await ego_apps.getInstalledApps();
+
+                        const NAME = ego_helpers.normalizeString(msg.data.name);
+                        if ('' !== NAME) {
+                            const APPS_TO_OPEN = INSTALLED_APPS.filter(
+                                a => NAME === ego_helpers.normalizeString(
+                                    path.basename(a.path)
+                                )
+                            );
+
+                            for (const A of APPS_TO_OPEN) {
+                                await ego_apps.openAppByName(
+                                    this.extension,
+                                    this.output,
+                                    path.basename(A.path)
+                                );
+                            }
+                        }
+                    } catch (e) {
+                        e = err;
+                    }
+                }
+                break;
+
             case 'reloadApps':
                 try {
-                    const APPS: any[] = [];
+                    const APPS: App[] = [];
 
                     // installed apps
                     const INSTALLED_APPS = await ego_apps.getInstalledApps();
@@ -343,6 +394,9 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
                         {
                             'success': true,
                             'apps': ego_helpers.from(APPS)
+                                .orderBy(a => a.isInstalled ? 0 : 1)
+                                .groupBy(a => ego_helpers.normalizeString(a.name))
+                                .select(grp => grp.first())
                                 .orderBy(x => ego_helpers.normalizeString(x.displayName))
                                 .thenBy(x => ego_helpers.normalizeString(x.name))
                                 .thenBy(x => ego_helpers.normalizeString(x.source))
@@ -451,11 +505,15 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
  * Opens the app store.
  *
  * @param {vscode.ExtensionContext} extension The extension context.
+ * @param {vscode.OutputChannel} output The output channel.
  *
- * @return {Promise<AppStoreWebView>} The new web view.
+ * @return {Promise<AppStoreWebView>} The promise with the new web view.
  */
-export async function openAppStore(extension: vscode.ExtensionContext): Promise<AppStoreWebView> {
-    const APP_STORE = new AppStoreWebView(extension);
+export async function openAppStore(
+    extension: vscode.ExtensionContext,
+    output: vscode.OutputChannel,
+): Promise<AppStoreWebView> {
+    const APP_STORE = new AppStoreWebView(extension, output);
     await APP_STORE.open();
 
     return APP_STORE;
