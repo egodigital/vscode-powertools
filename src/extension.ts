@@ -20,6 +20,7 @@
 import * as ego_commands from './commands';
 import * as ego_helpers from './helpers';
 import * as ego_log from './log';
+import * as ego_versions from './versions';
 import * as ego_workspace from './workspace';
 import * as vscode from 'vscode';
 
@@ -263,6 +264,19 @@ export async function activate(context: vscode.ExtensionContext) {
         outputChannel.appendLine('');
         outputChannel.appendLine(`Extension has been initialized.`);
         outputChannel.appendLine('');
+    });
+
+    // CHANGELOG
+    WF.next(async () => {
+        try {
+            await ego_versions.openChangelogIfNeeded(
+                context,
+                packageFile
+            );
+        } catch (e) {
+            ego_log.CONSOLE
+                .trace(e, 'extension.activate(openChangelogIfNeeded)');
+        }
     });
 
     await ego_helpers.QUEUE.add(async () => {

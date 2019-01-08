@@ -1147,6 +1147,10 @@ export interface WorkspaceCommand extends vscode.Disposable {
  */
 export interface WorkspaceCommandScriptArguments extends WorkspaceScriptArguments {
     /**
+     * The argument that have been submitted to the command.
+     */
+    readonly arguments: any[];
+    /**
      * The ID of the command.
      */
     readonly command: string;

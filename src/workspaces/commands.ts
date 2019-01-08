@@ -103,31 +103,31 @@ export async function reloadCommands() {
             let newButton: vscode.StatusBarItem;
             let newCommand: vscode.Disposable;
             try {
-                newCommand = vscode.commands.registerCommand(ID, async function() {
-                    try {
-                        await WORKSPACE.executeScript<ego_contracts.WorkspaceCommandScriptArguments>(
-                            item,
-                            (args) => {
-                                // args.command
-                                Object.defineProperty(args, 'command', {
-                                    enumerable: true,
-                                    get: () => {
-                                        return key;
-                                    },
-                                });
+                newCommand = vscode.commands.registerCommand(ID, function() {
+                    const ARGS = ego_helpers.toArray(arguments);
 
-                                return args;
-                            }
-                        );
-                    } catch (e) {
-                        WORKSPACE.logger.trace(
-                            e, `workspaces.reloadCommands.execute(${ key })`
-                        );
+                    return WORKSPACE.executeScript<ego_contracts.WorkspaceCommandScriptArguments>(
+                        item,
+                        (args) => {
+                            // args.arguments
+                            Object.defineProperty(args, 'arguments', {
+                                enumerable: true,
+                                get: () => {
+                                    return ARGS;
+                                },
+                            });
 
-                        ego_helpers.showErrorMessage(
-                            e
-                        );
-                    }
+                            // args.command
+                            Object.defineProperty(args, 'command', {
+                                enumerable: true,
+                                get: () => {
+                                    return key;
+                                },
+                            });
+
+                            return args;
+                        }
+                    );
                 });
 
                 const NEW_WORKSPACE_CMD: ego_contracts.WorkspaceCommand = {
