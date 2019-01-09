@@ -349,6 +349,10 @@ export async function reloadApps() {
 
                 newAppBtn = ego_helpers.buildButtonSync(item.button, (btn) => {
                     btn.text = WORKSPACE.replaceValues(btn.text);
+                    if (ego_helpers.isEmptyString(btn.text)) {
+                        btn.text = newApp.name;
+                    }
+
                     btn.color = WORKSPACE.replaceValues(btn.color);
                     btn.tooltip = WORKSPACE.replaceValues(btn.tooltip);
                     btn.command = CMD_ID;
