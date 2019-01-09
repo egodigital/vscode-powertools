@@ -64,6 +64,10 @@ export type AppEventFunction<TResult = any> = (args: AppEventScriptArguments) =>
  */
 export interface AppEventScriptArguments<TData = any> extends WorkspaceScriptArguments {
     /**
+     * The underlying button (if available).
+     */
+    readonly button?: vscode.StatusBarItem;
+    /**
      * Clears the '.temp' sub folder.
      *
      * @return {boolean} Temp folder has been cleared or not.
@@ -185,6 +189,10 @@ export interface AppEventScriptArguments<TData = any> extends WorkspaceScriptArg
  * An app item.
  */
 export interface AppItem extends Conditional, ForPlatforms {
+    /**
+     * An optional button to define.
+     */
+    button?: Button;
     /**
      * A description for the app.
      */
@@ -1075,6 +1083,10 @@ export interface WithValues {
  */
 export interface WorkspaceApp extends vscode.Disposable {
     /**
+     * The underlying button, if defined.
+     */
+    readonly button?: vscode.StatusBarItem;
+    /**
      * A description of the app.
      */
     readonly description: string;
@@ -1300,3 +1312,8 @@ export const IGNORE_FILE = '.egoignore';
  * The key for the global setting that stores the app store URL.
  */
 export const KEY_GLOBAL_SETTING_APP_STORE_URL = 'egoPTAppStoreUrl';
+
+/**
+ * The key for the global setting that stores if CHANGELOG should be opened on startup automatically.
+ */
+export const KEY_GLOBAL_SETTING_OPEN_CHANGELOG_ON_STARTUP = 'egoPTOpenChangelogOnStartup';

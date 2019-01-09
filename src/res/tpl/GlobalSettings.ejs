@@ -32,6 +32,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                     <a href="#" onclick="ego_select_area('apps')" class="list-group-item list-group-item-action waves-effect ego-item ego-item-apps">
                                         <i class="fa fa-bolt mr-3"></i>Apps
                                     </a>
+
+                                    <a href="#" onclick="ego_select_area('notifications')" class="list-group-item list-group-item-action waves-effect ego-item ego-item-notifications">
+                                        <i class="fa fa-bolt mr-3"></i>Notifications
+                                    </a>
                                 </div>    
                             </div>
                             <!-- Sidebar -->
@@ -57,6 +61,22 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                                data-trigger="focus"
                                                data-placement="bottom"
                                                data-content="Enter an URL with a JSON file, which describes a custom app store.">
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="ego-area ego-area-notifications" style="display: none;">
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item active">Notifications</li>
+                                    </ol>
+                                </nav>
+
+                                <form>
+                                    <!-- open CHANGELOG on startup -->
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="ego-open-changelog-on-startup">
+                                        <label class="custom-control-label" for="ego-open-changelog-on-startup">Open CHANGELOG on startup</label>
                                     </div>
                                 </form>
                             </div>

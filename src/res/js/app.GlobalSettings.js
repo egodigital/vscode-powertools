@@ -28,6 +28,10 @@ function ego_on_command(command, data) {
                     $('#ego-app-store-url').val(
                         data.settings.appStoreUrl
                     );
+
+                    $('#ego-open-changelog-on-startup').prop(
+                        'checked', data.settings.openChangelogOnStartup
+                    );
                 }
             }
             break;
@@ -46,7 +50,8 @@ function ego_on_loaded() {
         BTN.addClass('disabled');
 
         ego_post('saveSettings', {
-            appStoreUrl: $('#ego-app-store-url').val()
+            appStoreUrl: $('#ego-app-store-url').val(),
+            openChangelogOnStartup: $('#ego-open-changelog-on-startup').prop('checked'),
         });
     });
 

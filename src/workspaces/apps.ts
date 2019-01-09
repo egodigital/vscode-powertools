@@ -30,6 +30,7 @@ import * as vscode from 'vscode';
  * Name of the key for storing app instances.
  */
 export const KEY_APPS = 'apps';
+let nextAppButtonCommandId = Number.MIN_SAFE_INTEGER;
 
 
 /**
@@ -42,10 +43,12 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
      * @param {vscode.ExtensionContext} extension The underlying extension context.
      * @param {ego_workspace.Workspace} workspace The underlying workspace.
      * @param {ego_contracts.AppItem} item The item from the settings.
+     * @param {vscode.StatusBarItem} [button] The underlying button.
      */
     public constructor(
         public readonly workspace: ego_workspace.Workspace,
         public readonly item: ego_contracts.AppItem,
+        public readonly button?: vscode.StatusBarItem,
     ) {
         super(workspace.context.extension);
 
@@ -77,6 +80,7 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
         const ME = this;
 
         const ARGS: ego_contracts.AppEventScriptArguments = {
+            button: this.button,
             clearTemp: () => {
                 return this.clearTempDir();
             },
@@ -251,6 +255,13 @@ export async function reloadApps() {
     ];
 
     APP_ENTRIES.forEach(entry => {
+        let newAppBtn: vscode.StatusBarItem;
+        let newAppBtnCommand: vscode.Disposable;
+        const DISPOSE_BTN = () => {
+            ego_helpers.tryDispose(newAppBtn);
+            ego_helpers.tryDispose(newAppBtnCommand);
+        };
+
         try {
             let item: ego_contracts.AppItem;
             if (_.isObjectLike(entry)) {
@@ -287,6 +298,8 @@ export async function reloadApps() {
                 description: undefined,
                 detail: undefined,
                 dispose: function() {
+                    DISPOSE_BTN();
+
                     const VIEW = view;
                     if (VIEW) {
                         VIEW.dispose();
@@ -313,6 +326,34 @@ export async function reloadApps() {
                 },
                 view: undefined,
             };
+
+            // newApp.button
+            Object.defineProperty(newApp, 'button', {
+                enumerable: true,
+                get: () => {
+                    return newAppBtn;
+                },
+            });
+
+            if (item.button) {
+                const ID = nextAppButtonCommandId++;
+                const CMD_ID = `ego.power-tools.buttons.appBtn${ ID }`;
+
+                newAppBtnCommand = vscode.commands.registerCommand(CMD_ID, async () => {
+                    try {
+                        await newApp.open();
+                    } catch (e) {
+                        ego_helpers.showErrorMessage(e);
+                    }
+                });
+
+                newAppBtn = ego_helpers.buildButtonSync(item.button, (btn) => {
+                    btn.text = WORKSPACE.replaceValues(btn.text);
+                    btn.color = WORKSPACE.replaceValues(btn.color);
+                    btn.tooltip = WORKSPACE.replaceValues(btn.tooltip);
+                    btn.command = CMD_ID;
+                });
+            }
 
             // newApp.description
             Object.defineProperty(newApp, 'description', {
@@ -366,13 +407,21 @@ export async function reloadApps() {
             });
 
             if (newApp) {
+                if (newApp.button) {
+                    newApp.button.show();
+                }
+
                 APP_LIST.push(
                     newApp
                 );
+            } else {
+                DISPOSE_BTN();
             }
         } catch (e) {
             WORKSPACE.logger
                      .trace(e, 'apps.reloadApps(1)');
+
+            DISPOSE_BTN();
         }
     });
 }

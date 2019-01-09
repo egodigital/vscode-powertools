@@ -26,6 +26,7 @@ import * as vscode from 'vscode';
 
 interface SettingsFromWebView {
     appStoreUrl: string;
+    openChangelogOnStartup: boolean;
 }
 
 interface SettingsForWebView extends SettingsFromWebView {
@@ -79,7 +80,13 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
                                 this.extension
                                     .globalState
                                     .get(ego_contracts.KEY_GLOBAL_SETTING_APP_STORE_URL)
-                            ).trim()
+                            ).trim(),
+                            openChangelogOnStartup: ego_helpers.toBooleanSafe(
+                                this.extension
+                                    .globalState
+                                    .get(ego_contracts.KEY_GLOBAL_SETTING_OPEN_CHANGELOG_ON_STARTUP, true),
+                                true,
+                            ),
                         };
 
                         if ('' === settings.appStoreUrl) {
@@ -114,9 +121,16 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
                             appStoreUrl = undefined;
                         }
 
+                        const OPEN_CHANGELOG_ON_STARTUP = ego_helpers.toBooleanSafe(
+                            SETTINGS.openChangelogOnStartup, true
+                        );
+
                         await this.extension
                             .globalState
                             .update(ego_contracts.KEY_GLOBAL_SETTING_APP_STORE_URL, appStoreUrl);
+                        await this.extension
+                            .globalState
+                            .update(ego_contracts.KEY_GLOBAL_SETTING_OPEN_CHANGELOG_ON_STARTUP, OPEN_CHANGELOG_ON_STARTUP);
                     } catch (e) {
                         err = ego_helpers.errorToString(e);
                     }

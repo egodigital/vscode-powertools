@@ -18,6 +18,7 @@
  */
 
 import * as ego_commands from './commands';
+import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_log from './log';
 import * as ego_versions from './versions';
@@ -269,10 +270,18 @@ export async function activate(context: vscode.ExtensionContext) {
     // CHANGELOG
     WF.next(async () => {
         try {
-            await ego_versions.openChangelogIfNeeded(
-                context,
-                packageFile
+            const OPEN_CHANGELOG = ego_helpers.toBooleanSafe(
+                context.globalState
+                    .get(ego_contracts.KEY_GLOBAL_SETTING_OPEN_CHANGELOG_ON_STARTUP, true),
+                true,
             );
+
+            if (OPEN_CHANGELOG) {
+                await ego_versions.openChangelogIfNeeded(
+                    context,
+                    packageFile,
+                );
+            }
         } catch (e) {
             ego_log.CONSOLE
                 .trace(e, 'extension.activate(openChangelogIfNeeded)');
