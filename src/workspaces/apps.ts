@@ -335,30 +335,6 @@ export async function reloadApps() {
                 },
             });
 
-            if (item.button) {
-                const ID = nextAppButtonCommandId++;
-                const CMD_ID = `ego.power-tools.buttons.appBtn${ ID }`;
-
-                newAppBtnCommand = vscode.commands.registerCommand(CMD_ID, async () => {
-                    try {
-                        await newApp.open();
-                    } catch (e) {
-                        ego_helpers.showErrorMessage(e);
-                    }
-                });
-
-                newAppBtn = ego_helpers.buildButtonSync(item.button, (btn) => {
-                    btn.text = WORKSPACE.replaceValues(btn.text);
-                    if (ego_helpers.isEmptyString(btn.text)) {
-                        btn.text = newApp.name;
-                    }
-
-                    btn.color = WORKSPACE.replaceValues(btn.color);
-                    btn.tooltip = WORKSPACE.replaceValues(btn.tooltip);
-                    btn.command = CMD_ID;
-                });
-            }
-
             // newApp.description
             Object.defineProperty(newApp, 'description', {
                 enumerable: true,
@@ -409,6 +385,30 @@ export async function reloadApps() {
                     return view;
                 }
             });
+
+            if (item.button) {
+                const ID = nextAppButtonCommandId++;
+                const CMD_ID = `ego.power-tools.buttons.appBtn${ ID }`;
+
+                newAppBtnCommand = vscode.commands.registerCommand(CMD_ID, async () => {
+                    try {
+                        await newApp.open();
+                    } catch (e) {
+                        ego_helpers.showErrorMessage(e);
+                    }
+                });
+
+                newAppBtn = ego_helpers.buildButtonSync(item.button, (btn) => {
+                    btn.text = WORKSPACE.replaceValues(btn.text);
+                    if (ego_helpers.isEmptyString(btn.text)) {
+                        btn.text = newApp.name;
+                    }
+
+                    btn.color = WORKSPACE.replaceValues(btn.color);
+                    btn.tooltip = WORKSPACE.replaceValues(btn.tooltip);
+                    btn.command = CMD_ID;
+                });
+            }
 
             if (newApp) {
                 if (newApp.button) {
