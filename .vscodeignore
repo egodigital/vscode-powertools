@@ -8,3 +8,4 @@ src/**
 **/tslint.json
 **/*.map
 **/*.ts
+publish.js

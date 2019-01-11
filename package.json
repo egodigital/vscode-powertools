@@ -3,7 +3,7 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.4.3",
+    "version": "0.5.0",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -961,7 +961,9 @@
         }
     },
     "scripts": {
+        "build": "(rm -r ./out || true) && (\"./node_modules/.bin/tsc\" -p ./) && (mkdir \"./out/res\") && (cp -r ./src/res/* ./out/res)",
         "compile": "tsc -p ./",
+        "deploy": "npm install && npm run build && node ./publish.js",
         "doc": "(rm -r ./doc || true) && (\"./node_modules/.bin/typedoc\" --out ./doc ./src)",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "watch": "tsc -watch -p ./",
@@ -984,9 +986,10 @@
         "@types/sanitize-filename": "^1.1.28",
         "@types/tmp": "0.0.33",
         "@types/yazl": "^2.4.1",
-        "tslint": "^5.12.0",
+        "tslint": "^5.12.1",
         "typedoc": "^0.13.0",
         "typescript": "^3.2.2",
+        "vsce": "^1.54.0",
         "vscode": "^1.1.25"
     },
     "author": "e.GO Digital GmbH, Aachen, Germany",
