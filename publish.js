@@ -21,7 +21,7 @@ const vsce = require('vsce');
     // npm run deploy <PAT>
     const PAT = process.argv[2].trim();
     if ('' === PAT) {
-        throw new Error(`No Personal Access Token defined in 'VSCE_TOKEN'!`);
+        throw new Error(`No Personal Access Token defined!`);
     }
 
     await vsce.publish({

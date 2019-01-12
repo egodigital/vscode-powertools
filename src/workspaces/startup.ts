@@ -18,6 +18,7 @@
 import * as _ from 'lodash';
 import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
+import * as ego_stores from '../stores';
 import * as ego_workspace from '../workspace';
 
 
@@ -95,6 +96,7 @@ export async function onStartup() {
                             if (SCRIPT_MODULE) {
                                 if (SCRIPT_MODULE.execute) {
                                     const ARGS: ego_contracts.ScriptCommandStartupArguments = {
+                                        globalStore: new ego_stores.UserStore(),
                                         logger: WORKSPACE.logger,
                                         options: ego_helpers.cloneObject(SCRIPT_ITEM.options),
                                         output: WORKSPACE.output,
@@ -103,7 +105,8 @@ export async function onStartup() {
                                         },
                                         require: (id) => {
                                             return ego_helpers.requireModule(id);
-                                        }
+                                        },
+                                        store: new ego_stores.UserStore(FULL_SCRIPT_PATH),
                                     };
 
                                     await Promise.resolve(

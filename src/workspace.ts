@@ -20,6 +20,7 @@ import * as childProcess from 'child_process';
 import * as ego_code from './code';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
+import * as ego_stores from './stores';
 import * as ego_values from './values';
 import * as ego_workspaces_apps from './workspaces/apps';
 import * as ego_workspaces_buttons from './workspaces/buttons';
@@ -176,6 +177,7 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         if (SCRIPT_MODULE) {
             if (SCRIPT_MODULE.execute) {
                 const BASE_ARGS: ego_contracts.WorkspaceScriptArguments = {
+                    globalStore: new ego_stores.UserStore(),
                     logger: this.logger,
                     options: ego_helpers.cloneObject(settings.options),
                     output: this.output,
@@ -184,7 +186,8 @@ export class Workspace extends ego_helpers.WorkspaceBase {
                     },
                     require: (id) => {
                         return ego_helpers.requireModule(id);
-                    }
+                    },
+                    store: new ego_stores.UserStore(FULL_SCRIPT_PATH),
                 };
 
                 const ARGS: TArgs = await Promise.resolve(

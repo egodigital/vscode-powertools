@@ -21,6 +21,7 @@ import * as ego_code from './code';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_log from './log';
+import * as ego_stores from './stores';
 import * as fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
@@ -313,6 +314,7 @@ export class ScriptValue implements ego_contracts.Value {
             const VALUES = storageToArray(this.otherValues);
 
             const ARGS: ego_contracts.ScriptValueArguments = {
+                globalStore: new ego_stores.UserStore(),
                 logger: ego_log.CONSOLE,
                 options: ego_helpers.cloneObject(this.options),
                 output: undefined,
@@ -324,6 +326,7 @@ export class ScriptValue implements ego_contracts.Value {
                 require: (id) => {
                     return ego_helpers.requireModule(id);
                 },
+                store: new ego_stores.UserStore(this.script),
             };
 
             Object.defineProperty(ARGS, 'output', {

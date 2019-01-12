@@ -21,6 +21,7 @@ import * as childProcess from 'child_process';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_log from './log';
+import * as ego_stores from './stores';
 import * as ego_values from './values';
 import * as ego_workspace from './workspace';
 import * as ego_webview from './webview';
@@ -516,6 +517,7 @@ export class AppWebView extends AppWebViewBase {
 
                 return uri;
             },
+            globalStore: new ego_stores.UserStore(),
             logger: ego_log.CONSOLE,
             options: options,
             output: this.output,
@@ -568,6 +570,7 @@ export class AppWebView extends AppWebViewBase {
             stat: (p, lstat) => {
                 return this.fileSystemItemStat(p, lstat);
             },
+            store: new ego_stores.UserStore(this.scriptFile),
             tempFile: () => {
                 return this.createTempFile();
             },

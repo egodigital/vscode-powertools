@@ -19,6 +19,7 @@ import * as _ from 'lodash';
 import * as ego_apps from '../apps';
 import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
+import * as ego_stores from '../stores';
 import * as ego_workspace from '../workspace';
 import * as ejs from 'ejs';
 import * as fsExtra from 'fs-extra';
@@ -103,6 +104,7 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
 
                 return uri;
             },
+            globalStore: new ego_stores.UserStore(),
             logger: this.workspace.logger,
             options: ego_helpers.cloneObject(this.item.options),
             output: this.workspace.output,
@@ -153,6 +155,7 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
             stat: (p, lstat) => {
                 return this.fileSystemItemStat(p, lstat);
             },
+            store: new ego_stores.UserStore(this.scriptFile),
             tempFile: () => {
                 return this.createTempFile();
             },

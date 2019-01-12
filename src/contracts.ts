@@ -401,6 +401,16 @@ export interface AppStoreAppSource {
 }
 
 /**
+ * A boxed value.
+ */
+export interface BoxedValue<TValue = any> {
+    /**
+     * The boxed value.
+     */
+    value?: TValue;
+}
+
+/**
  * Settings for a button in the status bar.
  */
 export interface Button {
@@ -795,6 +805,10 @@ export interface ProgressContext extends vscode.Progress<{ message?: string; inc
  */
 export interface ScriptArguments {
     /**
+     * The global store.
+     */
+    readonly globalStore: Store;
+    /**
      * The logger.
      */
     readonly logger: ego_helpers.Logger;
@@ -822,6 +836,10 @@ export interface ScriptArguments {
      * @return {any} The module.
      */
     readonly require: (id: string) => any;
+    /**
+     * The user store for the underlying script.
+     */
+    readonly store: Store;
 }
 
 /**
@@ -959,6 +977,30 @@ export interface StaticValueItem extends ValueItem {
      * The value.
      */
     value: any;
+}
+
+/**
+ * Stores data.
+ */
+export interface Store {
+    /**
+     * Tries to return a value from the store.
+     *
+     * @param {any} key The key.
+     * @param {TDefault} [defaultValue] The custom default value.
+     *
+     * @return {TValue|TDefault} The read value or the default value.
+     */
+    get<TValue = any, TDefault = TValue>(key: any, defaultValue?: TDefault): TValue | TDefault;
+    /**
+     * Tries set a value in the store.
+     *
+     * @param {any} key The key.
+     * @param {any} value The value to set.
+     *
+     * @return {Promise<boolean>} The promise with the value that indicates if operation was successfull or not.
+     */
+    set(key: any, value: any): Promise<boolean>;
 }
 
 /**
