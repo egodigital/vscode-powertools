@@ -339,8 +339,9 @@ export async function reloadJobs() {
 
     const JOB_ENTRIES = ego_helpers.asArray(
         SETTINGS.jobs
-    );
-
+    ).map(j => {
+        return WORKSPACE.importValues(j);
+    });
     if (JOB_ENTRIES.length < 1) {
         return;
     }

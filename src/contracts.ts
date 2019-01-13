@@ -740,7 +740,7 @@ export type JobEntry = JobItem;
 /**
  * A job item.
  */
-export interface JobItem extends Conditional, ForPlatforms {
+export interface JobItem extends CanImportValues, Conditional, ForPlatforms {
     /**
      * The action to invoke.
      */

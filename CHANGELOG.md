@@ -4,7 +4,7 @@
 ## 0.6.0 (January 14th, 2019; import values to settings)
 
 * added `globals` property to [ScriptArguments interface](https://egodigital.github.io/vscode-powertools/api/interfaces/_contracts_.scriptarguments.html), which makes it possible to define global data for all scripts in the workspace settings
-* added `importValues` property for [apps](https://github.com/egodigital/vscode-powertools/wiki/Apps), [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons), [commands](https://github.com/egodigital/vscode-powertools/wiki/Commands) and [events](https://github.com/egodigital/vscode-powertools/wiki/Events), which makes it possible to import [external values](https://github.com/egodigital/vscode-powertools/wiki/Values)(https://github.com/egodigital/vscode-powertools/wiki/Commands)
+* added `importValues` property for [apps](https://github.com/egodigital/vscode-powertools/wiki/Apps), [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons), [commands](https://github.com/egodigital/vscode-powertools/wiki/Commands), [events](https://github.com/egodigital/vscode-powertools/wiki/Events) and [jobs](https://github.com/egodigital/vscode-powertools/wiki/Jobs), which makes it possible to import [external values](https://github.com/egodigital/vscode-powertools/wiki/Values)
 * code cleanups and improvements
 
 ## 0.5.1 (January 13th, 2019; apps)
