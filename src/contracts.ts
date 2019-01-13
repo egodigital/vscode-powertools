@@ -62,7 +62,7 @@ export type AppEventFunction<TResult = any> = (args: AppEventScriptArguments) =>
 /**
  * Arguments for an app script event.
  */
-export interface AppEventScriptArguments<TData = any> extends WorkspaceScriptArguments {
+export interface AppEventScriptArguments<TData = any> extends ScriptArguments {
     /**
      * The underlying button (if available).
      */
@@ -596,6 +596,10 @@ export interface ExtensionConfiguration extends WithValues {
      */
     events?: EventEntry[];
     /**
+     * Global data.
+     */
+    globals?: any;
+    /**
      * One or more jobs to run.
      */
     jobs?: JobEntry[];
@@ -805,6 +809,10 @@ export interface ProgressContext extends vscode.Progress<{ message?: string; inc
  */
 export interface ScriptArguments {
     /**
+     * Global data which are available for all scripts.
+     */
+    readonly globals?: any;
+    /**
      * The global store.
      */
     readonly globalStore: Store;
@@ -863,15 +871,7 @@ export interface ScriptCommandStartupArguments extends WorkspaceScriptArguments 
 /**
  * A startup item running a script.
  */
-export interface ScriptCommandStartupItem extends StartupItem {
-    /**
-     * Options for running the script.
-     */
-    options?: any;
-    /**
-     * The path to the script to invoke.
-     */
-    script: string;
+export interface ScriptCommandStartupItem extends StartupItem, WithScript {
 }
 
 /**
@@ -1153,6 +1153,16 @@ export interface WorkspaceApp extends vscode.Disposable {
 }
 
 /**
+ * Arguments for (workspace) an app script event.
+ */
+export interface WorkspaceAppEventScriptArguments<TData = any> extends AppEventScriptArguments<TData>, WorkspaceScriptArguments {
+    /**
+     * @inheritdoc
+     */
+    readonly globals: any;
+}
+
+/**
  * A workspace button.
  */
 export interface WorkspaceButton extends vscode.Disposable {
@@ -1290,6 +1300,10 @@ export type WorkspaceList = { [name: string]: WorkspaceInfo | WorkspaceInfo[] };
  * Arguments for a workspace based script.
  */
 export interface WorkspaceScriptArguments extends ScriptArguments {
+    /**
+     * @inheritdoc
+     */
+    readonly globals: any;
 }
 
 

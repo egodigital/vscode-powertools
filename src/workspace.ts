@@ -177,6 +177,7 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         if (SCRIPT_MODULE) {
             if (SCRIPT_MODULE.execute) {
                 const BASE_ARGS: ego_contracts.WorkspaceScriptArguments = {
+                    globals: ego_helpers.cloneObject(this.settings.globals),
                     globalStore: new ego_stores.UserStore(),
                     logger: this.logger,
                     options: ego_helpers.cloneObject(settings.options),

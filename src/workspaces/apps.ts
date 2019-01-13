@@ -77,10 +77,10 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
     protected createScriptArguments(
         eventName: string,
         data?: any,
-    ): ego_contracts.AppEventScriptArguments {
+    ): ego_contracts.WorkspaceAppEventScriptArguments {
         const ME = this;
 
-        const ARGS: ego_contracts.AppEventScriptArguments = {
+        const ARGS: ego_contracts.WorkspaceAppEventScriptArguments = {
             button: this.button,
             clearTemp: () => {
                 return this.clearTempDir();
@@ -104,6 +104,7 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
 
                 return uri;
             },
+            globals: ego_helpers.cloneObject(this.workspace.settings.globals),
             globalStore: new ego_stores.UserStore(),
             logger: this.workspace.logger,
             options: ego_helpers.cloneObject(this.item.options),

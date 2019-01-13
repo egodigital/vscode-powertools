@@ -3,7 +3,7 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.5.1",
+    "version": "0.6.0",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -424,6 +424,9 @@
                                     }
                                 ]
                             }
+                        },
+                        "globals": {
+                            "description": "Global data, which can be accessed from 'globals' properties in scripts, e.g."
                         },
                         "jobs": {
                             "description": "One or more jobs to run.",
