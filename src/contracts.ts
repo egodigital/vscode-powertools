@@ -467,11 +467,26 @@ export type ButtonEntry = ButtonItem;
 /**
  * A button item in the settings.
  */
-export interface ButtonItem extends Button, Conditional, ForPlatforms {
+export interface ButtonItem extends Button, CanImportValues, Conditional, ForPlatforms {
     /**
      * The action to invoke, when clicked.
      */
     action: string | ButtonAction;
+}
+
+/**
+ * An "import value" entry.
+ */
+export type CanImportValueEntry = string;
+
+/**
+ * An object, which can be import property data from values.
+ */
+export interface CanImportValues {
+    /**
+     * Defines a list of properties, which uses (external) values for itself.
+     */
+    importValues?: { [propertyName: string]: CanImportValueEntry };
 }
 
 /**

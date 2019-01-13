@@ -218,6 +218,21 @@
                                                 "description": "The JavaScript code that checks the avaibility of that button.",
                                                 "type": "string"
                                             },
+                                            "importValues": {
+                                                "description": "Defines a list of properties, which uses (external) values for itself.",
+                                                "type": "object",
+                                                "patternProperties": {
+                                                    "(.*)": {
+                                                        "description": "The name of the property, which should be set / overwritten.",
+                                                        "oneOf": [
+                                                            {
+                                                                "description": "(property name) : (value name)",
+                                                                "type": "string"
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            },
                                             "isRight": {
                                                 "description": "Display button on the right side or not.",
                                                 "type": "boolean",

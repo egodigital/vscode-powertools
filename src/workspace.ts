@@ -449,6 +449,25 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     }
 
     /**
+     * Imports values to an object.
+     *
+     * @param {TObj} obj The object where to import the values in.
+     * @param {boolean} [clone] Clone input object or not. Default: (true)
+     *
+     * @return {TObj} The object that contains the imported values.
+     */
+    public importValues<TObj extends ego_contracts.CanImportValues = ego_contracts.CanImportValues>(
+        obj: TObj,
+        clone?: boolean,
+    ): TObj {
+        return ego_helpers.importValues(
+            obj,
+            () => this.getValues(true),
+            clone,
+        );
+    }
+
+    /**
      * Initializes the workspace.
      */
     public async initialize() {

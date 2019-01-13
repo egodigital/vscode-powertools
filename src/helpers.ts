@@ -23,9 +23,10 @@ import * as os from 'os';
 import * as vscode from 'vscode';
 import {
     asArray,
+    cloneObject,
     normalizeString,
     toBooleanSafe,
-    toStringSafe
+    toStringSafe,
 } from 'vscode-helpers';
 
 export * from 'vscode-helpers';
@@ -222,6 +223,56 @@ export function getExtensionDirInHome(): string {
         path.join(os.homedir(),
                   ego_contracts.HOMEDIR_SUBFOLDER)
     );
+}
+
+/**
+ * Imports values to an object.
+ *
+ * @param {TObj} obj The object where to import the values in.
+ * @param {ego_contracts.ValueProvider} valueProvider The function that provides the value instances.
+ * @param {boolean} [clone] Clone input object or not. Default: (true)
+ *
+ * @return {TObj} The object that contains the imported values.
+ */
+export function importValues<TObj extends ego_contracts.CanImportValues = ego_contracts.CanImportValues>(
+    obj: TObj,
+    valueProvider: ego_contracts.ValueProvider,
+    clone?: boolean,
+): TObj {
+    clone = toBooleanSafe(clone, true);
+
+    const CLONED_OBJ = clone ? cloneObject(obj)
+        : obj;
+
+    const VALUES = asArray(
+        valueProvider()
+    );
+
+    if (CLONED_OBJ) {
+        const IMPORT_VALUES = CLONED_OBJ.importValues;
+        if (IMPORT_VALUES) {
+            for (const P in IMPORT_VALUES) {
+                const PROPERTY = toStringSafe(P).trim();
+
+                if ('' === PROPERTY) {
+                    continue;
+                }
+                if (['if', 'importValues', 'platforms'].indexOf(PROPERTY) > -1) {
+                    continue;  // these are "critical" properties
+                }
+
+                const VALUE_NAME: string = IMPORT_VALUES[PROPERTY];
+
+                VALUES.filter(v => {
+                    return normalizeString(v.name) === normalizeString(VALUE_NAME);
+                }).forEach(v => {
+                    CLONED_OBJ[PROPERTY] = v.value;
+                });
+            }
+        }
+    }
+
+    return CLONED_OBJ;
 }
 
 /**
