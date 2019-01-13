@@ -688,6 +688,21 @@
                                                 "description": "The JavaScript code that checks the avaibility of that startup item.",
                                                 "type": "string"
                                             },
+                                            "importValues": {
+                                                "description": "Defines a list of properties, which uses (external) values for itself.",
+                                                "type": "object",
+                                                "patternProperties": {
+                                                    "(.*)": {
+                                                        "description": "The name of the property, which should be set / overwritten.",
+                                                        "oneOf": [
+                                                            {
+                                                                "description": "(property name) : (value name)",
+                                                                "type": "string"
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            },
                                             "platforms": {
                                                 "description": "One or more platform names, that startup item is for.",
                                                 "type": "array",
@@ -729,6 +744,21 @@
                                             "if": {
                                                 "description": "The JavaScript code that checks the avaibility of that startup item.",
                                                 "type": "string"
+                                            },
+                                            "importValues": {
+                                                "description": "Defines a list of properties, which uses (external) values for itself.",
+                                                "type": "object",
+                                                "patternProperties": {
+                                                    "(.*)": {
+                                                        "description": "The name of the property, which should be set / overwritten.",
+                                                        "oneOf": [
+                                                            {
+                                                                "description": "(property name) : (value name)",
+                                                                "type": "string"
+                                                            }
+                                                        ]
+                                                    }
+                                                }
                                             },
                                             "options": {
                                                 "description": "Options for running the script."

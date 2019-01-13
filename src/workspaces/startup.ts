@@ -56,6 +56,7 @@ export async function onStartup() {
                     command: ego_helpers.toStringSafe(S),
                 };
             }
+            entry = WORKSPACE.importValues(entry);
 
             if (!WORKSPACE.doesMatchPlatformCondition(entry)) {
                 continue;

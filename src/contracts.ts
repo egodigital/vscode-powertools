@@ -977,7 +977,7 @@ export type StartupEntry = string | StartupItem;
 /**
  * A startup item.
  */
-export interface StartupItem extends Conditional, ForPlatforms {
+export interface StartupItem extends CanImportValues, Conditional, ForPlatforms {
     /**
      * The type.
      */
