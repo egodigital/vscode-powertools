@@ -480,7 +480,7 @@ export interface ButtonItem extends Button, CanImportValues, Conditional, ForPla
 export type CanImportValueEntry = string;
 
 /**
- * An object, which can be import property data from values.
+ * An object, which can import property data from values.
  */
 export interface CanImportValues {
     /**
@@ -579,7 +579,7 @@ export type EventEntry = EventItem;
 /**
  * An event item.
  */
-export interface EventItem extends Conditional, ForPlatforms {
+export interface EventItem extends CanImportValues, Conditional, ForPlatforms {
     /**
      * The action.
      */

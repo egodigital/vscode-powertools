@@ -250,7 +250,7 @@ export function importValues<TObj extends ego_contracts.CanImportValues = ego_co
 
     if (CLONED_OBJ) {
         const IMPORT_VALUES = CLONED_OBJ.importValues;
-        if (IMPORT_VALUES) {
+        if (!_.isNil(IMPORT_VALUES)) {
             for (const P in IMPORT_VALUES) {
                 const PROPERTY = toStringSafe(P).trim();
 

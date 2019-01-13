@@ -64,7 +64,9 @@ export async function reloadEvents() {
         this
     );
 
-    const EVENTS = ego_helpers.asArray(SETTINGS.events);
+    const EVENTS = ego_helpers.asArray(SETTINGS.events).map(e => {
+        return WORKSPACE.importValues(e);
+    });
     if (EVENTS.length < 1) {
         return;
     }
