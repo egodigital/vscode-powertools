@@ -3,6 +3,7 @@
 out/test/**
 doc/**
 src/**
+img/**
 .gitignore
 **/tsconfig.json
 **/tslint.json
