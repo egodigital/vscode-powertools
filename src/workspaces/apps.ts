@@ -249,7 +249,6 @@ export async function reloadApps() {
     const APP_ENTRIES = ego_helpers.asArray(
         SETTINGS.apps
     );
-
     if (APP_ENTRIES.length < 1) {
         return;
     }
@@ -275,6 +274,7 @@ export async function reloadApps() {
                     script: ego_helpers.toStringSafe(entry),
                 };
             }
+            item = WORKSPACE.importValues(item);
 
             if (!WORKSPACE.doesMatchPlatformCondition(item)) {
                 return;

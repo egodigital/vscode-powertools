@@ -188,7 +188,7 @@ export interface AppEventScriptArguments<TData = any> extends ScriptArguments {
 /**
  * An app item.
  */
-export interface AppItem extends Conditional, ForPlatforms {
+export interface AppItem extends CanImportValues, Conditional, ForPlatforms {
     /**
      * An optional button to define.
      */
