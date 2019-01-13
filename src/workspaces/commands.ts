@@ -71,7 +71,9 @@ export async function reloadCommands() {
 
     if (SETTINGS.commands) {
         _.forIn(SETTINGS.commands, (entry, key) => {
-            let item: ego_contracts.CommandItem = entry;
+            let item: ego_contracts.CommandItem = WORKSPACE.importValues(
+                entry
+            );
             const ID = ego_helpers.toStringSafe(key)
                 .trim();
 

@@ -507,7 +507,7 @@ export type CommandEntry = CommandItem;
 /**
  * A command item.
  */
-export interface CommandItem extends Conditional, ForPlatforms, WithScript {
+export interface CommandItem extends CanImportValues, Conditional, ForPlatforms, WithScript {
     /**
      * Settings for an optional button.
      */
