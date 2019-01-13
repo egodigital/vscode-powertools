@@ -102,6 +102,8 @@ For more information, have a look at the [wiki](https://github.com/egodigital/vs
 
 The complete reference of classes, functions and interfaces, can be found [here](https://egodigital.github.io/vscode-powertools/api/).
 
+A repository with code samples, can be found at [vscode-powertools-samples](https://github.com/egodigital/vscode-powertools-samples). If you would like to request for one or more examples, you can open an [issue here](https://github.com/egodigital/vscode-powertools-samples/issues).
+
 ## Contribute [[&uarr;](#table-of-contents)]
 
 If you like the extension, you are welcome to contribute, by [opening an issue](https://github.com/egodigital/vscode-powertools/issues) and/or fork this repository.
