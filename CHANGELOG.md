@@ -5,6 +5,8 @@
 
 * added `Power Tools: Tools` command, with `Code Execution ...` sub command
 * updated to `change-case@3.1.0`
+* added following [samples](https://github.com/egodigital/vscode-powertools-samples):
+  * [app-vue-test](https://github.com/egodigital/vscode-powertools-samples/tree/master/app-vue-test)
 
 ## 0.6.1 (January 13th, 2019; import values to settings)
 
