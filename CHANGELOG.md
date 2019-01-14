@@ -1,6 +1,11 @@
 # Change Log (vscode-powertools)
 
 
+## 0.7.0 (January 14th, 2019; tools)
+
+* added `Power Tools: Tools` command, with `Code Execution ...` sub command
+* updated to `change-case@3.1.0`
+
 ## 0.6.1 (January 13th, 2019; import values to settings)
 
 * added `globals` property to [ScriptArguments interface](https://egodigital.github.io/vscode-powertools/api/interfaces/_contracts_.scriptarguments.html), which makes it possible to define global data for all scripts in the workspace settings

@@ -33,3 +33,12 @@ main {
     margin-left: auto;
     margin-right: auto;
 }
+
+.ego-markdown a, .ego-markdown td a, .ego-markdown th a {
+    color: #00a0e3;
+    text-decoration: none;
+}
+
+.ego-markdown a:hover, .ego-markdown td a:hover, .ego-markdown th a:hover {
+    text-decoration: underline;
+}

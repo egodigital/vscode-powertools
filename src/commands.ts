@@ -15,15 +15,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as _ from 'lodash';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_log from './log';
+import * as ego_markdown from './markdown';
 import * as ego_resources from './resources';
 import * as ego_scripts from './scripts';
 import * as ego_settings_global from './settings/global';
+import * as ego_tools_quickcode from './tools/quickcode';
 import * as ego_workspace from './workspace';
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
+const hexy = require('hexy');
+import * as htmlEntities from 'html-entities';
 import * as moment from 'moment';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -459,6 +464,118 @@ export function registerCommands(
                 if (SELECT_ITEM) {
                     await Promise.resolve(
                         SELECT_ITEM.action()
+                    );
+                }
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }),
+
+        // tools
+        vscode.commands.registerCommand('ego.power-tools.tools', async () => {
+            try {
+                const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [
+                    {
+                        action: async () => {
+                            let lastCode = ego_helpers.toStringSafe(
+                                context.globalState
+                                    .get(ego_contracts.KEY_LAST_CODE_EXECUTION, '')
+                            );
+                            if (ego_helpers.isEmptyString(lastCode)) {
+                                lastCode = undefined;
+                            }
+
+                            const CODE = await vscode.window.showInputBox({
+                                placeHolder: 'Code to execute (enter $help for help screen) ...',
+                                value: lastCode,
+                            });
+
+                            if (ego_helpers.isEmptyString(CODE)) {
+                                return;
+                            }
+
+                            try {
+                                const RESULT = await ego_tools_quickcode._exec_fcac50a111604220b8173024b6925905({
+                                    code: CODE,
+                                });
+
+                                if (!_.isUndefined(RESULT)) {
+                                    const HTML = new htmlEntities.AllHtmlEntities();
+
+                                    if (Buffer.isBuffer(RESULT)) {
+                                        let md = '# Code Execution Result (Buffer)\n\n';
+                                        md += '```';
+                                        md += HTML.encode( hexy.hexy(RESULT) );
+                                        md += '```';
+
+                                        const WEB_VIEW = new ego_markdown.MarkdownWebView({
+                                            markdown: md,
+                                            title: 'Code Execution Result (Buffer)',
+                                        });
+
+                                        await WEB_VIEW.open();
+                                    } else if (_.isArray(RESULT) || _.isPlainObject(RESULT)) {
+                                        const TYPE = _.isArray(RESULT) ? 'Array' : 'Object';
+                                        const COL_1 = _.isArray(RESULT) ? 'Index' : 'Property';
+
+                                        let md = `# Code Execution Result (${ TYPE })\n\n`;
+                                        md += `${ COL_1 } | Value\n`;
+                                        md += `----- | -----\n`;
+                                        for (const KEY of ego_helpers.from(Object.keys(RESULT)).orderBy(k => ego_helpers.normalizeString(k))) {
+                                            const VALUE = RESULT[KEY];
+
+                                            let json: any;
+                                            try {
+                                                if (_.isNull(VALUE)) {
+                                                    json = '*(null)*';
+                                                } else if (_.isUndefined(VALUE)) {
+                                                    json = '*(undefined)*';
+                                                } else {
+                                                    json = '`' + HTML.encode(
+                                                        JSON.stringify(VALUE)
+                                                    ) + '`';
+                                                }
+                                            } catch {
+                                                json = '*(ERROR)*';
+                                            }
+
+                                            md += `${ KEY } | ${ json }\n`;
+                                        }
+
+                                        const WEB_VIEW = new ego_markdown.MarkdownWebView({
+                                            markdown: md,
+                                            title: `Code Execution Result (${ TYPE })`,
+                                        });
+
+                                        await WEB_VIEW.open();
+                                    } else {
+                                        vscode.window.showInformationMessage(
+                                            ego_helpers.toStringSafe(RESULT)
+                                        );
+                                    }
+                                }
+                            } finally {
+                                try {
+                                    await context.globalState
+                                        .update(ego_contracts.KEY_LAST_CODE_EXECUTION, CODE);
+                                } catch (e) {
+                                    ego_log.CONSOLE
+                                        .trace(e, 'ego.power-tools.tools(1)');
+                                }
+                            }
+                        },
+                        label: '$(zap)  Code Execution ...',
+                        description: 'Executes one line JavaScript code.',
+                    }
+                ];
+
+                const SELECTED_ITEM = await vscode.window.showQuickPick(
+                    QUICK_PICKS
+                );
+
+                if (SELECTED_ITEM) {
+                    await Promise.resolve(
+                        SELECTED_ITEM.action()
                     );
                 }
             } catch (e) {

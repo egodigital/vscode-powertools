@@ -1385,6 +1385,11 @@ export const IGNORE_FILE = '.egoignore';
 export const KEY_GLOBAL_SETTING_APP_STORE_URL = 'egoPTAppStoreUrl';
 
 /**
+ * The key of the last executed code.
+ */
+export const KEY_LAST_CODE_EXECUTION = 'egoPTLastCodeExecution';
+
+/**
  * The key for the global setting that stores if CHANGELOG should be opened on startup automatically.
  */
 export const KEY_GLOBAL_SETTING_OPEN_CHANGELOG_ON_STARTUP = 'egoPTOpenChangelogOnStartup';

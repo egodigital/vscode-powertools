@@ -3,7 +3,7 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.6.1",
+    "version": "0.7.0",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -49,6 +49,11 @@
             {
                 "command": "ego.power-tools.scripts",
                 "title": "Scripts",
+                "category": "Power Tools"
+            },
+            {
+                "command": "ego.power-tools.tools",
+                "title": "Tools",
                 "category": "Power Tools"
             }
         ],
@@ -1093,6 +1098,7 @@
         "@types/p-queue": "^3.0.0",
         "@types/sanitize-filename": "^1.1.28",
         "@types/tmp": "0.0.33",
+        "@types/uuid": "^3.4.4",
         "@types/yazl": "^2.4.1",
         "tslint": "^5.12.1",
         "typedoc": "^0.13.0",
@@ -1115,10 +1121,11 @@
         "url": "https://github.com/egodigital/vscode-powertools.git"
     },
     "dependencies": {
-        "change-case": "^3.0.2",
+        "change-case": "^3.1.0",
         "cron": "^1.6.0",
         "ejs": "^2.6.1",
         "fs-extra": "^7.0.1",
+        "hexy": "^0.3.0",
         "html-entities": "^1.2.1",
         "lodash": "^4.17.11",
         "mime-types": "^2.1.21",
@@ -1128,6 +1135,7 @@
         "opn": "^5.4.0",
         "sanitize-filename": "^1.6.1",
         "tmp": "0.0.33",
+        "uuid": "^3.3.2",
         "vscode-helpers": "^3.0.0",
         "yazl": "^2.5.1"
     }
