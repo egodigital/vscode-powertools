@@ -114,9 +114,11 @@ export async function _exec_fcac50a111604220b8173024b6925905(
     );
 
     // @ts-ignore
-    const $r = (id: string) => {
-        return $h.requireModule(id);
-    };
+    const $r = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        (id: string) => {
+            return $h.requireModule(id);
+        }
+    );
 
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
