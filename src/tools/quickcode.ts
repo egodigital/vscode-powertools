@@ -34,7 +34,7 @@ export interface ExecOptions {
 /**
  * Executes code.
  *
- * @param {ExecOptions} _opts_f4eba53df3b74b7aa4e3a3228b528d78 The options.
+ * @param {ExecOptions} _opts_f4eba53df3b74b7aa4e3a3228b528d78 options.
  */
 export async function _exec_fcac50a111604220b8173024b6925905(
     _opts_f4eba53df3b74b7aa4e3a3228b528d78: ExecOptions
