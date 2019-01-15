@@ -44,6 +44,95 @@ export function registerCommands(
     context: vscode.ExtensionContext,
     output: vscode.OutputChannel,
 ) {
+    const OPEN_CODE_EXECUTION = async () => {
+        let lastCode = ego_helpers.toStringSafe(
+            context.globalState
+                .get(ego_contracts.KEY_LAST_CODE_EXECUTION, '')
+        );
+        if (ego_helpers.isEmptyString(lastCode)) {
+            lastCode = undefined;
+        }
+
+        const CODE = await vscode.window.showInputBox({
+            placeHolder: 'Code To Execute (enter $help for help screen) ...',
+            value: lastCode,
+        });
+
+        if (ego_helpers.isEmptyString(CODE)) {
+            return;
+        }
+
+        try {
+            const RESULT = await ego_tools_quickcode._exec_fcac50a111604220b8173024b6925905({
+                code: CODE,
+            });
+
+            if (!_.isUndefined(RESULT)) {
+                const HTML = new htmlEntities.AllHtmlEntities();
+
+                if (Buffer.isBuffer(RESULT)) {
+                    let md = '# Code Execution Result (Buffer)\n\n';
+                    md += '```';
+                    md += HTML.encode( hexy.hexy(RESULT) );
+                    md += '```';
+
+                    const WEB_VIEW = new ego_markdown.MarkdownWebView({
+                        markdown: md,
+                        title: 'Code Execution Result (Buffer)',
+                    });
+
+                    await WEB_VIEW.open();
+                } else if (_.isArray(RESULT) || _.isPlainObject(RESULT)) {
+                    const TYPE = _.isArray(RESULT) ? 'Array' : 'Object';
+                    const COL_1 = _.isArray(RESULT) ? 'Index' : 'Property';
+
+                    let md = `# Code Execution Result (${ TYPE })\n\n`;
+                    md += `${ COL_1 } | Value\n`;
+                    md += `----- | -----\n`;
+                    for (const KEY of ego_helpers.from(Object.keys(RESULT)).orderBy(k => ego_helpers.normalizeString(k))) {
+                        const VALUE = RESULT[KEY];
+
+                        let json: any;
+                        try {
+                            if (_.isNull(VALUE)) {
+                                json = '*(null)*';
+                            } else if (_.isUndefined(VALUE)) {
+                                json = '*(undefined)*';
+                            } else {
+                                json = '`' + HTML.encode(
+                                    JSON.stringify(VALUE)
+                                ) + '`';
+                            }
+                        } catch {
+                            json = '*(ERROR)*';
+                        }
+
+                        md += `${ KEY } | ${ json }\n`;
+                    }
+
+                    const WEB_VIEW = new ego_markdown.MarkdownWebView({
+                        markdown: md,
+                        title: `Code Execution Result (${ TYPE })`,
+                    });
+
+                    await WEB_VIEW.open();
+                } else {
+                    vscode.window.showInformationMessage(
+                        ego_helpers.toStringSafe(RESULT)
+                    );
+                }
+            }
+        } finally {
+            try {
+                await context.globalState
+                    .update(ego_contracts.KEY_LAST_CODE_EXECUTION, CODE);
+            } catch (e) {
+                ego_log.CONSOLE
+                    .trace(e, 'ego.power-tools.tools(1)');
+            }
+        }
+    };
+
     context.subscriptions.push(
         // apps
         vscode.commands.registerCommand('ego.power-tools.apps', async () => {
@@ -100,6 +189,15 @@ export function registerCommands(
                         SELECTED_ITEM.action()
                     );
                 }
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }),
+
+        // codeExecution
+        vscode.commands.registerCommand('ego.power-tools.codeExecution', async () => {
+            try {
+                await OPEN_CODE_EXECUTION();
             } catch (e) {
                 ego_helpers.showErrorMessage(e);
             }
@@ -476,93 +574,8 @@ export function registerCommands(
             try {
                 const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [
                     {
-                        action: async () => {
-                            let lastCode = ego_helpers.toStringSafe(
-                                context.globalState
-                                    .get(ego_contracts.KEY_LAST_CODE_EXECUTION, '')
-                            );
-                            if (ego_helpers.isEmptyString(lastCode)) {
-                                lastCode = undefined;
-                            }
-
-                            const CODE = await vscode.window.showInputBox({
-                                placeHolder: 'Code to execute (enter $help for help screen) ...',
-                                value: lastCode,
-                            });
-
-                            if (ego_helpers.isEmptyString(CODE)) {
-                                return;
-                            }
-
-                            try {
-                                const RESULT = await ego_tools_quickcode._exec_fcac50a111604220b8173024b6925905({
-                                    code: CODE,
-                                });
-
-                                if (!_.isUndefined(RESULT)) {
-                                    const HTML = new htmlEntities.AllHtmlEntities();
-
-                                    if (Buffer.isBuffer(RESULT)) {
-                                        let md = '# Code Execution Result (Buffer)\n\n';
-                                        md += '```';
-                                        md += HTML.encode( hexy.hexy(RESULT) );
-                                        md += '```';
-
-                                        const WEB_VIEW = new ego_markdown.MarkdownWebView({
-                                            markdown: md,
-                                            title: 'Code Execution Result (Buffer)',
-                                        });
-
-                                        await WEB_VIEW.open();
-                                    } else if (_.isArray(RESULT) || _.isPlainObject(RESULT)) {
-                                        const TYPE = _.isArray(RESULT) ? 'Array' : 'Object';
-                                        const COL_1 = _.isArray(RESULT) ? 'Index' : 'Property';
-
-                                        let md = `# Code Execution Result (${ TYPE })\n\n`;
-                                        md += `${ COL_1 } | Value\n`;
-                                        md += `----- | -----\n`;
-                                        for (const KEY of ego_helpers.from(Object.keys(RESULT)).orderBy(k => ego_helpers.normalizeString(k))) {
-                                            const VALUE = RESULT[KEY];
-
-                                            let json: any;
-                                            try {
-                                                if (_.isNull(VALUE)) {
-                                                    json = '*(null)*';
-                                                } else if (_.isUndefined(VALUE)) {
-                                                    json = '*(undefined)*';
-                                                } else {
-                                                    json = '`' + HTML.encode(
-                                                        JSON.stringify(VALUE)
-                                                    ) + '`';
-                                                }
-                                            } catch {
-                                                json = '*(ERROR)*';
-                                            }
-
-                                            md += `${ KEY } | ${ json }\n`;
-                                        }
-
-                                        const WEB_VIEW = new ego_markdown.MarkdownWebView({
-                                            markdown: md,
-                                            title: `Code Execution Result (${ TYPE })`,
-                                        });
-
-                                        await WEB_VIEW.open();
-                                    } else {
-                                        vscode.window.showInformationMessage(
-                                            ego_helpers.toStringSafe(RESULT)
-                                        );
-                                    }
-                                }
-                            } finally {
-                                try {
-                                    await context.globalState
-                                        .update(ego_contracts.KEY_LAST_CODE_EXECUTION, CODE);
-                                } catch (e) {
-                                    ego_log.CONSOLE
-                                        .trace(e, 'ego.power-tools.tools(1)');
-                                }
-                            }
+                        action: () => {
+                            return OPEN_CODE_EXECUTION();
                         },
                         label: '$(zap)  Code Execution ...',
                         description: 'Executes one line JavaScript code.',
