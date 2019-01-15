@@ -15,8 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as uuid from 'uuid';
-
 
 type AsyncFunc<TResult = any> = (...args: any[]) => Promise<TResult>;
 
@@ -77,6 +75,8 @@ export async function _exec_fcac50a111604220b8173024b6925905(
     // @ts-ignore
     const $guid = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
         async (version?: string) => {
+            const uuid = require('uuid');
+
             version = $h.normalizeString( version );
 
             switch (version) {
@@ -114,9 +114,68 @@ export async function _exec_fcac50a111604220b8173024b6925905(
     );
 
     // @ts-ignore
+    const $pwd = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async function (length?: number, allowedChars?: string) {
+            const crypto = require('crypto');
+
+            length = parseInt(
+                $h.toStringSafe(length).trim()
+            );
+            if (isNaN(length)) {
+                length = 20;
+            }
+
+            if (arguments.length < 2) {
+                allowedChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            }
+            allowedChars = $h.toStringSafe(allowedChars);
+
+            const RANDOM_BYTES = await (() => {
+                return new Promise<Buffer>((resolve, reject) => {
+                    try {
+                        crypto.randomBytes(length * 4, (err: any, bytes: Buffer) => {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                resolve(bytes);
+                            }
+                        });
+                    } catch (e) {
+                        reject(e);
+                    }
+                });
+            })();
+
+            let password = '';
+
+            for (let i = 0; i < length; i++) {
+                const RB = RANDOM_BYTES.readUInt32LE(i * 4);
+                const C = allowedChars[RB % allowedChars.length];
+
+                password += C;
+            }
+
+            return password;
+        }
+    );
+
+    // @ts-ignore
     const $r = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
         (id: string) => {
             return $h.requireModule(id);
+        }
+    );
+
+    // @ts-ignore
+    const $res = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (val: any, mapper?: (v: any) => any) => {
+            if (mapper) {
+                return await Promise.resolve(
+                    mapper(val)
+                );
+            }
+
+            return val;
         }
     );
 
@@ -163,7 +222,9 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '---- | ----------- | -------\n';
         md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
         md += '`$guid(version?)` | Generates a GUID. | `$guid("4")`\n';
+        md += '`$pwd(length?, allowedChars?)` | Generates a password. | `$pwd(64)`\n';
         md += '`$r(id)` | Extended [require() function](https://nodejs.org/api/modules.html#modules_require), which also allows to access the [modules of that extension](https://github.com/egodigital/vscode-powertools/blob/master/package.json). | `$r("moment").utc()`\n';
+        md += '`$res(val, mapper?)` | Resolves a value. | `$res( Promise.resolve("TM"), s => s.toLowerCase() )`\n';
         md += '`$unwrap(val)` | Unwraps a value from being a function. | `$unwrap(() => 5979)` \n';
         md += '`$uuid(version?)` | Alias for `guid`. | `$uuid("4")`\n';
         md += '\n';
