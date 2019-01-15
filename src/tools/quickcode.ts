@@ -18,6 +18,8 @@
 import * as uuid from 'uuid';
 
 
+type AsyncFunc<TResult = any> = (...args: any[]) => Promise<TResult>;
+
 /**
  * Options for 'exec()' function.
  */
@@ -44,57 +46,72 @@ export async function _exec_fcac50a111604220b8173024b6925905(
     // @ts-ignore
     const $h = require('../helpers');
 
-    const $unwrap = async (val?: any, level?: number, maxLevel?: number) => {
-        level = parseInt(
-            $h.toStringSafe(await Promise.resolve(level)).trim()
-        );
-        if (isNaN(level)) {
-            level = 0;
-        }
-
-        maxLevel = parseInt(
-            $h.toStringSafe(await Promise.resolve(maxLevel)).trim()
-        );
-        if (isNaN(maxLevel)) {
-            maxLevel = 64;
-        }
-
-        if (level < maxLevel) {
-            if (_.isFunction(val)) {
-                return await Promise.resolve(
-                    val()
-                );
+    const $unwrap = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (val?: any, level?: number, maxLevel?: number) => {
+            level = parseInt(
+                $h.toStringSafe(level).trim()
+            );
+            if (isNaN(level)) {
+                level = 0;
             }
-        }
 
-        return val;
-    };
+            maxLevel = parseInt(
+                $h.toStringSafe(maxLevel).trim()
+            );
+            if (isNaN(maxLevel)) {
+                maxLevel = 64;
+            }
+
+            if (level < maxLevel) {
+                if (_.isFunction(val)) {
+                    return await Promise.resolve(
+                        val()
+                    );
+                }
+            }
+
+            return val;
+        }
+    );
 
     // @ts-ignore
-    const $guid = async (version?: string) => {
-        version = $h.normalizeString( await Promise.resolve(version) );
+    const $guid = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (version?: string) => {
+            version = $h.normalizeString( version );
 
-        switch (version) {
-            case '':
-            case '4':
-            case 'v4':
-                return uuid.v4();
+            switch (version) {
+                case '':
+                case '4':
+                case 'v4':
+                    return uuid.v4();
 
-            case '1':
-            case 'v1':
-                return uuid.v1();
+                case '1':
+                case 'v1':
+                    return uuid.v1();
 
-            default:
-                throw new Error(`'${ version }' is not supported!`);
+                default:
+                    throw new Error(`'${ version }' is not supported!`);
+            }
         }
-    };
+    );
     // @ts-ignore
     const $uuid = $guid;
 
     // @ts-ignore
-    const $help = () => {
-        return showHelp_579c52a1992b472183db2fff8c764504();
-    };
+    const $cmd = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        function() {
+            return require('vscode').commands
+                .executeCommand
+                .apply(null, arguments);
+        }
+    );
+
+    // @ts-ignore
+    const $help = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        () => {
+            return showHelp_579c52a1992b472183db2fff8c764504();
+        }
+    );
 
     // @ts-ignore
     const $r = (id: string) => {
@@ -103,17 +120,36 @@ export async function _exec_fcac50a111604220b8173024b6925905(
 
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
+    if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
+        _code_g93c97d35bd94b22b3041037bdc64780 = 'return ' + _code_g93c97d35bd94b22b3041037bdc64780;
+    }
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().endsWith(';')) {
-        _code_g93c97d35bd94b22b3041037bdc64780 = _code_g93c97d35bd94b22b3041037bdc64780 + ' ;';
+        _code_g93c97d35bd94b22b3041037bdc64780 += ' ;';
     }
 
-    return await $unwrap(await Promise.resolve(eval(`(async () => {
+    return await $unwrap(eval(`(async () => {
 
-return ${ _code_g93c97d35bd94b22b3041037bdc64780 }
+${ _code_g93c97d35bd94b22b3041037bdc64780 }
 
-})()`)));
+})()`));
 }
 
+
+function asAsync_628dffd9c1e74e5cb82620a2c575e5dd<TResult = any>(
+    func: (...args: any[]) => TResult | PromiseLike<TResult>
+): AsyncFunc<TResult> {
+    return async (...args: any[]) => {
+        if (args) {
+            for (let i = 0; i < args.length; i++) {
+                args[i] = await Promise.resolve(args[i]);
+            }
+        }
+
+        return await Promise.resolve(
+            func.apply(null, args)
+        );
+    };
+}
 
 async function showHelp_579c52a1992b472183db2fff8c764504() {
     let md = '# Code Execution Help\n\n';
@@ -123,10 +159,11 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '## Functions\n';
         md += 'Name | Description | Example\n';
         md += '---- | ----------- | -------\n';
-        md += '`$guid(version?: string)` | Generates a GUID. | `$guid("4")`\n';
-        md += '`$r(id: string)` | Extended [require() function](https://nodejs.org/api/modules.html#modules_require), which also allows to access the [modules of that extension](https://github.com/egodigital/vscode-powertools/blob/master/package.json). | `$r("moment").utc()`\n';
-        md += '`$unwrap(val: any)` | Unwraps a value from being a function. | `$unwrap(() => 5979)` \n';
-        md += '`$uuid` | Alias for `guid`. | `$uuid("4")`\n';
+        md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
+        md += '`$guid(version?)` | Generates a GUID. | `$guid("4")`\n';
+        md += '`$r(id)` | Extended [require() function](https://nodejs.org/api/modules.html#modules_require), which also allows to access the [modules of that extension](https://github.com/egodigital/vscode-powertools/blob/master/package.json). | `$r("moment").utc()`\n';
+        md += '`$unwrap(val)` | Unwraps a value from being a function. | `$unwrap(() => 5979)` \n';
+        md += '`$uuid(version?)` | Alias for `guid`. | `$uuid("4")`\n';
         md += '\n';
     }
 
