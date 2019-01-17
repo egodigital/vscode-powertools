@@ -202,6 +202,109 @@ export async function _exec_fcac50a111604220b8173024b6925905(
         }
     );
 
+    // @ts-ignore
+    const $hash = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (algo: string, val: any, asBlob?: boolean) => {
+            const crypto = require('crypto');
+            const isStream = require('is-stream');
+
+            algo = $h.normalizeString(algo);
+            asBlob = $h.toBooleanSafe(asBlob);
+
+            if (isStream(val)) {
+                val = await $h.asBuffer(val);
+            } else {
+                if (!Buffer.isBuffer(val)) {
+                    val = new Buffer(
+                        $h.toStringSafe(val), 'utf8'
+                    );
+                }
+            }
+
+            return crypto.createHash(algo)
+                .update(val)
+                .digest(asBlob ? undefined : 'hex');
+        }
+    );
+    // @ts-ignore
+    const $md5 = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        function (val: any, asBlob?: boolean) {
+            return $hash.apply(
+                null, [ 'md5' ].concat($h.toArray(arguments))
+            );
+        }
+    );
+    // @ts-ignore
+    const $sha1 = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        function (val: any, asBlob?: boolean) {
+            return $hash.apply(
+                null, [ 'sha1' ].concat($h.toArray(arguments))
+            );
+        }
+    );
+    // @ts-ignore
+    const $sha256 = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        function (val: any, asBlob?: boolean) {
+            return $hash.apply(
+                null, [ 'sha256' ].concat($h.toArray(arguments))
+            );
+        }
+    );
+    // @ts-ignore
+    const $sha384 = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        function (val: any, asBlob?: boolean) {
+            return $hash.apply(
+                null, [ 'sha384' ].concat($h.toArray(arguments))
+            );
+        }
+    );
+    // @ts-ignore
+    const $sha512 = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        function (val: any, asBlob?: boolean) {
+            return $hash.apply(
+                null, [ 'sha512' ].concat($h.toArray(arguments))
+            );
+        }
+    );
+
+    // @ts-ignore
+    const $asc = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        (str) => {
+            str = $h.toStringSafe(str);
+
+            const CODES: number[] = [];
+            for (let i = 0; i < str.length; i++) {
+                CODES.push(str.charCodeAt(i));
+            }
+
+            return 1 === CODES.length ? CODES[0]
+                                      : CODES;
+        }
+    );
+
+    // @ts-ignore
+    const $emojis = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        (search) => {
+            const emoji = require('node-emoji');
+
+            search = $h.toStringSafe(search).trim();
+
+            const SEARCH_RESULT = emoji.search(search);
+
+            const EMOJI_LIST = {};
+            for (const ITEM of SEARCH_RESULT) {
+                EMOJI_LIST[ITEM.key] = ITEM.emoji;
+            }
+
+            const SORTED_EMOJI_LIST = {};
+            for (const KEY of Object.keys(EMOJI_LIST)) {
+                SORTED_EMOJI_LIST[KEY] = EMOJI_LIST[KEY];
+            }
+
+            return SORTED_EMOJI_LIST;
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -243,13 +346,21 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '## Functions\n';
         md += 'Name | Description | Example\n';
         md += '---- | ----------- | -------\n';
+        md += '`$asc(str)` | Handles a value as string and returns the ASCII (codes). | `$asc("T")`\n';
         md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
+        md += '`$emojis(search?)` | Returns a list of [emojis](https://www.npmjs.com/package/node-emoji), by using an optional filter. | `$emojis("heart")`\n';
         md += '`$guid(version?)` | Generates a GUID. | `$guid("4")`\n';
+        md += '`$hash(algo, val, asBlob?)` | Hashes a value. | `$hash("sha1", "TM+MK")`\n';
         md += '`$htmldec(val)` | Handles a values as string, and decodes the HTML entities. | `$htmldec("5979 &gt; 23979")`\n';
         md += '`$htmlenc(val)` | Handles a values as string, and encodes the HTML entities. | `$htmlenc("<tm>")`\n';
+        md += '`$md5(val, asBlob?)` | Hashes a value with MD5. | `$md5("TM+MK")`\n';
         md += '`$pwd(length?, allowedChars?)` | Generates a password. | `$pwd(64)`\n';
         md += '`$r(id)` | Extended [require() function](https://nodejs.org/api/modules.html#modules_require), which also allows to access the [modules of that extension](https://github.com/egodigital/vscode-powertools/blob/master/package.json). | `$r("moment").utc()`\n';
         md += '`$res(val, mapper?)` | Resolves a value. | `$res( Promise.resolve("TM"), s => s.toLowerCase() )`\n';
+        md += '`$sha1(val, asBlob?)` | Hashes a value with SHA-1. | `$sha1("TM+MK")`\n';
+        md += '`$sha256(val, asBlob?)` | Hashes a value with SHA-256. | `$sha256("TM+MK")`\n';
+        md += '`$sha384(val, asBlob?)` | Hashes a value with SHA-384. | `$sha384("TM+MK")`\n';
+        md += '`$sha512(val, asBlob?)` | Hashes a value with SHA-512. | `$sha512("TM+MK")`\n';
         md += '`$unwrap(val, maxLevel?`, level?)` | Unwraps a value from being a function. | `$unwrap(() => 5979)` \n';
         md += '`$uuid(version?)` | Alias for `guid`. | `$uuid("4")`\n';
         md += '\n';

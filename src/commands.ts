@@ -100,7 +100,7 @@ export function registerCommands(
                                 json = '*(undefined)*';
                             } else {
                                 json = '`' + HTML.encode(
-                                    JSON.stringify(VALUE)
+                                    _.isString(VALUE) ? VALUE : JSON.stringify(VALUE)
                                 ) + '`';
                             }
                         } catch {

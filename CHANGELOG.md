@@ -4,8 +4,16 @@
 ## 0.8.0 (January 17th, 2019; tools)
 
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$asc`: handles a value as string and returns its ASCII code(s)
+  * `$emojis`: return a list of [emojis](https://www.npmjs.com/package/node-emoji), by using an optional filter
+  * `$hash`: hashes a value
   * `$htmldec`: handles a value as string and decodes the HTML entities
   * `$htmlenc`: handles a value as string and encodes the HTML entities
+  * `$md5`: hashes a value with MD5
+  * `$sha1`: hashes a value with SHA-1
+  * `$sha256`: hashes a value with SHA-256
+  * `$sha384`: hashes a value with SHA-384
+  * `$sha512`: hashes a value with SHA-512
 
 ## 0.7.0 (January 15th, 2019; tools)
 
