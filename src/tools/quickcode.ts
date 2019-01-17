@@ -181,6 +181,27 @@ export async function _exec_fcac50a111604220b8173024b6925905(
         }
     );
 
+    // @ts-ignore
+    const $htmldec = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        (val: any) => {
+            const HTML = new (require('html-entities').AllHtmlEntities);
+
+            return HTML.decode(
+                $h.toStringSafe(val)
+            );
+        }
+    );
+    // @ts-ignore
+    const $htmlenc = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        (val: any) => {
+            const HTML = new (require('html-entities').AllHtmlEntities);
+
+            return HTML.encode(
+                $h.toStringSafe(val)
+            );
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -224,6 +245,8 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '---- | ----------- | -------\n';
         md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
         md += '`$guid(version?)` | Generates a GUID. | `$guid("4")`\n';
+        md += '`$htmldec(val)` | Handles a values as string, and decodes the HTML entities. | `$htmldec("5979 &gt; 23979")`\n';
+        md += '`$htmlenc(val)` | Handles a values as string, and encodes the HTML entities. | `$htmlenc("<tm>")`\n';
         md += '`$pwd(length?, allowedChars?)` | Generates a password. | `$pwd(64)`\n';
         md += '`$r(id)` | Extended [require() function](https://nodejs.org/api/modules.html#modules_require), which also allows to access the [modules of that extension](https://github.com/egodigital/vscode-powertools/blob/master/package.json). | `$r("moment").utc()`\n';
         md += '`$res(val, mapper?)` | Resolves a value. | `$res( Promise.resolve("TM"), s => s.toLowerCase() )`\n';

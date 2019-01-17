@@ -1,10 +1,19 @@
 # Change Log (vscode-powertools)
 
 
-## 0.7.0 (January 14th, 2019; tools)
+## 0.8.0 (January 17th, 2019; tools)
+
+* added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$htmldec`: handles a value as string and decodes the HTML entities
+  * `$htmlenc`: handles a value as string and encodes the HTML entities
+
+## 0.7.0 (January 15th, 2019; tools)
 
 * added `Power Tools: Tools` command, with `Code Execution ...` sub command
 * updated to `change-case@3.1.0`
+* added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$pwd`: generates a strong password
+  * `$res`: resolves an (async) value
 * added following [samples](https://github.com/egodigital/vscode-powertools-samples):
   * [app-vue-test](https://github.com/egodigital/vscode-powertools-samples/tree/master/app-vue-test)
 
