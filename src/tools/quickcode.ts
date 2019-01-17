@@ -43,6 +43,8 @@ export async function _exec_fcac50a111604220b8173024b6925905(
     const $fs = require('fs-extra');
     // @ts-ignore
     const $h = require('../helpers');
+    // @ts-ignore
+    const $vs = require('vscode');
 
     const $unwrap = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
         async (val?: any, maxLevel?: number, level?: number) => {
@@ -374,6 +376,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`_` | [lodash](https://lodash.com/) | `_.isString(5979)` \n';
         md += '`$fs` | [fs-extra](https://github.com/jprichardson/node-fs-extra) | `$fs.existsSync("/path/to/something")` \n';
         md += '`$h` | [helpers](https://github.com/egodigital/vscode-powertools/blob/master/src/helpers.ts) | `$h.normalizeString("TM+MK")`\n';
+        md += '`$vs` | [Visual Studio Code API](https://code.visualstudio.com/api/references/vscode-api) | `$vs.commands.getCommands`\n';
         md += '\n';
     }
 

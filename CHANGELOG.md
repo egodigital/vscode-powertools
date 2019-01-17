@@ -1,7 +1,7 @@
 # Change Log (vscode-powertools)
 
 
-## 0.8.0 (January 17th, 2019; tools)
+## 0.8.1 (January 17th, 2019; tools)
 
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$asc`: handles a value as string and returns its ASCII code(s)
@@ -14,6 +14,8 @@
   * `$sha256`: hashes a value with SHA-256
   * `$sha384`: hashes a value with SHA-384
   * `$sha512`: hashes a value with SHA-512
+* added following modules for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$vs`: [Visual Studio Code API](https://code.visualstudio.com/api/references/vscode-api)
 
 ## 0.7.0 (January 15th, 2019; tools)
 
