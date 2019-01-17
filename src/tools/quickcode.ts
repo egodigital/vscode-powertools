@@ -45,14 +45,7 @@ export async function _exec_fcac50a111604220b8173024b6925905(
     const $h = require('../helpers');
 
     const $unwrap = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
-        async (val?: any, level?: number, maxLevel?: number) => {
-            level = parseInt(
-                $h.toStringSafe(level).trim()
-            );
-            if (isNaN(level)) {
-                level = 0;
-            }
-
+        async (val?: any, maxLevel?: number, level?: number) => {
             maxLevel = parseInt(
                 $h.toStringSafe(maxLevel).trim()
             );
@@ -60,10 +53,19 @@ export async function _exec_fcac50a111604220b8173024b6925905(
                 maxLevel = 64;
             }
 
+            level = parseInt(
+                $h.toStringSafe(level).trim()
+            );
+            if (isNaN(level)) {
+                level = 0;
+            }
+
             if (level < maxLevel) {
                 if (_.isFunction(val)) {
                     return await Promise.resolve(
-                        val()
+                        $unwrap(
+                            val(), maxLevel, level + 1
+                        )
                     );
                 }
             }
@@ -225,7 +227,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$pwd(length?, allowedChars?)` | Generates a password. | `$pwd(64)`\n';
         md += '`$r(id)` | Extended [require() function](https://nodejs.org/api/modules.html#modules_require), which also allows to access the [modules of that extension](https://github.com/egodigital/vscode-powertools/blob/master/package.json). | `$r("moment").utc()`\n';
         md += '`$res(val, mapper?)` | Resolves a value. | `$res( Promise.resolve("TM"), s => s.toLowerCase() )`\n';
-        md += '`$unwrap(val)` | Unwraps a value from being a function. | `$unwrap(() => 5979)` \n';
+        md += '`$unwrap(val, maxLevel?`, level?)` | Unwraps a value from being a function. | `$unwrap(() => 5979)` \n';
         md += '`$uuid(version?)` | Alias for `guid`. | `$uuid("4")`\n';
         md += '\n';
     }
