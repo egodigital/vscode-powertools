@@ -1,6 +1,10 @@
 # Change Log (vscode-powertools)
 
 
+## 0.9.0 (January 19th, 2019; apps)
+
+* automatic check for new [apps](https://github.com/egodigital/vscode-powertools/wiki/Apps) on start
+
 ## 0.8.1 (January 17th, 2019; tools)
 
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):

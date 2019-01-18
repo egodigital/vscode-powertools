@@ -530,7 +530,7 @@ export async function checkForNewApps(
         if (knownApps) {
             if (APP_STORE_URL === knownApps.store) {
                 const LAST_CHECK = moment.utc(knownApps.lastCheck);
-                if (TODAY.diff(LAST_CHECK, 'days') >= 1) {
+                if (TODAY.diff(LAST_CHECK, 'days') >= 3) {
                     const CURRENT_APPS = await LOAD_APPS();
 
                     for (const CA of CURRENT_APPS) {
