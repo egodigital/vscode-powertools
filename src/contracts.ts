@@ -1385,6 +1385,11 @@ export const IGNORE_FILE = '.egoignore';
 export const KEY_GLOBAL_SETTING_APP_STORE_URL = 'egoPTAppStoreUrl';
 
 /**
+ * The key for the list of known apps.
+ */
+export const KEY_KNOWN_APPS = 'egoPTKnownApps';
+
+/**
  * The key of the last executed code.
  */
 export const KEY_LAST_CODE_EXECUTION = 'egoPTLastCodeExecution';

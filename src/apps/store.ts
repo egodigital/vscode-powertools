@@ -23,6 +23,7 @@ import * as ego_log from '../log';
 import * as ego_webview from '../webview';
 import * as ejs from 'ejs';
 import * as fsExtra from 'fs-extra';
+import * as moment from 'moment';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
@@ -36,6 +37,12 @@ interface App {
     isInstalled: boolean;
     source: string;
     upgradeSource?: string;
+}
+
+interface KnownAppList {
+    apps: string[];
+    lastCheck: string;
+    store: string;
 }
 
 interface UninstallAppData {
@@ -94,76 +101,17 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
     private async loadStoreFromUrl(appStoreUrl?: string): Promise<ego_contracts.AppStore> {
         try {
             if (arguments.length < 1) {
-                appStoreUrl = ego_helpers.toStringSafe(
-                    this.extension
-                        .globalState
-                        .get(ego_contracts.KEY_GLOBAL_SETTING_APP_STORE_URL)
-                );
+                appStoreUrl = getAppStoreUrl(this.extension);
             }
 
-            appStoreUrl = ego_helpers.toStringSafe(
-                appStoreUrl
-            ).trim();
-            if ('' === appStoreUrl) {
-                appStoreUrl = ego_contracts.EGO_APP_STORE;
-            }
-
-            if (!appStoreUrl.toLowerCase().startsWith('https://') && !appStoreUrl.toLowerCase().startsWith('http://')) {
-                appStoreUrl = 'http://' + appStoreUrl;
-            }
-
-            return await vscode.window.withProgress({
+           return await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
             }, async (progress) => {
                 progress.report({
                     message: `Loading app list from '${ appStoreUrl }' ...`,
                 });
 
-                const RESPONSE = await ego_helpers.GET(appStoreUrl, null, {
-                    timeout: 5000,
-                });
-                if (RESPONSE.code < 200 || RESPONSE.code >= 300) {
-                    throw new Error(`Unexpected response: [${ RESPONSE.code }] '${ RESPONSE.status }'`);
-                }
-
-                const APP_STORE: ego_contracts.AppStore = JSON.parse(
-                    (await RESPONSE.readBody()).toString('utf8')
-                );
-
-                if (APP_STORE) {
-                    APP_STORE.apps = ego_helpers.asArray(
-                        APP_STORE.apps
-                    );
-
-                    for (const A of APP_STORE.apps) {
-                        A.__source = {
-                            app: A,
-                            store: APP_STORE,
-                            url: appStoreUrl,
-                        };
-                    }
-
-                    if (arguments.length < 1) {
-                        const IMPORTS = ego_helpers.from(
-                            ego_helpers.asArray(APP_STORE.imports)
-                        ).select(x => ego_helpers.toStringSafe(x).trim())
-                         .where(x => '' !== x)
-                         .distinct()
-                         .take(5)
-                         .toArray();
-
-                        for (const I of IMPORTS) {
-                            const SUB_STORE = await this.loadStoreFromUrl(I);
-                            if (SUB_STORE) {
-                                ego_helpers.from(
-                                    ego_helpers.asArray(SUB_STORE.apps)
-                                ).pushTo( APP_STORE.apps );
-                            }
-                        }
-                    }
-                }
-
-                return APP_STORE;
+                return await loadStoreFrom(appStoreUrl);
             });
         } catch (e) {
             if (arguments.length < 1) {
@@ -520,6 +468,172 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
     }
 }
 
+
+/**
+ * Checks for new apps in store.
+ *
+ * @param {vscode.ExtensionContext} extension The underlying extension context.
+ *
+ * @return {string[]} The list of new apps.
+ */
+export async function checkForNewApps(
+    extension: vscode.ExtensionContext,
+): Promise<string[]> {
+    const TODAY = ego_helpers.utcNow()
+        .startOf('day');
+
+    const NEW_APPS: string[] = [];
+
+    await vscode.window.withProgress({
+        cancellable: false,
+        location: vscode.ProgressLocation.Window,
+    }, async (progress) => {
+        progress.report({
+            message: `Checking for new apps ...`,
+        });
+
+        const APP_STORE_URL = getAppStoreUrl(extension);
+
+        const LOAD_APPS = async () => {
+            let apps: ego_contracts.AppStoreApp[];
+
+            const APP_STORE = await loadStoreFrom(APP_STORE_URL);
+            if (APP_STORE) {
+                apps = APP_STORE.apps;
+            }
+
+            return ego_helpers.from(
+                ego_helpers.asArray(
+                    apps
+                )
+            ).select(a => ego_helpers.normalizeString(a.name))
+             .where(a => '' !== a)
+             .distinct()
+             .order()
+             .toArray();
+        };
+
+        let knownApps: KnownAppList = extension.globalState
+            .get<KnownAppList>(ego_contracts.KEY_KNOWN_APPS, null);
+
+        let update = false;
+        const ASYNC_REFRESH_ENTRY = async () => {
+            knownApps = {
+                apps: await LOAD_APPS(),
+                lastCheck: TODAY.toISOString(),
+                store: APP_STORE_URL,
+            };
+
+            update = true;
+        };
+
+        if (knownApps) {
+            if (APP_STORE_URL === knownApps.store) {
+                const LAST_CHECK = moment.utc(knownApps.lastCheck);
+                if (TODAY.diff(LAST_CHECK, 'days') >= 1) {
+                    const CURRENT_APPS = await LOAD_APPS();
+
+                    for (const CA of CURRENT_APPS) {
+                        if (knownApps.apps.indexOf(CA) < 0) {
+                            NEW_APPS.push(CA);
+                        }
+                    }
+
+                    knownApps = {
+                        apps: CURRENT_APPS,
+                        lastCheck: TODAY.toISOString(),
+                        store: APP_STORE_URL,
+                    };
+
+                    update = true;
+                }
+            } else {
+                // new app store
+                await ASYNC_REFRESH_ENTRY();
+            }
+        } else {
+            // not loaded yet
+            await ASYNC_REFRESH_ENTRY();
+        }
+
+        if (update) {
+            await extension.globalState
+                .update(ego_contracts.KEY_KNOWN_APPS, knownApps);
+        }
+    });
+
+    return NEW_APPS;
+}
+
+function getAppStoreUrl(
+    extension: vscode.ExtensionContext,
+): string {
+    let appStoreUrl = ego_helpers.toStringSafe(
+        extension.globalState
+            .get(ego_contracts.KEY_GLOBAL_SETTING_APP_STORE_URL)
+    );
+
+    appStoreUrl = ego_helpers.toStringSafe(
+        appStoreUrl
+    ).trim();
+    if ('' === appStoreUrl) {
+        appStoreUrl = ego_contracts.EGO_APP_STORE;
+    }
+
+    if (!appStoreUrl.toLowerCase().startsWith('https://') && !appStoreUrl.toLowerCase().startsWith('http://')) {
+        appStoreUrl = 'http://' + appStoreUrl;
+    }
+
+    return appStoreUrl.trim();
+}
+
+async function loadStoreFrom(url: string): Promise<ego_contracts.AppStore> {
+    const RESPONSE = await ego_helpers.GET(url, null, {
+        timeout: 5000,
+    });
+    if (RESPONSE.code < 200 || RESPONSE.code >= 300) {
+        throw new Error(`Unexpected response: [${ RESPONSE.code }] '${ RESPONSE.status }'`);
+    }
+
+    const APP_STORE: ego_contracts.AppStore = JSON.parse(
+        (await RESPONSE.readBody()).toString('utf8')
+    );
+
+    if (APP_STORE) {
+        APP_STORE.apps = ego_helpers.asArray(
+            APP_STORE.apps
+        );
+
+        for (const A of APP_STORE.apps) {
+            A.__source = {
+                app: A,
+                store: APP_STORE,
+                url: url,
+            };
+        }
+
+        if (arguments.length < 1) {
+            const IMPORTS = ego_helpers.from(
+                ego_helpers.asArray(APP_STORE.imports)
+            ).select(x => ego_helpers.toStringSafe(x).trim())
+             .where(x => '' !== x)
+             .distinct()
+             .take(5)
+             .toArray();
+
+            for (const I of IMPORTS) {
+                const SUB_STORE = await this.loadStoreFromUrl(I);
+                if (SUB_STORE) {
+                    ego_helpers.from(
+                        ego_helpers.asArray(SUB_STORE.apps)
+                    ).pushTo( APP_STORE.apps );
+                }
+            }
+        }
+    }
+
+    return APP_STORE;
+}
 
 /**
  * Opens the app store.

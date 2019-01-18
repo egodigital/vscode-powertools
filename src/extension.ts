@@ -288,6 +288,42 @@ export async function activate(context: vscode.ExtensionContext) {
         }
     });
 
+    // check for new apps
+    WF.next(() => {
+        require('./apps/store').checkForNewApps(context).then((newApps: string[]) => {
+            if (newApps.length < 1) {
+                return;
+            }
+
+            const NEW_APPS_MSG = 1 === newApps.length ?
+                '[New App] One new app has been released in the store.' :
+                `[New Apps] ${ newApps.length } new apps have been released in the store.`;
+
+            vscode.window.showInformationMessage(
+                NEW_APPS_MSG + ' Do you like to open the store?',
+                'Yes!', 'No'
+            ).then((selectedItem) => {
+                if ('Yes!' !== selectedItem) {
+                    return;
+                }
+
+                require('./apps/store').openAppStore(
+                    context, outputChannel
+                ).then(() => {
+                }).catch((err) => {
+                    ego_log.CONSOLE
+                        .trace(err, 'extension.activate(checkForNewApps.3)');
+                });
+            }, (err) => {
+                ego_log.CONSOLE
+                    .trace(err, 'extension.activate(checkForNewApps.2)');
+            });
+        }).catch((err) => {
+            ego_log.CONSOLE
+                .trace(err, 'extension.activate(checkForNewApps.1)');
+        });
+    });
+
     await ego_helpers.QUEUE.add(async () => {
         if (isDeactivating) {
             return;
