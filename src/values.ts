@@ -25,6 +25,7 @@ import * as ego_stores from './stores';
 import * as fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
+import * as vscode from 'vscode';
 
 
 const IS_LAZY_VALUE = Symbol('IS_LAZY_VALUE');
@@ -430,6 +431,26 @@ export class StaticValue implements ego_contracts.Value {
  */
 export function getGlobalValues(): ego_contracts.Value[] {
     const VALUES: ego_contracts.Value[] = [
+        // ${activeFile}
+        new FunctionValue(() => {
+            let activeFile: string;
+
+            const EDITOR = vscode.window.activeTextEditor;
+            if (EDITOR) {
+                const DOC = EDITOR.document;
+                if (DOC) {
+                    const FILENAME = DOC.fileName;
+                    if (!ego_helpers.isEmptyString(FILENAME)) {
+                        return path.resolve(
+                            FILENAME
+                        );
+                    }
+                }
+            }
+
+            return ego_helpers.isEmptyString(activeFile) ?
+                '' : activeFile;
+        }, 'activeFile'),
         // ${appDir}
         new FunctionValue(() => {
             return ego_helpers.getAppsDir();

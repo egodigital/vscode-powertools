@@ -3,7 +3,7 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.8.1",
+    "version": "0.9.0",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -222,6 +222,11 @@
                                                                     "shell"
                                                                 ],
                                                                 "type": "string"
+                                                            },
+                                                            "wait": {
+                                                                "description": "Wait until command has been executed or not.",
+                                                                "type": "boolean",
+                                                                "default": true
                                                             }
                                                         },
                                                         "required": [
@@ -555,6 +560,11 @@
                                                                 ],
                                                                 "description": "The type of the action.",
                                                                 "type": "string"
+                                                            },
+                                                            "wait": {
+                                                                "description": "Wait until command has been executed or not.",
+                                                                "type": "boolean",
+                                                                "default": true
                                                             }
                                                         },
                                                         "required": [
@@ -736,6 +746,11 @@
                                                     "shell"
                                                 ],
                                                 "type": "string"
+                                            },
+                                            "wait": {
+                                                "description": "Wait until command has been executed or not.",
+                                                "type": "boolean",
+                                                "default": true
                                             }
                                         },
                                         "required": [

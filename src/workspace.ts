@@ -863,33 +863,34 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         cwd = path.resolve(cwd);
 
         const SILENT = ego_helpers.toBooleanSafe(settings.silent, true);
+        const WAIT = ego_helpers.toBooleanSafe(settings.wait, true);
+
+        const WRITE_RESULT = (result: string) => {
+            if (!SILENT) {
+                if (!ego_helpers.isEmptyString(result)) {
+                    this.output
+                        .appendLine(ego_helpers.toStringSafe(result));
+                    this.output
+                        .appendLine('');
+                }
+            }
+        };
 
         const COMMAND_ACTION = (progress: ego_contracts.ProgressContext) => {
             return new Promise<void>((resolve, reject) => {
                 const COMPLETED = (err: any, result?: string) => {
-                    const WRITE_RESULT = () => {
-                        if (!SILENT) {
-                            if (!ego_helpers.isEmptyString(result)) {
-                                this.output
-                                    .appendLine(ego_helpers.toStringSafe(result));
-                                this.output
-                                    .appendLine('');
-                            }
-                        }
-                    };
-
                     if (err) {
                         this.output
                             .appendLine(`[FAILED: '${ ego_helpers.errorToString(err) }']`);
 
-                        WRITE_RESULT();
+                        WRITE_RESULT(result);
 
                         reject(err);
                     } else {
                         this.output
                             .appendLine('[OK]');
 
-                        WRITE_RESULT();
+                        WRITE_RESULT(result);
 
                         resolve();
                     }
@@ -908,8 +909,23 @@ export class Workspace extends ego_helpers.WorkspaceBase {
                     childProcess.exec(COMMAND_TO_EXECUTE, {
                         cwd: cwd,
                     }, (err, result) => {
-                        COMPLETED(err, result);
+                        if (WAIT) {
+                            COMPLETED(err, result);
+                        } else {
+                            if (err) {
+                                this.logger
+                                    .trace(err, 'workspace.Workspace.runShellCommand(1)');
+
+                                ego_helpers.showErrorMessage(err);
+                            }
+
+                            WRITE_RESULT(result);
+                        }
                     });
+
+                    if (!WAIT) {
+                        COMPLETED(null, '');
+                    }
                 } catch (e) {
                     COMPLETED(e);
                 }

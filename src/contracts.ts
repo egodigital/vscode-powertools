@@ -1123,6 +1123,10 @@ export interface WithShellCommand {
      * Do not write result to output.
      */
     silent?: boolean;
+    /**
+     * Wait until command has been executed or not. Default: (true).
+     */
+    wait?: boolean;
 }
 
 /**
