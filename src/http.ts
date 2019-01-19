@@ -86,7 +86,7 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
      * @inheritdoc
      */
     protected getType(): string {
-        return 'HttpResponseDocument';
+        return 'HttpResponse';
     }
 
     /**
