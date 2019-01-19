@@ -1,12 +1,13 @@
 # Change Log (vscode-powertools)
 
 
-## 0.9.1 (January 19th, 2019; apps)
+## 0.9.2 (January 19th, 2019; apps and values)
 
 * automatic check for new [apps](https://github.com/egodigital/vscode-powertools/wiki/Apps) on start
 * added predefined value `activeFile` ... s. [issue #5](https://github.com/egodigital/vscode-powertools/issues/5)
 * added `wait` setting for all [actions](https://egodigital.github.io/vscode-powertools/api/interfaces/_contracts_.withshellcommand.html), which run a shell command
 * settings can also be defined in user scope now
+* fixes
 
 ## 0.8.1 (January 17th, 2019; tools)
 

@@ -363,7 +363,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$sha256(val, asBlob?)` | Hashes a value with SHA-256. | `$sha256("TM+MK")`\n';
         md += '`$sha384(val, asBlob?)` | Hashes a value with SHA-384. | `$sha384("TM+MK")`\n';
         md += '`$sha512(val, asBlob?)` | Hashes a value with SHA-512. | `$sha512("TM+MK")`\n';
-        md += '`$unwrap(val, maxLevel?`, level?)` | Unwraps a value from being a function. | `$unwrap(() => 5979)` \n';
+        md += '`$unwrap(val, maxLevel?, level?)` | Unwraps a value from being a function. | `$unwrap(() => 5979)` \n';
         md += '`$uuid(version?)` | Alias for `guid`. | `$uuid("4")`\n';
         md += '\n';
     }
