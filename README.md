@@ -18,6 +18,7 @@ A swiss army knife with lots of tools, extensions and (scriptable) enhancements 
    * [Jobs](#jobs-)
    * [Scripts](#scripts-)
    * [Startups](#startups-)
+   * [Tools](#tools-)
    * [Values](#values-)
 3. [Documentation](#documentation-)
 4. [Contribute](#contribute-)
@@ -89,6 +90,14 @@ For more information, have a look at the [wiki](https://github.com/egodigital/vs
 *Startups* are similar to *Autostart* in Windows.
 
 For more information, have a look at the [wiki](https://github.com/egodigital/vscode-powertools/wiki/Startups).
+
+### Tools [[&uarr;](#how-to-use-)]
+
+A set of useful sub commands.
+
+![demo-tools1.gif](https://raw.githubusercontent.com/egodigital/vscode-powertools/master/img/demo-tools1.gif)
+
+For more information, have a look at the [wiki](https://github.com/egodigital/vscode-powertools/wiki/Tools).
 
 ### Values [[&uarr;](#how-to-use-)]
 
