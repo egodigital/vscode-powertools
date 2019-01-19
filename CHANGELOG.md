@@ -4,7 +4,13 @@
 ## 0.10.0 (January 21st, 2019; tools)
 
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$DELETE`: starts a HTTP DELETE request
   * `$exec`: executes the code in the currently running editor
+  * `$GET`: starts a HTTP GET request
+  * `$PATCH`: starts a HTTP PATCH request
+  * `$POST`: starts a HTTP POST request
+  * `$PUT`: starts a HTTP PUT request
+* updated help (press `F1` and select `Power Tools: Help` command)
 
 ## 0.9.2 (January 19th, 2019; apps and values)
 

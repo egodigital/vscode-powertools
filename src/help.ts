@@ -75,7 +75,9 @@ export class HelpViewView extends ego_webview.WebViewWithContextBase {
                     const DATA: LoadWikiPageData = msg.data;
                     try {
                         let pageName = ego_helpers.toStringSafe(DATA.name)
-                            .trim();
+                            .trim()
+                            .split(' ')
+                            .join('-');
                         if ('' !== pageName) {
                             let url = `https://github.com/egodigital/vscode-powertools/wiki/${ encodeURIComponent(pageName) }.md`;
 

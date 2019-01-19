@@ -18,6 +18,7 @@
 import * as _ from 'lodash';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
+import * as ego_http from './http';
 import * as ego_log from './log';
 import * as ego_markdown from './markdown';
 import * as ego_resources from './resources';
@@ -70,7 +71,12 @@ export function registerCommands(
             if (!_.isUndefined(RESULT)) {
                 const HTML = new htmlEntities.AllHtmlEntities();
 
-                if (Buffer.isBuffer(RESULT)) {
+                if (RESULT && _.isSymbol(RESULT['__httpresponse_tm_19790905'])) {
+                    const WEB_VIEW = new ego_http.HttpResponseWebView(RESULT);
+
+                    await WEB_VIEW.initialize();
+                    await WEB_VIEW.open();
+                } else if (Buffer.isBuffer(RESULT)) {
                     let md = '# Code Execution Result (Buffer)\n\n';
                     md += '```';
                     md += HTML.encode( hexy.hexy(RESULT) );

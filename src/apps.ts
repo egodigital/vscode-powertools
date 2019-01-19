@@ -813,7 +813,7 @@ export async function buildAppPackage() {
                                 'Package files (*.ego-app)': [ 'ego-app' ],
                                 'All files (*.*)': [ '*' ]
                             },
-                            saveLabel: 'Save app package to ...',
+                            saveLabel: 'Save App Package To ...',
                         });
 
                         if (OUTPUT_FILE) {

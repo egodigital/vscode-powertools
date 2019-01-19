@@ -97,7 +97,7 @@ function ego_select_area(name) {
                 .removeClass('active');
 
     if (name) {
-        CONTENT_LEFT.find(`.ego-item.ego-item-${ name }`)
+        CONTENT_LEFT.find(`.ego-item.ego-item-${ name.split(' ').join('') }`)
             .addClass('active');
     }
 

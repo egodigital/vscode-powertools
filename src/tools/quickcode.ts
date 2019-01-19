@@ -326,6 +326,57 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         }
     );
 
+    // @ts-ignore
+    const $DELETE = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (url: string, body?: any, headers?: any) => {
+            return toHttpResponseResult_ce264120a2bf44a98d6044ce418333cd(
+                await $h.DELETE(
+                    $h.toStringSafe(url), body, headers,
+                )
+            );
+        }
+    );
+    // @ts-ignore
+    const $GET = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (url: string, headers?: any) => {
+            return toHttpResponseResult_ce264120a2bf44a98d6044ce418333cd(
+                await $h.GET(
+                    $h.toStringSafe(url), headers,
+                )
+            );
+        }
+    );
+    // @ts-ignore
+    const $PATCH = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (url: string, body?: any, headers?: any) => {
+            return toHttpResponseResult_ce264120a2bf44a98d6044ce418333cd(
+                await $h.PATCH(
+                    $h.toStringSafe(url), body, headers,
+                )
+            );
+        }
+    );
+    // @ts-ignore
+    const $POST = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (url: string, body?: any, headers?: any) => {
+            return toHttpResponseResult_ce264120a2bf44a98d6044ce418333cd(
+                await $h.POST(
+                    $h.toStringSafe(url), body, headers,
+                )
+            );
+        }
+    );
+    // @ts-ignore
+    const $PUT = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (url: string, body?: any, headers?: any) => {
+            return toHttpResponseResult_ce264120a2bf44a98d6044ce418333cd(
+                await $h.PUT(
+                    $h.toStringSafe(url), body, headers,
+                )
+            );
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -369,13 +420,18 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '---- | ----------- | -------\n';
         md += '`$asc(str)` | Handles a value as string and returns the ASCII (codes). | `$asc("T")`\n';
         md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
+        md += '`$DELETE(url, body?, headers?)` | Starts a HTTP DELETE request. | `$DELETE("https://example.com/users/19861222")`\n';
         md += '`$emojis(search?)` | Returns a list of [emojis](https://www.npmjs.com/package/node-emoji), by using an optional filter. | `$emojis("heart")`\n';
         md += '`$exec` | Executes the code in the currently running editor. | `$exec`\n';
+        md += '`$GET(url, headers?)` | Starts a HTTP GET request. | `$GET("https://example.com/users/19790905")`\n';
         md += '`$guid(version?)` | Generates a GUID. | `$guid("4")`\n';
         md += '`$hash(algo, val, asBlob?)` | Hashes a value. | `$hash("sha1", "TM+MK")`\n';
         md += '`$htmldec(val)` | Handles a values as string, and decodes the HTML entities. | `$htmldec("5979 &gt; 23979")`\n';
         md += '`$htmlenc(val)` | Handles a values as string, and encodes the HTML entities. | `$htmlenc("<tm>")`\n';
         md += '`$md5(val, asBlob?)` | Hashes a value with MD5. | `$md5("TM+MK")`\n';
+        md += '`$PATCH(url, body?, headers?)` | Starts a HTTP PATCH request. | `$PATCH("https://example.com/users/19790905")`\n';
+        md += '`$POST(url, body?, headers?)` | Starts a HTTP POST request. | `$POST("https://example.com/users/19790905")`\n';
+        md += '`$PUT(url, body?, headers?)` | Starts a HTTP PUT request. | `$PUT("https://example.com/users/19790905")`\n';
         md += '`$pwd(length?, allowedChars?)` | Generates a password. | `$pwd(64)`\n';
         md += '`$r(id)` | Extended [require() function](https://nodejs.org/api/modules.html#modules_require), which also allows to access the [modules of that extension](https://github.com/egodigital/vscode-powertools/blob/master/package.json). | `$r("moment").utc()`\n';
         md += '`$res(val, mapper?)` | Resolves a value. | `$res( Promise.resolve("TM"), s => s.toLowerCase() )`\n';
@@ -406,4 +462,12 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
     });
 
     await WEB_VIEW.open();
+}
+
+function toHttpResponseResult_ce264120a2bf44a98d6044ce418333cd(result: any) {
+    if (result) {
+        result['__httpresponse_tm_19790905'] = Symbol('HTTP_RESPONSE');
+    }
+
+    return result;
 }
