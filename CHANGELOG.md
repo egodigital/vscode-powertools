@@ -1,7 +1,12 @@
 # Change Log (vscode-powertools)
 
 
-## 0.9.1 (January 19th, 2019; apps)
+## 0.10.0 (January 21st, 2019; tools)
+
+* added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$exec`: executes the code in the currently running editor
+
+## 0.9.1 (January 19th, 2019; apps and values)
 
 * automatic check for new [apps](https://github.com/egodigital/vscode-powertools/wiki/Apps) on start
 * added predefined value `activeFile` ... s. [issue #5](https://github.com/egodigital/vscode-powertools/issues/5)

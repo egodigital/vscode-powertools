@@ -307,6 +307,25 @@ export async function _exec_fcac50a111604220b8173024b6925905(
         }
     );
 
+    // @ts-ignore
+    const $exec = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async () => {
+            const ACTIVE_EDITOR = $vs.window.activeTextEditor;
+            if (ACTIVE_EDITOR) {
+                const DOCUMENT = ACTIVE_EDITOR.document;
+                if (DOCUMENT) {
+                    return await Promise.resolve(eval(`(async () => {
+
+${ $h.toStringSafe(DOCUMENT.getText()) }
+
+})()`));
+                }
+            }
+
+            throw new Error('No active editor found!');
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -351,6 +370,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$asc(str)` | Handles a value as string and returns the ASCII (codes). | `$asc("T")`\n';
         md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
         md += '`$emojis(search?)` | Returns a list of [emojis](https://www.npmjs.com/package/node-emoji), by using an optional filter. | `$emojis("heart")`\n';
+        md += '`$exec` | Executes the code in the currently running editor. | `$exec`\n';
         md += '`$guid(version?)` | Generates a GUID. | `$guid("4")`\n';
         md += '`$hash(algo, val, asBlob?)` | Hashes a value. | `$hash("sha1", "TM+MK")`\n';
         md += '`$htmldec(val)` | Handles a values as string, and decodes the HTML entities. | `$htmldec("5979 &gt; 23979")`\n';
