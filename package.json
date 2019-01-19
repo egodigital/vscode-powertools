@@ -3,7 +3,7 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.9.0",
+    "version": "0.9.1",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -62,7 +62,7 @@
                 "ego.power-tools": {
                     "description": "Settings for 'vscode-powertools' extension.",
                     "type": "object",
-                    "scope": "resource",
+                    "scope": "window",
                     "properties": {
                         "apps": {
                             "description": "One or more apps to register.",
