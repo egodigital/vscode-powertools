@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as _ from 'lodash';
 import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
 import * as ego_workspace from '../workspace';
@@ -85,7 +86,16 @@ export async function reloadEvents() {
             }
 
             let executeAction: ((type: string, ...args: any[]) => void | PromiseLike<void>);
-            let disposeAction: () => { };
+            const EXECUTE_ON_DESTROYED = () => {
+                if (!_.isNil(e.onDestroyed)) {
+                    WORKSPACE.executeCode(
+                        e.onDestroyed
+                    );
+                }
+            };
+            let disposeAction = () => {
+                EXECUTE_ON_DESTROYED();
+            };
 
             let type = ego_helpers.normalizeString(e.type);
             if ('' === type) {
@@ -217,6 +227,12 @@ export async function reloadEvents() {
                     execute: executeAction,
                     type: type,
                 });
+
+                if (!_.isNil(e.onCreated)) {
+                    WORKSPACE.executeCode(
+                        e.onCreated
+                    );
+                }
             }
         } catch (err) {
             WORKSPACE.logger

@@ -80,7 +80,7 @@ export type WorkspaceProvider = () => Workspace | Workspace[];
 /**
  * Workspace settings.
  */
-export interface WorkspaceSettings extends ego_contracts.ExtensionConfiguration, vscode.WorkspaceConfiguration {
+export interface WorkspaceSettings extends ego_contracts.ExtensionConfiguration {
 }
 
 

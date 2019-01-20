@@ -484,6 +484,14 @@
                                                     }
                                                 }
                                             },
+                                            "onCreated": {
+                                                "description": "The (JavaScript) code to executed after event has been created.",
+                                                "type": "string"
+                                            },
+                                            "onDestroyed": {
+                                                "description": "The (JavaScript) code to executed after event has been destroyed.",
+                                                "type": "string"
+                                            },
                                             "platforms": {
                                                 "description": "One or more platform names, that event is for.",
                                                 "type": "array",

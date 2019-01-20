@@ -579,7 +579,7 @@ export type EventEntry = EventItem;
 /**
  * An event item.
  */
-export interface EventItem extends CanImportValues, Conditional, ForPlatforms {
+export interface EventItem extends CanImportValues, Conditional, ForPlatforms, WithCreationEvents {
     /**
      * The action.
      */

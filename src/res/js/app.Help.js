@@ -68,7 +68,9 @@ function ego_on_command(command, data) {
 
                         if (!HREF.startsWith('http://') && !HREF.startsWith('https://')) {
                             A.off('click').on('click', function() {
-                                ego_select_area(HREF);
+                                ego_select_area(
+                                    HREF.split('%20').join(' ')
+                                );
                             });
                         }
                     });
