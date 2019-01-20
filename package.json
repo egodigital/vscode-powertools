@@ -131,6 +131,14 @@
                                                 "description": "The (display) name.",
                                                 "type": "string"
                                             },
+                                            "onCreated": {
+                                                "description": "The (JavaScript) code to executed after app has been created.",
+                                                "type": "string"
+                                            },
+                                            "onDestroyed": {
+                                                "description": "The (JavaScript) code to executed after app has been destroyed.",
+                                                "type": "string"
+                                            },
                                             "options": {
                                                 "description": "Options for running the script."
                                             },

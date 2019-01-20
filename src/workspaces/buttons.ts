@@ -97,12 +97,6 @@ export async function reloadButtons() {
 
                 ego_helpers.tryDispose(newButton);
                 ego_helpers.tryDispose(newCommand);
-
-                if (!_.isNil(b.onDestroyed)) {
-                    WORKSPACE.executeCode(
-                        b.onDestroyed
-                    );
-                }
             };
 
             try {
@@ -188,6 +182,12 @@ export async function reloadButtons() {
                     BUTTON_LIST.push({
                         dispose: () => {
                             DISPOSE_BTN();
+
+                            if (!_.isNil(b.onDestroyed)) {
+                                WORKSPACE.executeCode(
+                                    b.onDestroyed
+                                );
+                            }
                         }
                     });
 

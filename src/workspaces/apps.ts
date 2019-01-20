@@ -310,6 +310,12 @@ export async function reloadApps() {
                     }
 
                     view = null;
+
+                    if (!_.isNil(item.onDestroyed)) {
+                        WORKSPACE.executeCode(
+                            item.onDestroyed
+                        );
+                    }
                 },
                 name: undefined,
                 open: async function() {
@@ -422,6 +428,12 @@ export async function reloadApps() {
                 APP_LIST.push(
                     newApp
                 );
+
+                if (!_.isNil(item.onCreated)) {
+                    WORKSPACE.executeCode(
+                        item.onCreated
+                    );
+                }
             } else {
                 DISPOSE_BTN();
             }
