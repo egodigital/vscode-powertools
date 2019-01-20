@@ -672,6 +672,14 @@
                                                 "description": "The (display) name.",
                                                 "type": "string"
                                             },
+                                            "onCreated": {
+                                                "description": "The (JavaScript) code to executed after job has been created.",
+                                                "type": "string"
+                                            },
+                                            "onDestroyed": {
+                                                "description": "The (JavaScript) code to executed after job has been destroyed.",
+                                                "type": "string"
+                                            },
                                             "platforms": {
                                                 "description": "One or more platform names, that job is for.",
                                                 "type": "array",

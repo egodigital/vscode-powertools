@@ -120,6 +120,13 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
             ego_helpers.tryDispose(newButton);
             ego_helpers.tryDispose(newButtonCommand);
         };
+        const EXECUTE_ON_DESTROYED = () => {
+            if (!_.isNil(item.onDestroyed)) {
+                WORKSPACE.executeCode(
+                    item.onDestroyed
+                );
+            }
+        };
 
         const UPDATE_BUTTON_TEXT = () => {
             const ICON = newJob.isRunning ?
@@ -211,6 +218,8 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
                     if (this.isRunning) {
                         this.stop();
                     }
+
+                    EXECUTE_ON_DESTROYED();
                 },
                 isRunning: undefined,
                 name: undefined,
@@ -375,6 +384,12 @@ export async function reloadJobs() {
             JOB_LIST.push(
                 newJob
             );
+
+            if (!_.isNil(entry.onCreated)) {
+                WORKSPACE.executeCode(
+                    entry.onCreated
+                );
+            }
         }
     });
 }
