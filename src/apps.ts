@@ -646,7 +646,7 @@ export class AppWebView extends AppWebViewBase {
      * Initializes the app (view).
      */
     public async initialize() {
-        this._module = ego_helpers.loadModule<ego_contracts.AppModule>(
+        this._module = ego_helpers.loadScriptModule<ego_contracts.AppModule>(
             this.scriptFile
         );
     }

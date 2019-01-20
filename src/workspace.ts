@@ -187,7 +187,7 @@ export class Workspace extends ego_helpers.WorkspaceBase {
             throw new Error(`Script '${ SCRIPT_PATH }' not found!`);
         }
 
-        const SCRIPT_MODULE = ego_helpers.loadModule<ego_contracts.ScriptModule>(
+        const SCRIPT_MODULE = ego_helpers.loadScriptModule<ego_contracts.ScriptModule>(
             FULL_SCRIPT_PATH
         );
         if (SCRIPT_MODULE) {

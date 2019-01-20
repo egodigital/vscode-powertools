@@ -296,7 +296,7 @@ export class ScriptValue implements ego_contracts.Value {
             )
         );
         if (false !== SCRIPT_FILE) {
-            this.scriptModule = ego_helpers.loadModule<ego_contracts.ScriptValueModule>(
+            this.scriptModule = ego_helpers.loadScriptModule<ego_contracts.ScriptValueModule>(
                 SCRIPT_FILE
             );
         }

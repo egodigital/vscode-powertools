@@ -24,6 +24,7 @@ import * as vscode from 'vscode';
 import {
     asArray,
     cloneObject,
+    isEmptyString,
     normalizeString,
     toBooleanSafe,
     toStringSafe,
@@ -273,6 +274,33 @@ export function importValues<TObj extends ego_contracts.CanImportValues = ego_co
     }
 
     return CLONED_OBJ;
+}
+
+/**
+ * Loads a module from a script.
+ *
+ * @param {string} file The path to the script.
+ * @param {boolean} [fromCache] Cache module or not. Default: (false)
+ *
+ * @return {TModule} The loaded module.
+ */
+export function loadScriptModule<TModule>(file: string, fromCache = false): TModule {
+    file = toStringSafe(file);
+    if (isEmptyString(file)) {
+        file = './module.js';
+    }
+    if (!path.isAbsolute(file)) {
+        file = path.join(getExtensionDirInHome(), file);
+    }
+    file = require.resolve(file);
+
+    fromCache = toBooleanSafe(fromCache);
+
+    if (!fromCache) {
+        delete require.cache[file];
+    }
+
+    return require(file);
 }
 
 /**

@@ -65,7 +65,7 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
             throw new Error(`Script '${ SCRIPT_PATH }' not found!`);
         }
 
-        this.module = ego_helpers.loadModule<ego_contracts.AppModule>(
+        this.module = ego_helpers.loadScriptModule<ego_contracts.AppModule>(
             FULL_SCRIPT_PATH
         );
         this.scriptFile = FULL_SCRIPT_PATH;
