@@ -152,6 +152,11 @@ export class Workspace extends ego_helpers.WorkspaceBase {
      * @return {any} The result of the execution.
      */
     public executeCode(code: string): any {
+        code = ego_helpers.toStringSafe(code);
+        if ('' === code.trim()) {
+            return;
+        }
+
         return ego_code.run({
             code: code,
             values: ego_values.toValueStorage(
