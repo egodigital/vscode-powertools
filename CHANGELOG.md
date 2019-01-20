@@ -10,7 +10,7 @@
   * `$PATCH`: starts a HTTP PATCH request
   * `$POST`: starts a HTTP POST request
   * `$PUT`: starts a HTTP PUT request
-* added `onCreated` and `onDestroyed` settings for [apps](https://github.com/egodigital/vscode-powertools/wiki/Apps) and [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons)
+* added `onCreated` and `onDestroyed` settings for [apps](https://github.com/egodigital/vscode-powertools/wiki/Apps), [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons) and [commands](https://github.com/egodigital/vscode-powertools/wiki/Commands)
 * updated help (press `F1` and select `Power Tools: Help` command)
 
 ## 0.9.3 (January 19th, 2019; apps and values)

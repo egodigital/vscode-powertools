@@ -336,6 +336,14 @@
                                                     "type": "boolean",
                                                     "default": false
                                                 },
+                                                "onCreated": {
+                                                    "description": "The (JavaScript) code to executed after command has been created.",
+                                                    "type": "string"
+                                                },
+                                                "onDestroyed": {
+                                                    "description": "The (JavaScript) code to executed after command has been destroyed.",
+                                                    "type": "string"
+                                                },
                                                 "priority": {
                                                     "description": "The priority.",
                                                     "type": "number"

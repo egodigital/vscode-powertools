@@ -139,6 +139,12 @@ export async function reloadCommands() {
                     dispose: function() {
                         ego_helpers.tryDispose(this.button);
                         ego_helpers.tryDispose(this.command);
+
+                        if (!_.isNil(item.onDestroyed)) {
+                            WORKSPACE.executeCode(
+                                item.onDestroyed
+                            );
+                        }
                     },
                     execute: function () {
                         return vscode.commands.executeCommand
@@ -206,6 +212,12 @@ export async function reloadCommands() {
                 COMMAND_LIST.push(
                     NEW_WORKSPACE_CMD
                 );
+
+                if (!_.isNil(item.onCreated)) {
+                    WORKSPACE.executeCode(
+                        item.onCreated
+                    );
+                }
 
                 if (newButton) {
                     newButton.show();

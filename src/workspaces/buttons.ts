@@ -191,13 +191,13 @@ export async function reloadButtons() {
                         }
                     });
 
-                    newButton.show();
-
                     if (!_.isNil(b.onCreated)) {
                         WORKSPACE.executeCode(
                             b.onCreated
                         );
                     }
+
+                    newButton.show();
                 }
             } catch (e) {
                 DISPOSE_BTN();
