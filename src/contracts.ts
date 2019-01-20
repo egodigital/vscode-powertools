@@ -615,6 +615,10 @@ export interface ExtensionConfiguration extends WithValues {
      */
     globals?: any;
     /**
+     * A list of one or more external setting files to import.
+     */
+    imports?: string | string[];
+    /**
      * One or more jobs to run.
      */
     jobs?: JobEntry[];
@@ -1257,6 +1261,12 @@ export interface WorkspaceCommandScriptArguments extends WorkspaceScriptArgument
  * A workspace command script module.
  */
 export interface WorkspaceCommandScriptModule extends WorkspaceCommandScriptArguments {
+}
+
+/**
+ * An import entry of a workspace configuration.
+ */
+export interface WorkspaceConfigImport extends vscode.Disposable {
 }
 
 /**

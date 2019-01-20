@@ -25,6 +25,7 @@ import * as ego_values from './values';
 import * as ego_workspaces_apps from './workspaces/apps';
 import * as ego_workspaces_buttons from './workspaces/buttons';
 import * as ego_workspaces_commands from './workspaces/commands';
+import * as ego_workspaces_config from './workspaces/config';
 import * as ego_workspaces_events from './workspaces/events';
 import * as ego_workspaces_jobs from './workspaces/jobs';
 import * as ego_workspaces_startup from './workspaces/startup';
@@ -312,6 +313,19 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     }
 
     /**
+     * Returns all config imports of that workspace.
+     *
+     * @return {ego_contracts.WorkspaceConfigImport[]} The list of config imports.
+     */
+    public getConfigImports(): ego_contracts.WorkspaceConfigImport[] {
+        return ego_helpers.asArray(
+            this.instanceState[
+                ego_workspaces_config.KEY_CONFIG_IMPORTS
+            ]
+        );
+    }
+
+    /**
      * Returns all events of that workspace.
      *
      * @return {ego_contracts.WorkspaceEvent[]} The list of events.
@@ -499,6 +513,9 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         };
 
         this.instanceState[
+            ego_workspaces_config.KEY_CONFIG_IMPORTS
+        ] = [];
+        this.instanceState[
             ego_workspaces_apps.KEY_APPS
         ] = [];
         this.instanceState[
@@ -667,6 +684,10 @@ export class Workspace extends ego_helpers.WorkspaceBase {
 
         ego_helpers.tryDispose(this.context.fileWatcher);
 
+        // config imports
+        ego_workspaces_config.disposeConfigImports.apply(
+            this
+        );
         // events
         ego_workspaces_events.disposeEvents.apply(
             this
@@ -763,6 +784,15 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         return this.context.output;
     }
 
+    /**
+     * Raises the event that config imports have changed.
+     */
+    public async raiseConfigImportsChanged() {
+        await this._QUEUE.add(async () => {
+            await this.reloadConfiguration();
+        });
+    }
+
     private async reloadConfiguration() {
         if (this.isInFinalizeState) {
             return;
@@ -771,40 +801,36 @@ export class Workspace extends ego_helpers.WorkspaceBase {
             return;
         }
 
-        try {
-            let loadedSettings: WorkspaceSettings = vscode.workspace.getConfiguration(this.configSource.section,
-                                                                                      this.configSource.resource) || <any>{};
+        // load settings
+        this._settings = await ego_workspaces_config.loadSettings.apply(
+            this
+        );
 
-            this._settings = loadedSettings;
+        // commands
+        await ego_workspaces_commands.reloadCommands.apply(
+            this
+        );
+        // apps
+        await ego_workspaces_apps.reloadApps.apply(
+            this
+        );
+        // buttons
+        await ego_workspaces_buttons.reloadButtons.apply(
+            this
+        );
+        // jobs
+        await ego_workspaces_jobs.reloadJobs.apply(
+            this
+        );
+        // events
+        await ego_workspaces_events.reloadEvents.apply(
+            this
+        );
 
-            // commands
-            await ego_workspaces_commands.reloadCommands.apply(
-                this
-            );
-            // apps
-            await ego_workspaces_apps.reloadApps.apply(
-                this
-            );
-            // buttons
-            await ego_workspaces_buttons.reloadButtons.apply(
-                this
-            );
-            // jobs
-            await ego_workspaces_jobs.reloadJobs.apply(
-                this
-            );
-            // events
-            await ego_workspaces_events.reloadEvents.apply(
-                this
-            );
-
-            // startups !!!THIS HAS TO BE DONE AT LAST!!!
-            await ego_workspaces_startup.onStartup.apply(
-                this
-            );
-        } finally {
-
-        }
+        // startups !!!THIS HAS TO BE DONE AT LAST!!!
+        await ego_workspaces_startup.onStartup.apply(
+            this
+        );
     }
 
     /**
