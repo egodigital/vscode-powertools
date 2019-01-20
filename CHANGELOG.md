@@ -11,6 +11,7 @@
   * `$POST`: starts a HTTP POST request
   * `$PUT`: starts a HTTP PUT request
 * added `onCreated` and `onDestroyed` settings for [apps](https://github.com/egodigital/vscode-powertools/wiki/Apps), [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons), [commands](https://github.com/egodigital/vscode-powertools/wiki/Commands), [events](https://github.com/egodigital/vscode-powertools/wiki/Events) and [jobs](https://github.com/egodigital/vscode-powertools/wiki/Jobs)
+* added `$s` constant for [executable settings](https://github.com/egodigital/vscode-powertools/wiki/Executable%20Settings)
 * updated help (press `F1` and select `Power Tools: Help` command)
 * fixes
 
