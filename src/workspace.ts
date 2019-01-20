@@ -145,6 +145,22 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     }
 
     /**
+     * Executes code for that workspace.
+     *
+     * @param {string} code The code to execute.
+     *
+     * @return {any} The result of the execution.
+     */
+    public executeCode(code: string): any {
+        return ego_code.run({
+            code: code,
+            values: ego_values.toValueStorage(
+                this.getValues(true)
+            ),
+        });
+    }
+
+    /**
      * Executes a script.
      *
      * @param {TSettings} settings The object with the settings.

@@ -88,9 +88,21 @@ export async function reloadButtons() {
 
             let newButton: vscode.StatusBarItem;
             let newCommand: vscode.Disposable;
+            let hasBeenDisposed = false;
             const DISPOSE_BTN = () => {
+                if (hasBeenDisposed) {
+                    return;
+                }
+                hasBeenDisposed = true;
+
                 ego_helpers.tryDispose(newButton);
                 ego_helpers.tryDispose(newCommand);
+
+                if (!_.isNil(b.onDestroyed)) {
+                    WORKSPACE.executeCode(
+                        b.onDestroyed
+                    );
+                }
             };
 
             try {
@@ -180,6 +192,12 @@ export async function reloadButtons() {
                     });
 
                     newButton.show();
+
+                    if (!_.isNil(b.onCreated)) {
+                        WORKSPACE.executeCode(
+                            b.onCreated
+                        );
+                    }
                 }
             } catch (e) {
                 DISPOSE_BTN();

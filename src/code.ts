@@ -58,6 +58,7 @@ export function run<TResult = any>(_749b18b8162b474388f9d39d173483fa_tmmk: RunOp
         return $h.requireModule(id);
     };
 
+    // @ts-ignore
     const $v: any = {};
     if (_749b18b8162b474388f9d39d173483fa_tmmk.values) {
         _.forIn(_749b18b8162b474388f9d39d173483fa_tmmk.values, (value: any, key: string) => {
@@ -69,6 +70,9 @@ export function run<TResult = any>(_749b18b8162b474388f9d39d173483fa_tmmk: RunOp
             });
         });
     }
+
+    // @ts-ignore
+    const $s = $h.SESSION;
 
     return eval(
         $h.toStringSafe(

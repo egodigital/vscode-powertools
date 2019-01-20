@@ -152,6 +152,13 @@ async function withTextDocument(
 export async function activate(context: vscode.ExtensionContext) {
     const WF = ego_helpers.buildWorkflow();
 
+    // session
+    WF.next(() => {
+        context.subscriptions.push(
+            ego_helpers.SESSION_DISPOSER
+        );
+    });
+
     // extension's root directory
     WF.next(() => {
         ego_helpers.setExtensionRoot(__dirname);

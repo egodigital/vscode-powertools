@@ -62,7 +62,7 @@
                 "ego.power-tools": {
                     "description": "Settings for 'vscode-powertools' extension.",
                     "type": "object",
-                    "scope": "window",
+                    "scope": "resource",
                     "properties": {
                         "apps": {
                             "description": "One or more apps to register.",
@@ -262,6 +262,14 @@
                                                 "description": "Display button on the right side or not.",
                                                 "type": "boolean",
                                                 "default": false
+                                            },
+                                            "onCreated": {
+                                                "description": "The (JavaScript) code to executed after button has been created.",
+                                                "type": "string"
+                                            },
+                                            "onDestroyed": {
+                                                "description": "The (JavaScript) code to executed after button has been destroyed.",
+                                                "type": "string"
                                             },
                                             "platforms": {
                                                 "description": "One or more platform names, that button is for.",

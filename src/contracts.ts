@@ -467,7 +467,7 @@ export type ButtonEntry = ButtonItem;
 /**
  * A button item in the settings.
  */
-export interface ButtonItem extends Button, CanImportValues, Conditional, ForPlatforms {
+export interface ButtonItem extends Button, CanImportValues, Conditional, ForPlatforms, WithCreationEvents {
     /**
      * The action to invoke, when clicked.
      */
@@ -1092,6 +1092,20 @@ export interface WebViewLogMessageData {
  * Options for a web view with a panel.
  */
 export type WebViewWithPanelOptions = vscode.WebviewPanelOptions & vscode.WebviewOptions;
+
+/**
+ * An object, which can execute optional (JavaScript) code after it has been created and/ore destroyed.
+ */
+export interface WithCreationEvents {
+    /**
+     * The (JavaScript) code to executed after object has been created.
+     */
+    onCreated?: string;
+    /**
+     * The (JavaScript) code to executed after object has been destroyed.
+     */
+    onDestroyed?: string;
+}
 
 /**
  * An object that uses a script.
