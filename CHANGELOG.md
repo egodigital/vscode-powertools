@@ -11,13 +11,13 @@
   * `$POST`: starts a HTTP POST request
   * `$PUT`: starts a HTTP PUT request
 * updated help (press `F1` and select `Power Tools: Help` command)
+* added `onCreated` and `onDestroyed` for [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons)
 
-## 0.9.2 (January 19th, 2019; apps and values)
+## 0.9.3 (January 19th, 2019; apps and values)
 
 * automatic check for new [apps](https://github.com/egodigital/vscode-powertools/wiki/Apps) on start
 * added predefined value `activeFile` ... s. [issue #5](https://github.com/egodigital/vscode-powertools/issues/5)
 * added `wait` setting for all [actions](https://egodigital.github.io/vscode-powertools/api/interfaces/_contracts_.withshellcommand.html), which run a shell command
-* settings can also be defined in user scope now
 * fixes
 
 ## 0.8.1 (January 17th, 2019; tools)
