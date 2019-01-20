@@ -532,17 +532,20 @@
                         },
                         "imports": {
                             "description": "One or more external files, which should be imported.",
-                            "oneOf": [{
-                                "description": "The path to an external config file, that should be imported.",
-                                "type": "string"
-                            }, {
-                                "description": "One or more external files, which should be imported.",
-                                "type": "array",
-                                "items": {
+                            "oneOf": [
+                                {
                                     "description": "The path to an external config file, that should be imported.",
                                     "type": "string"
+                                },
+                                {
+                                    "description": "One or more external files, which should be imported.",
+                                    "type": "array",
+                                    "items": {
+                                        "description": "The path to an external config file, that should be imported.",
+                                        "type": "string"
+                                    }
                                 }
-                            }]
+                            ]
                         },
                         "jobs": {
                             "description": "One or more jobs to run.",
@@ -1208,6 +1211,7 @@
         "node-emoji": "^1.8.1",
         "node-zip": "^1.1.1",
         "opn": "^5.4.0",
+        "public-ip": "^3.0.0",
         "sanitize-filename": "^1.6.1",
         "tmp": "0.0.33",
         "uuid": "^3.3.2",

@@ -377,6 +377,39 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         }
     );
 
+    // @ts-ignore
+    const $ip = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (v6?: boolean, timeout?: number) => {
+            const publicIP = require('public-ip');
+
+            v6 = $h.toBooleanSafe(v6);
+
+            timeout = parseInt(
+                $h.toStringSafe(
+                    timeout
+                ).trim()
+            );
+            if (isNaN(timeout)) {
+                timeout = 5000;
+            }
+
+            const OPTS = {
+                timeout: timeout,
+            };
+
+            return v6 ? publicIP.v6(OPTS)
+                : publicIP.v4(OPTS);
+        }
+    );
+    // @ts-ignore
+    const $ip4 = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        (timeout?: number) => $ip(false, timeout),
+    );
+    // @ts-ignore
+    const $ip6 = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        (timeout?: number) => $ip(true, timeout),
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -428,6 +461,9 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$hash(algo, val, asBlob?)` | Hashes a value. | `$hash("sha1", "TM+MK")`\n';
         md += '`$htmldec(val)` | Handles a values as string, and decodes the HTML entities. | `$htmldec("5979 &gt; 23979")`\n';
         md += '`$htmlenc(val)` | Handles a values as string, and encodes the HTML entities. | `$htmlenc("<tm>")`\n';
+        md += '`$ip(v6?, timeout?)` | Tries to detect the public IP address. | `$ip(true)`\n';
+        md += '`$ip4(timeout?)` | Tries to detect the public IP address (version 4). | `$ip4`\n';
+        md += '`$ip6(timeout?)` | Tries to detect the public IP address (version 6). | `$ip6`\n';
         md += '`$md5(val, asBlob?)` | Hashes a value with MD5. | `$md5("TM+MK")`\n';
         md += '`$PATCH(url, body?, headers?)` | Starts a HTTP PATCH request. | `$PATCH("https://example.com/users/19790905")`\n';
         md += '`$POST(url, body?, headers?)` | Starts a HTTP POST request. | `$POST("https://example.com/users/19790905")`\n';

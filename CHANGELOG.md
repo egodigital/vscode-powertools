@@ -8,6 +8,9 @@
   * `$DELETE`: starts a HTTP DELETE request
   * `$exec`: executes the code in the currently running editor
   * `$GET`: starts a HTTP GET request
+  * `$ip`: tries to detect the public IP address
+  * `$ip4`: tries to detect the public IP address (version 4)
+  * `$ip6`: tries to detect the public IP address (version 6)
   * `$PATCH`: starts a HTTP PATCH request
   * `$POST`: starts a HTTP POST request
   * `$PUT`: starts a HTTP PUT request
