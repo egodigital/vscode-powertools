@@ -1,8 +1,9 @@
 # Change Log (vscode-powertools)
 
 
-## 0.10.0 (January 21st, 2019; tools)
+## 0.10.0 (January 21st, 2019; config and tools)
 
+* added `imports` setting, which can define one or more external setting files to import
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$DELETE`: starts a HTTP DELETE request
   * `$exec`: executes the code in the currently running editor
