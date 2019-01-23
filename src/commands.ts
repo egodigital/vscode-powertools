@@ -17,6 +17,7 @@
 
 import * as _ from 'lodash';
 import * as ego_contracts from './contracts';
+import * as ego_global_jobs from './global/jobs';
 import * as ego_helpers from './helpers';
 import * as ego_http from './http';
 import * as ego_log from './log';
@@ -289,7 +290,16 @@ export function registerCommands(
                             workspace: ws,
                         };
                     });
-                }).select(x => {
+                }).concat(
+                    ego_helpers.from(
+                        ego_global_jobs.getGlobalUserJobs()
+                    ).select(j => {
+                        return {
+                            job: j,
+                            workspace: null,
+                        };
+                    })
+                ).select(x => {
                     return {
                         action: () => {
                             if (x.job.isRunning) {
@@ -299,7 +309,7 @@ export function registerCommands(
                             }
                         },
                         description: x.job.description,
-                        detail: x.workspace.rootPath,
+                        detail: x.workspace ? x.workspace.rootPath : '(global)',
                         label: x.job.name,
                         tag: x.job,
                     };
@@ -321,44 +331,6 @@ export function registerCommands(
                     );
 
                     return;
-                }
-
-                const ALL_JOBS = QUICK_PICKS.map(qp => qp.tag);
-
-                // stop jobs
-                if (ALL_JOBS.some(j => j.isRunning)) {
-                    QUICK_PICKS.unshift({
-                        action: () => {
-                            return require('./workspaces/jobs')
-                                .stopAllJobs();
-                        },
-                        label: '$(circle-slash)  Stop All Jobs ...',
-                        description: 'Stops all running jobs.',
-                    });
-                }
-
-                // start jobs
-                if (ALL_JOBS.some(j => !j.isRunning)) {
-                    QUICK_PICKS.unshift({
-                        action: () => {
-                            return require('./workspaces/jobs')
-                                .startAllJobs();
-                        },
-                        label: '$(rocket)  Start All Jobs ...',
-                        description: 'Start all jobs, which are not running yet.',
-                    });
-                }
-
-                // restart jobs
-                if (ALL_JOBS.some(j => j.isRunning)) {
-                    QUICK_PICKS.unshift({
-                        action: () => {
-                            return require('./workspaces/jobs')
-                                .restartAllJobs();
-                        },
-                        label: '$(issue-reopened)  Re-Start All Jobs ...',
-                        description: 'Restarts all running jobs.',
-                    });
                 }
 
                 const SELECT_ITEM = await vscode.window.showQuickPick(

@@ -18,15 +18,14 @@
 import * as _ from 'lodash';
 import * as cron from 'cron';
 import * as ego_contracts from '../contracts';
+import * as ego_global_values from '../global/values';
 import * as ego_helpers from '../helpers';
-import * as ego_workspace from '../workspace';
+import * as ego_log from '../log';
+import * as ego_pt from '../extension';
 import * as vscode from 'vscode';
 
 
-/**
- * Name of the key for storing job instances.
- */
-export const KEY_JOBS = 'jobs';
+const GLOBAL_JOBS: ego_contracts.GlobalJob[] = [];
 let nextJobButtonCommandId = Number.MIN_SAFE_INTEGER;
 
 
@@ -34,8 +33,6 @@ function createActionFunction(
     item: ego_contracts.CronJobItem,
     buttonProvider: () => vscode.StatusBarItem,
 ) {
-    const WORKSPACE: ego_workspace.Workspace = this;
-
     let func: Function;
 
     if (item.action) {
@@ -56,7 +53,7 @@ function createActionFunction(
                 case 'shell':
                     {
                         func = async () => {
-                            await WORKSPACE.runShellCommand(
+                            await ego_pt.runShellCommand(
                                 <ego_contracts.JobItemShellCommandAction>item.action,
                                 {
                                     noProgress: true,
@@ -69,7 +66,7 @@ function createActionFunction(
                 case 'script':
                     {
                         func = async () => {
-                            await WORKSPACE.executeScript<ego_contracts.JobItemScriptActionArguments>(
+                            await ego_pt.executeScript<ego_contracts.JobItemScriptActionArguments>(
                                 <ego_contracts.JobItemScriptAction>item.action,
                                 (args) => {
                                     // args.button
@@ -94,9 +91,9 @@ function createActionFunction(
 }
 
 function createNewCronJob(item: ego_contracts.CronJobItem) {
-    const WORKSPACE: ego_workspace.Workspace = this;
+    const SETTINGS: ego_contracts.GlobalExtensionSettings = this;
 
-    let newJob: ego_contracts.WorkspaceJob;
+    let newJob: ego_contracts.GlobalJob;
 
     const FORMAT = ego_helpers.normalizeString(
         ego_helpers.normalizeString(item.format)
@@ -106,7 +103,7 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
     switch (FORMAT) {
         case '':
         case 'crontab':
-            cronTime = WORKSPACE.replaceValues(
+            cronTime = ego_global_values.replaceValues(
                 item.time
             ).trim();
             break;
@@ -122,7 +119,7 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
         };
         const EXECUTE_ON_DESTROYED = () => {
             if (!_.isNil(item.onDestroyed)) {
-                WORKSPACE.executeCode(
+                ego_pt.executeCode(
                     item.onDestroyed
                 );
             }
@@ -132,7 +129,7 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
             const ICON = newJob.isRunning ?
                 'primitive-square' : 'triangle-right';
 
-            newButton.text = `$(${ ICON })  ` + WORKSPACE.replaceValues(
+            newButton.text = `$(${ ICON })  ` + ego_global_values.replaceValues(
                 item.button.text
             ).trim();
         };
@@ -145,7 +142,7 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
 
         try {
             const TICK_ACTION = createActionFunction.apply(
-                WORKSPACE,
+                SETTINGS,
                 [
                     item,
                     () => newButton,
@@ -153,7 +150,7 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
             );
 
             const GET_NAME = () => {
-                let name = WORKSPACE.replaceValues(
+                let name = ego_global_values.replaceValues(
                     item.name
                 ).trim();
                 if ('' === name) {
@@ -194,8 +191,8 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
                     }).catch((err) => {
                         isExecutingJob = false;
 
-                        WORKSPACE.logger.trace(
-                            err, `jobs.reloadJobs(2:${ GET_NAME() })`
+                        ego_log.CONSOLE.trace(
+                            err, `global.jobs.reloadJobs(2:${ GET_NAME() })`
                         );
                     });
                 },
@@ -273,7 +270,7 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
 
             if (item.button) {
                 const ID = nextJobButtonCommandId++;
-                const CMD_ID = `ego.power-tools.buttons.jobBtn${ ID }`;
+                const CMD_ID = `ego.power-tools.buttons.globalJobBtn${ ID }`;
 
                 newButtonCommand = vscode.commands.registerCommand(CMD_ID, async () => {
                     try {
@@ -288,8 +285,8 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
                 });
 
                 newButton = ego_helpers.buildButtonSync(item.button, (btn) => {
-                    btn.color = WORKSPACE.replaceValues(btn.color);
-                    btn.tooltip = WORKSPACE.replaceValues(btn.tooltip);
+                    btn.color = ego_global_values.replaceValues(btn.color);
+                    btn.tooltip = ego_global_values.replaceValues(btn.tooltip);
                     btn.command = CMD_ID;
                 });
 
@@ -300,8 +297,8 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
         } catch (e) {
             DISPOSE_BUTTON();
 
-            WORKSPACE.logger.trace(
-                e, `jobs.reloadJobs(1)`
+            ego_log.CONSOLE.trace(
+                e, `global.jobs.reloadJobs(1)`
             );
         }
     }
@@ -310,64 +307,57 @@ function createNewCronJob(item: ego_contracts.CronJobItem) {
 }
 
 /**
- * Disposes all workspace jobs.
+ * Disposes all global jobs.
  */
-export function disposeJobs() {
-    const WORKSPACE: ego_workspace.Workspace = this;
-
-    const COMMAND_LIST: ego_contracts.WorkspaceJob[] = WORKSPACE.instanceState[
-        KEY_JOBS
-    ];
-    while (COMMAND_LIST.length > 0) {
-        const CMD = COMMAND_LIST.pop();
-
-        ego_helpers.tryDispose(CMD);
+export function disposeGlobalUserJobs() {
+    while (GLOBAL_JOBS.length > 0) {
+        ego_helpers.tryDispose(
+            GLOBAL_JOBS.pop()
+        );
     }
 }
 
 /**
- * Reloads all workspace jobs.
+ * Returns the list of global user jobs.
+ *
+ * @return {ego_contracts.GlobalJob[]} The list of jobs.
  */
-export async function reloadJobs() {
-    const WORKSPACE: ego_workspace.Workspace = this;
-    if (WORKSPACE.isInFinalizeState) {
-        return;
-    }
-    if (!WORKSPACE.isInitialized) {
-        return;
-    }
+export function getGlobalUserJobs(): ego_contracts.GlobalJob[] {
+    return ego_helpers.asArray(
+        GLOBAL_JOBS
+    );
+}
 
-    const SETTINGS = WORKSPACE.settings;
-    if (!SETTINGS) {
-        return;
-    }
+/**
+ * Reloads all global jobs.
+ */
+export async function reloadGlobalUserJobs() {
+    const SETTINGS: ego_contracts.GlobalExtensionSettings = this;
 
-    disposeJobs.apply(
+    disposeGlobalUserJobs.apply(
         this
     );
 
     const JOB_ENTRIES = ego_helpers.asArray(
         SETTINGS.jobs
     ).map(j => {
-        return WORKSPACE.importValues(j);
+        return ego_pt.importValues(j);
     });
     if (JOB_ENTRIES.length < 1) {
         return;
     }
 
-    const JOB_LIST: ego_contracts.WorkspaceJob[] = WORKSPACE.instanceState[
-        KEY_JOBS
-    ];
+    const JOB_LIST: ego_contracts.GlobalJob[] = GLOBAL_JOBS;
 
     JOB_ENTRIES.forEach(entry => {
-        if (!WORKSPACE.doesMatchPlatformCondition(entry)) {
+        if (!ego_helpers.doesMatchPlatformCondition(entry)) {
             return;
         }
-        if (!WORKSPACE.doesMatchFilterCondition(entry)) {
+        if (!ego_helpers.doesMatchFilterCondition(entry)) {
             return;
         }
 
-        let newJob: ego_contracts.WorkspaceJob;
+        let newJob: ego_contracts.GlobalJob;
 
         switch (ego_helpers.normalizeString(entry.type)) {
             case '':
@@ -386,7 +376,7 @@ export async function reloadJobs() {
             );
 
             if (!_.isNil(entry.onCreated)) {
-                WORKSPACE.executeCode(
+                ego_pt.executeCode(
                     entry.onCreated
                 );
             }

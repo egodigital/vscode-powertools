@@ -50,6 +50,7 @@ const APPLY = (prop) => {
 
 APPLY('buttons');
 APPLY('commands');
+APPLY('jobs');
 APPLY('values');
 
 fs.writeFileSync(

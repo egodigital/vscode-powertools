@@ -776,6 +776,40 @@ export interface GlobalExtensionSettings extends WithValues {
      * Global data.
      */
     globals?: any;
+    /**
+     * One or more jobs to run.
+     */
+    jobs?: JobEntry[];
+}
+
+/**
+ * A global job.
+ */
+export interface GlobalJob extends vscode.Disposable {
+    /**
+     * A description for the job.
+     */
+    readonly description: string;
+    /**
+     * Gets if the job is currently running or not.
+     */
+    readonly isRunning: boolean;
+    /**
+     * The (display) name.
+     */
+    readonly name: string;
+    /**
+     * Starts the job.
+     *
+     * @return {boolean} Operation was successful or not.
+     */
+    readonly start: () => boolean;
+    /**
+     * Stops the job.
+     *
+     * @return {boolean} Operation was successful or not.
+     */
+    readonly stop: () => boolean;
 }
 
 /**
@@ -1353,31 +1387,7 @@ export interface WorkspaceInfo {
 /**
  * A workspace job.
  */
-export interface WorkspaceJob extends vscode.Disposable {
-    /**
-     * A description for the job.
-     */
-    readonly description: string;
-    /**
-     * Gets if the job is currently running or not.
-     */
-    readonly isRunning: boolean;
-    /**
-     * The (display) name.
-     */
-    readonly name: string;
-    /**
-     * Starts the job.
-     *
-     * @return {boolean} Operation was successful or not.
-     */
-    readonly start: () => boolean;
-    /**
-     * Stops the job.
-     *
-     * @return {boolean} Operation was successful or not.
-     */
-    readonly stop: () => boolean;
+export interface WorkspaceJob extends GlobalJob {
 }
 
 /**

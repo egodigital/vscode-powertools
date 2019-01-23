@@ -1655,6 +1655,194 @@
                                     ]
                                 }
                             }
+                        },
+                        "jobs": {
+                            "description": "One or more jobs to run.",
+                            "type": "array",
+                            "items": {
+                                "oneOf": [
+                                    {
+                                        "description": "A scheduled job.",
+                                        "type": "object",
+                                        "properties": {
+                                            "action": {
+                                                "oneOf": [
+                                                    {
+                                                        "description": "The (shell) command to execute.",
+                                                        "type": "string"
+                                                    },
+                                                    {
+                                                        "description": "An action running a script.",
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "options": {
+                                                                "description": "Options for running the script."
+                                                            },
+                                                            "script": {
+                                                                "description": "The path of the script to execute.",
+                                                                "type": "string"
+                                                            },
+                                                            "type": {
+                                                                "enum": [
+                                                                    "script"
+                                                                ],
+                                                                "description": "The type of the action.",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "script"
+                                                        ]
+                                                    },
+                                                    {
+                                                        "description": "An action running a shell command.",
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "command": {
+                                                                "description": "The shell command to execute.",
+                                                                "type": "string"
+                                                            },
+                                                            "cwd": {
+                                                                "description": "The custom working directory.",
+                                                                "type": "string"
+                                                            },
+                                                            "silent": {
+                                                                "description": "Do not write result to output.",
+                                                                "type": "boolean",
+                                                                "default": true
+                                                            },
+                                                            "type": {
+                                                                "enum": [
+                                                                    "",
+                                                                    "shell"
+                                                                ],
+                                                                "description": "The type of the action.",
+                                                                "type": "string"
+                                                            },
+                                                            "wait": {
+                                                                "description": "Wait until command has been executed or not.",
+                                                                "type": "boolean",
+                                                                "default": true
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "command"
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "autoStart": {
+                                                "description": "Run on startup or not.",
+                                                "type": "boolean",
+                                                "default": true
+                                            },
+                                            "button": {
+                                                "description": "Settings for an optional button.",
+                                                "type": "object",
+                                                "properties": {
+                                                    "color": {
+                                                        "description": "The color.",
+                                                        "type": "string"
+                                                    },
+                                                    "isRight": {
+                                                        "description": "Display button on the right side or not.",
+                                                        "type": "boolean",
+                                                        "default": false
+                                                    },
+                                                    "priority": {
+                                                        "description": "The priority.",
+                                                        "type": "number"
+                                                    },
+                                                    "text": {
+                                                        "description": "The label / text.",
+                                                        "type": "string"
+                                                    },
+                                                    "tooltip": {
+                                                        "description": "The tooltip.",
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "description": {
+                                                "description": "A description for the job.",
+                                                "type": "string"
+                                            },
+                                            "format": {
+                                                "description": "The format of 'time' value.",
+                                                "enum": [
+                                                    "",
+                                                    "crontab"
+                                                ],
+                                                "type": "string"
+                                            },
+                                            "if": {
+                                                "description": "The JavaScript code that checks the avaibility of that job.",
+                                                "type": "string"
+                                            },
+                                            "importValues": {
+                                                "description": "Defines a list of properties, which uses (external) values for itself.",
+                                                "type": "object",
+                                                "patternProperties": {
+                                                    "(.*)": {
+                                                        "description": "The name of the property, which should be set / overwritten.",
+                                                        "oneOf": [
+                                                            {
+                                                                "description": "(property name) : (value name)",
+                                                                "type": "string"
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "name": {
+                                                "description": "The (display) name.",
+                                                "type": "string"
+                                            },
+                                            "onCreated": {
+                                                "description": "The (JavaScript) code to executed after job has been created.",
+                                                "type": "string"
+                                            },
+                                            "onDestroyed": {
+                                                "description": "The (JavaScript) code to executed after job has been destroyed.",
+                                                "type": "string"
+                                            },
+                                            "platforms": {
+                                                "description": "One or more platform names, that job is for.",
+                                                "type": "array",
+                                                "items": {
+                                                    "enum": [
+                                                        "aix",
+                                                        "darwin",
+                                                        "freebsd",
+                                                        "linux",
+                                                        "openbsd",
+                                                        "sunos",
+                                                        "win32"
+                                                    ],
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "time": {
+                                                "description": "The time pattern.",
+                                                "type": "string",
+                                                "default": "0 * * * * *"
+                                            },
+                                            "type": {
+                                                "enum": [
+                                                    "",
+                                                    "cron",
+                                                    "scheduled"
+                                                ],
+                                                "description": "The type of the job.",
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "action"
+                                        ]
+                                    }
+                                ]
+                            }
                         }
                     }
                 }

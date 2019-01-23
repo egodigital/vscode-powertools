@@ -18,6 +18,7 @@
 import * as ego_contracts from '../contracts';
 import * as ego_global_buttons from '../global/buttons';
 import * as ego_global_commands from '../global/commands';
+import * as ego_global_jobs from '../global/jobs';
 import * as ego_global_values from '../global/values';
 import * as ego_helpers from '../helpers';
 import * as vscode from 'vscode';
@@ -33,6 +34,7 @@ const SETTINGS_QUEUE = ego_helpers.createQueue();
 export async function disposeGlobalStuff() {
     await SETTINGS_QUEUE.add(async () => {
         ego_global_buttons.disposeGlobalUserButtons();
+        ego_global_jobs.disposeGlobalUserJobs();
         ego_global_commands.disposeGlobalUserCommands();
     });
 }
@@ -59,6 +61,8 @@ export async function reloadGlobalSettings() {
         await ego_global_commands.reloadGlobalUserCommands
             .apply(NEW_SETTINGS, []);
         await ego_global_buttons.reloadGlobalUserButtons
+            .apply(NEW_SETTINGS, []);
+        await ego_global_jobs.reloadGlobalUserJobs
             .apply(NEW_SETTINGS, []);
 
         globalSettings = NEW_SETTINGS;

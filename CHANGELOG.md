@@ -3,7 +3,8 @@
 
 ## 0.12.0 (January 23rd, 2019; global buttons and jobs)
 
-* [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons) and [commands](https://github.com/egodigital/vscode-powertools/wiki/Commands) can be defined [globally](https://github.com/egodigital/vscode-powertools/wiki/Global%20Settings) now (`CTRL + ,`) ... s. [issue #4](https://github.com/egodigital/vscode-powertools/issues/4)
+* [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons), [commands](https://github.com/egodigital/vscode-powertools/wiki/Commands), [jobs](https://github.com/egodigital/vscode-powertools/wiki/Jobs) and [values](https://github.com/egodigital/vscode-powertools/wiki/Values) can be defined [globally](https://github.com/egodigital/vscode-powertools/wiki/Global%20Settings) now ... s. [issue #4](https://github.com/egodigital/vscode-powertools/issues/4)
+* removed shortcut commands to restart / start and stop all jobs
 
 ## 0.11.0 (January 23rd, 2019; npm update & bug fixes)
 
