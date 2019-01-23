@@ -199,6 +199,25 @@ export async function executeScript<
     }
 }
 
+/**
+ * Imports values to an object.
+ *
+ * @param {TObj} obj The object where to import the values in.
+ * @param {boolean} [clone] Clone input object or not. Default: (true)
+ *
+ * @return {TObj} The object that contains the imported values.
+ */
+export function importValues<TObj extends ego_contracts.CanImportValues = ego_contracts.CanImportValues>(
+    obj: TObj,
+    clone?: boolean,
+): TObj {
+    return ego_helpers.importValues(
+        obj,
+        () => ego_global_values.getGlobalUserValues(),
+        clone,
+    );
+}
+
 async function onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
     for (const WS of ego_workspace.getAllWorkspaces()) {
         try {

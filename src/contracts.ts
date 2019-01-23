@@ -709,6 +709,58 @@ export interface GlobalButton extends vscode.Disposable {
 }
 
 /**
+ * A global command.
+ */
+export interface GlobalCommand extends vscode.Disposable {
+    /**
+     * The optional button.
+     */
+    readonly button?: vscode.StatusBarItem;
+    /**
+     * The command instance.
+     */
+    readonly command: vscode.Disposable;
+    /**
+     * A description of the command.
+     */
+    readonly description: string;
+    /**
+     * Executes the command.
+     *
+     * @param {any[]} [args] One or more argument for the execution.
+     *
+     * @return {any} The result of the execution.
+     */
+    readonly execute: (...args: any[]) => any;
+    /**
+     * The ID of the command.
+     */
+    readonly id: string;
+    /**
+     * The item from the settings.
+     */
+    readonly item: CommandItem;
+    /**
+     * The name for display.
+     */
+    readonly name: string;
+}
+
+/**
+ * Arguments for a global command script.
+ */
+export interface GlobalCommandScriptArguments extends WorkspaceScriptArguments {
+    /**
+     * The argument that have been submitted to the command.
+     */
+    readonly arguments: any[];
+    /**
+     * The ID of the command.
+     */
+    readonly command: string;
+}
+
+/**
  * Global extension settings.
  */
 export interface GlobalExtensionSettings extends WithValues {
@@ -716,6 +768,10 @@ export interface GlobalExtensionSettings extends WithValues {
      * One or more buttons to register.
      */
     buttons?: ButtonEntry[];
+    /**
+     * One or more commands to register.
+     */
+    commands?: { [id: string]: CommandEntry };
     /**
      * Global data.
      */
@@ -1238,53 +1294,13 @@ export interface WorkspaceButton extends GlobalButton {
 /**
  * A workspace command.
  */
-export interface WorkspaceCommand extends vscode.Disposable {
-    /**
-     * The optional button.
-     */
-    readonly button?: vscode.StatusBarItem;
-    /**
-     * The command instance.
-     */
-    readonly command: vscode.Disposable;
-    /**
-     * A description of the command.
-     */
-    readonly description: string;
-    /**
-     * Executes the command.
-     *
-     * @param {any[]} [args] One or more argument for the execution.
-     *
-     * @return {any} The result of the execution.
-     */
-    readonly execute: (...args: any[]) => any;
-    /**
-     * The ID of the command.
-     */
-    readonly id: string;
-    /**
-     * The item from the settings.
-     */
-    readonly item: CommandItem;
-    /**
-     * The name for display.
-     */
-    readonly name: string;
+export interface WorkspaceCommand extends GlobalCommand {
 }
 
 /**
  * Arguments for a workspace command script.
  */
-export interface WorkspaceCommandScriptArguments extends WorkspaceScriptArguments {
-    /**
-     * The argument that have been submitted to the command.
-     */
-    readonly arguments: any[];
-    /**
-     * The ID of the command.
-     */
-    readonly command: string;
+export interface WorkspaceCommandScriptArguments extends GlobalCommandScriptArguments {
 }
 
 /**

@@ -1291,6 +1291,106 @@
                                 ]
                             }
                         },
+                        "commands": {
+                            "description": "Defines one or more commands to register.",
+                            "type": "object",
+                            "patternProperties": {
+                                "(.*)": {
+                                    "description": "A command to register.",
+                                    "type": "object",
+                                    "properties": {
+                                        "button": {
+                                            "description": "Settings for an optional button.",
+                                            "type": "object",
+                                            "properties": {
+                                                "color": {
+                                                    "description": "The color.",
+                                                    "type": "string"
+                                                },
+                                                "isRight": {
+                                                    "description": "Display button on the right side or not.",
+                                                    "type": "boolean",
+                                                    "default": false
+                                                },
+                                                "onCreated": {
+                                                    "description": "The (JavaScript) code to executed after command has been created.",
+                                                    "type": "string"
+                                                },
+                                                "onDestroyed": {
+                                                    "description": "The (JavaScript) code to executed after command has been destroyed.",
+                                                    "type": "string"
+                                                },
+                                                "priority": {
+                                                    "description": "The priority.",
+                                                    "type": "number"
+                                                },
+                                                "text": {
+                                                    "description": "The label / text.",
+                                                    "type": "string"
+                                                },
+                                                "tooltip": {
+                                                    "description": "The tooltip.",
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "description": {
+                                            "description": "A description for the command.",
+                                            "type": "string"
+                                        },
+                                        "if": {
+                                            "description": "The JavaScript code that checks the avaibility of that command.",
+                                            "type": "string"
+                                        },
+                                        "importValues": {
+                                            "description": "Defines a list of properties, which uses (external) values for itself.",
+                                            "type": "object",
+                                            "patternProperties": {
+                                                "(.*)": {
+                                                    "description": "The name of the property, which should be set / overwritten.",
+                                                    "oneOf": [
+                                                        {
+                                                            "description": "(property name) : (value name)",
+                                                            "type": "string"
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "name": {
+                                            "description": "The name for display.",
+                                            "type": "string"
+                                        },
+                                        "options": {
+                                            "description": "Options for running the script."
+                                        },
+                                        "platforms": {
+                                            "description": "One or more platform names, that command is for.",
+                                            "type": "array",
+                                            "items": {
+                                                "enum": [
+                                                    "aix",
+                                                    "darwin",
+                                                    "freebsd",
+                                                    "linux",
+                                                    "openbsd",
+                                                    "sunos",
+                                                    "win32"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "script": {
+                                            "description": "The path to the script that should be executed.",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "script"
+                                    ]
+                                }
+                            }
+                        },
                         "values": {
                             "description": "Defines one or more values.",
                             "type": "object",

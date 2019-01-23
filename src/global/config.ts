@@ -17,21 +17,23 @@
 
 import * as ego_contracts from '../contracts';
 import * as ego_global_buttons from '../global/buttons';
+import * as ego_global_commands from '../global/commands';
 import * as ego_global_values from '../global/values';
 import * as ego_helpers from '../helpers';
 import * as vscode from 'vscode';
 
 
 let globalSettings: ego_contracts.GlobalExtensionSettings;
-const QUEUE = ego_helpers.createQueue();
+const SETTINGS_QUEUE = ego_helpers.createQueue();
 
 
 /**
  * Disposes all global settings.
  */
 export async function disposeGlobalStuff() {
-    await QUEUE.add(async () => {
+    await SETTINGS_QUEUE.add(async () => {
         ego_global_buttons.disposeGlobalUserButtons();
+        ego_global_commands.disposeGlobalUserCommands();
     });
 }
 
@@ -48,11 +50,13 @@ export function getGlobalSettings(): ego_contracts.GlobalExtensionSettings {
  * Reloads the global settings.
  */
 export async function reloadGlobalSettings() {
-    await QUEUE.add(async () => {
+    await SETTINGS_QUEUE.add(async () => {
         const NEW_SETTINGS: ego_contracts.GlobalExtensionSettings =
             vscode.workspace.getConfiguration('ego.power-tools.user') || <any>{};
 
         await ego_global_values.reloadGlobalUserValues
+            .apply(NEW_SETTINGS, []);
+        await ego_global_commands.reloadGlobalUserCommands
             .apply(NEW_SETTINGS, []);
         await ego_global_buttons.reloadGlobalUserButtons
             .apply(NEW_SETTINGS, []);

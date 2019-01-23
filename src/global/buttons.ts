@@ -49,7 +49,9 @@ export async function reloadGlobalUserButtons() {
         this
     );
 
-    const BUTTONS = ego_helpers.asArray(SETTINGS.buttons);
+    const BUTTONS = ego_helpers.asArray(SETTINGS.buttons).map(b => {
+        return ego_pt.importValues(b);
+    });
     if (BUTTONS.length < 1) {
         return;
     }

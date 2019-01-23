@@ -49,6 +49,7 @@ const APPLY = (prop) => {
 };
 
 APPLY('buttons');
+APPLY('commands');
 APPLY('values');
 
 fs.writeFileSync(

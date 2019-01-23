@@ -3,7 +3,7 @@
 
 ## 0.12.0 (January 23rd, 2019; global buttons and jobs)
 
-* [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons) can be defined [globally](https://github.com/egodigital/vscode-powertools/wiki/Global%20Settings) now (`CTRL + ,`)
+* [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons) and [commands](https://github.com/egodigital/vscode-powertools/wiki/Commands) can be defined [globally](https://github.com/egodigital/vscode-powertools/wiki/Global%20Settings) now (`CTRL + ,`) ... s. [issue #4](https://github.com/egodigital/vscode-powertools/issues/4)
 
 ## 0.11.0 (January 23rd, 2019; npm update & bug fixes)
 
