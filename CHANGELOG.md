@@ -1,7 +1,7 @@
 # Change Log (vscode-powertools)
 
 
-## 0.11.0 (January 21st, 2019; npm update & bug fixes)
+## 0.11.0 (January 23st, 2019; npm update & bug fixes)
 
 * bug fix: there way no auto creation of `.vscode-powertools` sub folder in home directory, when using [store](https://egodigital.github.io/vscode-powertools/api/classes/_stores_.userstore.html) in scripts, e.g. ... s. [issue #7](https://github.com/egodigital/vscode-powertools/issues/7)
 * updated the following [npm](https://www.npmjs.com/) modules:
