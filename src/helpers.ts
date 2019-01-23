@@ -18,12 +18,14 @@
 import * as _ from 'lodash';
 import * as ego_code from './code';
 import * as ego_contracts from './contracts';
+import * as fsExtra from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
 import * as vscode from 'vscode';
 import {
     asArray,
     cloneObject,
+    exists,
     isEmptyString,
     normalizeString,
     toBooleanSafe,
@@ -103,6 +105,38 @@ export function buildButtonSync<TButton extends ego_contracts.Button = ego_contr
     }
 
     return NEW_BUTTON;
+}
+
+/**
+ * Creates the extension's folder in the home directory, if it does not exist.
+ *
+ * @return {Promise<boolean>} The promise that indicates if directory has been created or not.
+ */
+export async function createExtensionDirectoryIfNeeded(): Promise<boolean> {
+    const DIR = getExtensionDirInHome();
+    if (!(await exists(DIR))) {
+        await fsExtra.mkdirs(DIR);
+
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Creates the extension's folder in the home directory, if it does not exist (synchronously).
+ *
+ * @return {boolean} Indicates if directory has been created or not.
+ */
+export function createExtensionDirectoryIfNeededSync(): boolean {
+    const DIR = getExtensionDirInHome();
+    if (!fsExtra.existsSync(DIR)) {
+        fsExtra.mkdirsSync(DIR);
+
+        return true;
+    }
+
+    return false;
 }
 
 /**

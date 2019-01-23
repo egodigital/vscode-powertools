@@ -189,6 +189,11 @@ export class UserStore extends StoreBase {
                 };
             }
 
+            const DIR = path.dirname(this.file);
+            if (!(await ego_helpers.exists(DIR))) {
+                await fsExtra.mkdirs(DIR);
+            }
+
             await fsExtra.writeFile(
                 this.file,
                 JSON.stringify(store, null, 2),

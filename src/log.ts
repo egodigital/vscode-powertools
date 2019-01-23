@@ -73,10 +73,9 @@ NEW_CONSOLE_LOGGER.addAction((ctx) => {
 
 // write to file inside home directory
 NEW_CONSOLE_LOGGER.addAction((ctx) => {
+    ego_helpers.createExtensionDirectoryIfNeededSync();
+
     const LOGS_DIR = ego_helpers.getExtensionDirInHome();
-    if (!fsExtra.existsSync(LOGS_DIR)) {
-        fsExtra.mkdirsSync(LOGS_DIR);
-    }
 
     let logType = ctx.type;
     if (_.isNil(logType)) {
