@@ -17,12 +17,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as childProcess from 'child_process';
+import * as ego_code from './code';
 import * as ego_commands from './commands';
 import * as ego_contracts from './contracts';
+import * as ego_global_config from './global/config';
+import * as ego_global_values from './global/values';
 import * as ego_helpers from './helpers';
 import * as ego_log from './log';
+import * as ego_stores from './stores';
+import * as ego_values from './values';
 import * as ego_versions from './versions';
 import * as ego_workspace from './workspace';
+import * as path from 'path';
 import * as vscode from 'vscode';
 
 
@@ -107,6 +114,91 @@ async function createNewWorkspace(folder: vscode.WorkspaceFolder): Promise<ego_w
     return newWorkspace;
 }
 
+/**
+ * Executes code (globally).
+ *
+ * @param {string} code The code to execute.
+ *
+ * @return {any} The result of the execution.
+ */
+export function executeCode(code: string): any {
+    code = ego_helpers.toStringSafe(code);
+    if ('' === code.trim()) {
+        return;
+    }
+
+    return ego_code.run({
+        code: code,
+        values: ego_values.toValueStorage(
+            ego_global_values.getGlobalUserValues()
+        ),
+    });
+}
+
+/**
+ * Executes a script (globally).
+ *
+ * @param {TSettings} settings The object with the settings.
+ * @param {Function} argsFactory The function that produces the argument object for the execution.
+ *
+ * @return {Promise<any>} The promise with the result of the execution.
+ */
+export async function executeScript<
+    TArgs extends ego_contracts.WorkspaceScriptArguments,
+    TSettings extends ego_contracts.WithScript = ego_contracts.WithScript
+>(
+    settings: TSettings,
+    argsFactory: (args: TArgs, settings: TSettings) => TArgs | PromiseLike<TArgs>
+): Promise<any> {
+    const SETTINGS = ego_global_config.getGlobalSettings();
+
+    let scriptPath = ego_global_values.replaceValues(
+        settings.script
+    );
+    if (!path.isAbsolute(scriptPath)) {
+        scriptPath = path.join(
+            ego_helpers.getExtensionDirInHome(), scriptPath
+        );
+    }
+    scriptPath = path.resolve(scriptPath);
+
+    if (!(await ego_helpers.exists(scriptPath))) {
+        throw new Error(`Script '${ scriptPath }' not found!`);
+    }
+
+    const SCRIPT_MODULE = ego_helpers.loadScriptModule<ego_contracts.ScriptModule>(
+        scriptPath
+    );
+    if (SCRIPT_MODULE) {
+        if (SCRIPT_MODULE.execute) {
+            const BASE_ARGS: ego_contracts.WorkspaceScriptArguments = {
+                globals: ego_helpers.cloneObject(SETTINGS.globals),
+                globalStore: new ego_stores.UserStore(),
+                logger: ego_log.CONSOLE,
+                options: ego_helpers.cloneObject(settings.options),
+                output: outputChannel,
+                replaceValues: (val) => {
+                    return ego_global_values.replaceValues(val);
+                },
+                require: (id) => {
+                    return ego_helpers.requireModule(id);
+                },
+                store: new ego_stores.UserStore(scriptPath),
+            };
+
+            const ARGS: TArgs = await Promise.resolve(
+                argsFactory(
+                    <any>BASE_ARGS, settings
+                )
+            );
+
+            return await Promise.resolve(
+                SCRIPT_MODULE.execute(ARGS)
+            );
+        }
+    }
+}
+
 async function onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
     for (const WS of ego_workspace.getAllWorkspaces()) {
         try {
@@ -124,6 +216,119 @@ async function onDidSaveTextDocument(doc: vscode.TextDocument) {
     await withTextDocument(doc, async (ws, d) => {
         await ws.onDidSaveTextDocument(d);
     });
+}
+
+/**
+ * Runs a shell command and shows it progress in the GUI (globally).
+ *
+ * @param {ego_contracts.WithShellCommand} settings Settings with the command to run.
+ * @param {ego_contracts.RunShellCommandOptions} [opts] Custom options.
+ */
+export async function runShellCommand(settings: ego_contracts.WithShellCommand, opts?: ego_contracts.RunShellCommandOptions) {
+    if (!opts) {
+        opts = <any>{};
+    }
+
+    const COMMAND_TO_EXECUTE = ego_global_values.replaceValues(
+        settings.command
+    );
+
+    let cwd = ego_global_values.replaceValues(
+        settings.cwd
+    );
+    if (ego_helpers.isEmptyString(cwd)) {
+        cwd = ego_helpers.getExtensionDirInHome();
+    }
+    if (!path.isAbsolute(cwd)) {
+        cwd = path.join(
+            ego_helpers.getExtensionDirInHome(), cwd
+        );
+    }
+    cwd = path.resolve(cwd);
+
+    const SILENT = ego_helpers.toBooleanSafe(settings.silent, true);
+    const WAIT = ego_helpers.toBooleanSafe(settings.wait, true);
+
+    const WRITE_RESULT = (result: string) => {
+        if (!SILENT) {
+            if (!ego_helpers.isEmptyString(result)) {
+                outputChannel
+                    .appendLine(ego_helpers.toStringSafe(result));
+                outputChannel
+                    .appendLine('');
+            }
+        }
+    };
+
+    const COMMAND_ACTION = (progress: ego_contracts.ProgressContext) => {
+        return new Promise<void>((resolve, reject) => {
+            const COMPLETED = (err: any, result?: string) => {
+                if (err) {
+                    outputChannel
+                        .appendLine(`[FAILED: '${ ego_helpers.errorToString(err) }']`);
+
+                    WRITE_RESULT(result);
+
+                    reject(err);
+                } else {
+                    outputChannel
+                        .appendLine('[OK]');
+
+                    WRITE_RESULT(result);
+
+                    resolve();
+                }
+            };
+
+            try {
+                outputChannel
+                    .append(`Running shell command '${ COMMAND_TO_EXECUTE }' ... `);
+
+                if (progress) {
+                    progress.report({
+                        message: `Running '${ COMMAND_TO_EXECUTE }' ...`,
+                    });
+                }
+
+                childProcess.exec(COMMAND_TO_EXECUTE, {
+                    cwd: cwd,
+                }, (err, result) => {
+                    if (WAIT) {
+                        COMPLETED(err, result);
+                    } else {
+                        if (err) {
+                            require('./log')
+                                .CONSOLE
+                                .trace(err, 'helpers.runShellCommand(1)');
+
+                            ego_helpers.showErrorMessage(err);
+                        }
+
+                        WRITE_RESULT(result);
+                    }
+                });
+
+                if (!WAIT) {
+                    COMPLETED(null, '');
+                }
+            } catch (e) {
+                COMPLETED(e);
+            }
+        });
+    };
+
+    // run command
+    if (ego_helpers.toBooleanSafe(opts.noProgress)) {
+        await COMMAND_ACTION(null);
+    } else {
+        await vscode.window.withProgress({
+            cancellable: false,
+            location: vscode.ProgressLocation.Notification,
+            title: '(Global) Shell Command',
+        }, async (progress) => {
+            await COMMAND_ACTION(progress);
+        });
+    }
 }
 
 async function withTextDocument(
@@ -205,6 +410,15 @@ export async function activate(context: vscode.ExtensionContext) {
         outputChannel.hide();
     });
 
+    // global stuff
+    WF.next(() => {
+        context.subscriptions.push({
+            dispose: () => {
+                ego_global_config.disposeGlobalStuff();
+            }
+        });
+    });
+
     // workspace watcher
     WF.next(() => {
         context.subscriptions.push(
@@ -248,17 +462,22 @@ export async function activate(context: vscode.ExtensionContext) {
 
             // onDidChangeConfiguration
             vscode.workspace.onDidChangeConfiguration((e) => {
-                onDidChangeConfiguration(e).then(() => {
-                }).catch((err) => {
+                (async () => {
+                    try {
+                        await onDidChangeConfiguration(e);
+                    } catch (e) {
+                        ego_log.CONSOLE
+                               .trace(e, 'vscode.workspace.onDidChangeConfiguration(1)');
+                    }
+
+                    await ego_global_config.reloadGlobalSettings();
+                })().then(() => {
+                }).catch(err => {
                     ego_log.CONSOLE
-                           .trace(err, 'vscode.workspace.onDidChangeConfiguration');
+                           .trace(err, 'vscode.workspace.onDidChangeConfiguration(2)');
                 });
             }),
         );
-    });
-
-    WF.next(async () => {
-        await workspaceWatcher.reload();
     });
 
     // global extension commands
@@ -266,6 +485,12 @@ export async function activate(context: vscode.ExtensionContext) {
         ego_commands.registerCommands(
             context, outputChannel
         );
+    });
+
+    WF.next(async () => {
+        await workspaceWatcher.reload();
+
+        await ego_global_config.reloadGlobalSettings();
     });
 
     WF.next(() => {

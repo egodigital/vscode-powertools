@@ -357,7 +357,7 @@ export function requireModule<TModule = any>(id: string): TModule {
  *
  * @return {Promise<string>} The promise with the result.
  */
-export async function showErrorMessage(err: any) {
+export async function showErrorMessage(err: any): Promise<string> {
     if (err) {
         return await vscode.window.showErrorMessage(
             errorToString(err).trim()

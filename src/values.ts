@@ -516,6 +516,8 @@ export function replaceValues(
     }
 
     const ALL_VALUES = getGlobalValues().concat(
+        require('./global/values').getGlobalUserValues()
+    ).concat(
         ego_helpers.asArray(
             opts.buildInValues
         )

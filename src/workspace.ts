@@ -36,16 +36,6 @@ import * as vscode from 'vscode';
 
 
 /**
- * Options for 'Workspace.runShellCommand()' methods.
- */
-export interface RunShellCommandOptions {
-    /**
-     * Do not show progress window.
-     */
-    noProgress?: boolean;
-}
-
-/**
  * A context for a workspace instaqnce.
  */
 export interface WorkspaceContext {
@@ -885,9 +875,9 @@ export class Workspace extends ego_helpers.WorkspaceBase {
      * Runs a shell command for that workspace and shows it progress in the GUI.
      *
      * @param {ego_contracts.WithShellCommand} settings Settings with the command to run.
-     * @param {RunShellCommandOptions} [opts] Custom options.
+     * @param {ego_contracts.RunShellCommandOptions} [opts] Custom options.
      */
-    public async runShellCommand(settings: ego_contracts.WithShellCommand, opts?: RunShellCommandOptions) {
+    public async runShellCommand(settings: ego_contracts.WithShellCommand, opts?: ego_contracts.RunShellCommandOptions) {
         if (!opts) {
             opts = <any>{};
         }

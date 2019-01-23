@@ -703,6 +703,26 @@ export interface ForPlatforms {
 }
 
 /**
+ * A global button.
+ */
+export interface GlobalButton extends vscode.Disposable {
+}
+
+/**
+ * Global extension settings.
+ */
+export interface GlobalExtensionSettings extends WithValues {
+    /**
+     * One or more buttons to register.
+     */
+    buttons?: ButtonEntry[];
+    /**
+     * Global data.
+     */
+    globals?: any;
+}
+
+/**
  * An installed app.
  */
 export interface InstalledApp {
@@ -821,6 +841,16 @@ export type PathResolver = (path: string) => string | false;
  * A progress context of a 'vscode.window.withProgress()' task.
  */
 export interface ProgressContext extends vscode.Progress<{ message?: string; increment?: number }> {
+}
+
+/**
+ * Options for 'Workspace.runShellCommand()' methods.
+ */
+export interface RunShellCommandOptions {
+    /**
+     * Do not show progress window.
+     */
+    noProgress?: boolean;
 }
 
 /**
@@ -1202,7 +1232,7 @@ export interface WorkspaceAppEventScriptArguments<TData = any> extends AppEventS
 /**
  * A workspace button.
  */
-export interface WorkspaceButton extends vscode.Disposable {
+export interface WorkspaceButton extends GlobalButton {
 }
 
 /**

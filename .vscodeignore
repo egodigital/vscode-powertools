@@ -10,3 +10,4 @@ img/**
 **/*.map
 **/*.ts
 publish.js
+syncPackageJSON.js
