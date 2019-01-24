@@ -44,6 +44,9 @@ export async function _exec_fcac50a111604220b8173024b6925905(
     // @ts-ignore
     const $h = require('../helpers');
     // @ts-ignore
+    const $m = require('moment');
+    require('moment-timezone');
+    // @ts-ignore
     const $vs = require('vscode');
 
     const $unwrap = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
@@ -410,6 +413,25 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         (timeout?: number) => $ip(true, timeout),
     );
 
+    // @ts-ignore
+    const $now = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (tz) => {
+            const NOW = $m();
+
+            tz = $h.toStringSafe(tz)
+                .trim();
+
+            return '' === tz ? NOW
+                             : NOW.tz(tz);
+        }
+    );
+    // @ts-ignore
+    const $utc = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async () => {
+            return $m.utc();
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -465,6 +487,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$ip4(timeout?)` | Tries to detect the public IP address (version 4). | `$ip4`\n';
         md += '`$ip6(timeout?)` | Tries to detect the public IP address (version 6). | `$ip6`\n';
         md += '`$md5(val, asBlob?)` | Hashes a value with MD5. | `$md5("TM+MK")`\n';
+        md += '`$now(timeZone?)` | Returns the current [time](https://momentjs.com/), with an optional [timezone](https://momentjs.com/timezone/). | `$now("Europe/Berlin")`\n';
         md += '`$PATCH(url, body?, headers?)` | Starts a HTTP PATCH request. | `$PATCH("https://example.com/users/19790905")`\n';
         md += '`$POST(url, body?, headers?)` | Starts a HTTP POST request. | `$POST("https://example.com/users/19790905")`\n';
         md += '`$PUT(url, body?, headers?)` | Starts a HTTP PUT request. | `$PUT("https://example.com/users/19790905")`\n';
@@ -476,6 +499,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$sha384(val, asBlob?)` | Hashes a value with SHA-384. | `$sha384("TM+MK")`\n';
         md += '`$sha512(val, asBlob?)` | Hashes a value with SHA-512. | `$sha512("TM+MK")`\n';
         md += '`$unwrap(val, maxLevel?, level?)` | Unwraps a value from being a function. | `$unwrap(() => 5979)` \n';
+        md += '`$utc` | Returns the current [time](https://momentjs.com/) in [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time). | `$utc`\n';
         md += '`$uuid(version?)` | Alias for `guid`. | `$uuid("4")`\n';
         md += '\n';
     }
@@ -488,6 +512,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`_` | [lodash](https://lodash.com/) | `_.isString(5979)`\n';
         md += '`$fs` | [fs-extra](https://github.com/jprichardson/node-fs-extra) | `$fs.existsSync("/path/to/something")`\n';
         md += '`$h` | [helpers](https://github.com/egodigital/vscode-powertools/blob/master/src/helpers.ts) | `$h.normalizeString("TM+MK")`\n';
+        md += '`$m` | [Moment.js](https://momentjs.com/) | `$m()`\n';
         md += '`$vs` | [Visual Studio Code API](https://code.visualstudio.com/api/references/vscode-api) | `$vs.commands.getCommands`\n';
         md += '\n';
     }

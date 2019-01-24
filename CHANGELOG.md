@@ -3,6 +3,11 @@
 ## 0.13.0 (January 23rd, 2019; global buttons and jobs)
 
 * added `document.opened` [event](https://github.com/egodigital/vscode-powertools/wiki/Events)
+* added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$now`: returns the current [time](https://momentjs.com/), with an optional [timezone](https://momentjs.com/timezone/)
+  * `$utc`: returns the current [time](https://momentjs.com/) in [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time)
+* added following modules for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$m`: [Moment.js](https://momentjs.com/)
 
 ## 0.12.2 (January 23rd, 2019; global buttons and jobs)
 
