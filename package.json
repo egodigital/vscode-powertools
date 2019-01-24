@@ -2,8 +2,8 @@
     "name": "vscode-powertools",
     "publisher": "ego-digital",
     "displayName": "Power Tools",
-    "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.12.1",
+    "description": "A swiss army knife with lots of tools, extensions and (scriptable) enhancements.",
+    "version": "0.12.2",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -1886,7 +1886,7 @@
         "typedoc": "^0.13.0",
         "typescript": "^3.2.4",
         "vsce": "^1.54.0",
-        "vscode": "^1.1.27"
+        "vscode": "^1.1.28"
     },
     "author": "e.GO Digital GmbH, Aachen, Germany",
     "license": "LGPL-3.0",

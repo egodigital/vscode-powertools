@@ -150,32 +150,32 @@ export async function reloadEvents() {
                                     if (DOES_FILE_MATCH(args[1], <ego_contracts.FileEventItem>e)) {
                                         await WORKSPACE.executeScript<ego_contracts.FileChangeEventActionScriptArguments>(
                                             <ego_contracts.ScriptEventAction>e.action,
-                                            (args) => {
-                                                // args.changeType
-                                                Object.defineProperty(args, 'changeType', {
+                                            (scriptArgs) => {
+                                                // scriptArgs.changeType
+                                                Object.defineProperty(scriptArgs, 'changeType', {
                                                     enumerable: true,
                                                     get: () => {
                                                         return args[0];
                                                     },
                                                 });
 
-                                                // args.document
-                                                Object.defineProperty(args, 'document', {
+                                                // scriptArgs.document
+                                                Object.defineProperty(scriptArgs, 'document', {
                                                     enumerable: true,
                                                     get: () => {
                                                         return args[2];
                                                     },
                                                 });
 
-                                                // args.file
-                                                Object.defineProperty(args, 'file', {
+                                                // scriptArgs.file
+                                                Object.defineProperty(scriptArgs, 'file', {
                                                     enumerable: true,
                                                     get: () => {
                                                         return args[1];
                                                     },
                                                 });
 
-                                                return args;
+                                                return scriptArgs;
                                             }
                                         );
                                     }
@@ -185,32 +185,32 @@ export async function reloadEvents() {
                                     if (DOES_FILE_MATCH(args[1], <ego_contracts.FileEventItem>e)) {
                                         await WORKSPACE.executeScript<ego_contracts.FileSavedEventActionScriptArguments>(
                                             <ego_contracts.ScriptEventAction>e.action,
-                                            (args) => {
-                                                // args.changeType
-                                                Object.defineProperty(args, 'changeType', {
+                                            (scriptArgs) => {
+                                                // scriptArgs.changeType
+                                                Object.defineProperty(scriptArgs, 'changeType', {
                                                     enumerable: true,
                                                     get: () => {
                                                         return args[0];
                                                     },
                                                 });
 
-                                                // args.document
-                                                Object.defineProperty(args, 'document', {
+                                                // scriptArgs.document
+                                                Object.defineProperty(scriptArgs, 'document', {
                                                     enumerable: true,
                                                     get: () => {
                                                         return args[2];
                                                     },
                                                 });
 
-                                                // args.file
-                                                Object.defineProperty(args, 'file', {
+                                                // scriptArgs.file
+                                                Object.defineProperty(scriptArgs, 'file', {
                                                     enumerable: true,
                                                     get: () => {
                                                         return args[1];
                                                     },
                                                 });
 
-                                                return args;
+                                                return scriptArgs;
                                             }
                                         );
                                     }
