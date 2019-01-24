@@ -2,6 +2,8 @@
 
 ## 0.13.0 (January 23rd, 2019; global buttons and jobs)
 
+* added `document.opened` [event](https://github.com/egodigital/vscode-powertools/wiki/Events)
+
 ## 0.12.2 (January 23rd, 2019; global buttons and jobs)
 
 * fixed scripting in [events](https://github.com/egodigital/vscode-powertools/wiki/Events)
