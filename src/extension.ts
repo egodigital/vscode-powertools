@@ -231,6 +231,12 @@ async function onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
     }
 }
 
+async function onDidOpenTextDocument(doc: vscode.TextDocument) {
+    await withTextDocument(doc, async (ws, d) => {
+        await ws.onDidOpenTextDocument(d);
+    });
+}
+
 async function onDidSaveTextDocument(doc: vscode.TextDocument) {
     await withTextDocument(doc, async (ws, d) => {
         await ws.onDidSaveTextDocument(d);
@@ -376,6 +382,13 @@ async function withTextDocument(
 export async function activate(context: vscode.ExtensionContext) {
     const WF = ego_helpers.buildWorkflow();
 
+    // create extenstion directory, if needed
+    WF.next(async () => {
+        try {
+            await ego_helpers.createExtensionDirectoryIfNeeded();
+        } catch (e) { }
+    });
+
     // session
     WF.next(() => {
         context.subscriptions.push(
@@ -476,6 +489,15 @@ export async function activate(context: vscode.ExtensionContext) {
                 }).catch((err) => {
                     ego_log.CONSOLE
                            .trace(err, 'vscode.workspace.onDidSaveTextDocument');
+                });
+            }),
+
+            // onDidOpenTextDocument
+            vscode.workspace.onDidOpenTextDocument((doc) => {
+                onDidOpenTextDocument(doc).then(() => {
+                }).catch((err) => {
+                    ego_log.CONSOLE
+                           .trace(err, 'vscode.workspace.onDidOpenTextDocument');
                 });
             }),
 

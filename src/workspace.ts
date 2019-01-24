@@ -651,6 +651,19 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     }
 
     /**
+     * Is invoked when a text document has been opened.
+     *
+     * @param {vscode.TextDocument} doc The underlying text document.
+     */
+    public async onDidOpenTextDocument(doc: vscode.TextDocument) {
+        await this._QUEUE.add(async () => {
+            await this.onDocumentOpened(
+                doc
+            );
+        });
+    }
+
+    /**
      * Is invoked when a text document has been changed.
      *
      * @param {vscode.TextDocument} doc The underlying text document.
@@ -698,6 +711,36 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         ego_workspaces_commands.disposeCommands.apply(
             this
         );
+    }
+
+    private async onDocumentOpened(doc: vscode.TextDocument) {
+        if (this.isInFinalizeState) {
+            return;
+        }
+
+        // do not handle items inside
+        // the following folders
+        if (this.isInGit(doc.fileName)) {
+            return;
+        }
+        if (this.isInVscode(doc.fileName)) {
+            return;
+        }
+
+        const EVENT_TYPE = 'document.opened';
+
+        const EVENTS = this.getEventsBy(EVENT_TYPE);
+        for (const E of EVENTS) {
+            try {
+                await Promise.resolve(
+                    E.execute(EVENT_TYPE,
+                              doc)
+                );
+            } catch (e) {
+                this.logger
+                    .trace(e, 'workspace.onDocumentOpened(1)');
+            }
+        }
     }
 
     private async onFileChange(

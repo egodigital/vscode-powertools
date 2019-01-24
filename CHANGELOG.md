@@ -1,5 +1,9 @@
 # Change Log (vscode-powertools)
 
+## 0.13.0 (January 25th, 2019; events)
+
+* `.vscode-powertools` inside user's home directory is tried to be created on startup automatically, if needed
+
 ## 0.12.1 (January 23rd, 2019; global buttons and jobs)
 
 * [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons), [commands](https://github.com/egodigital/vscode-powertools/wiki/Commands), [jobs](https://github.com/egodigital/vscode-powertools/wiki/Jobs) and [values](https://github.com/egodigital/vscode-powertools/wiki/Values) can be defined [globally](https://github.com/egodigital/vscode-powertools/wiki/Global%20Settings) now ... s. [issue #4](https://github.com/egodigital/vscode-powertools/issues/4)

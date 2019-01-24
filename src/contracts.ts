@@ -562,6 +562,22 @@ export interface CronJobItem extends JobItem {
 }
 
 /**
+ * An action for an event that is raised, after a document has been opened.
+ */
+export interface DocumentOpenedEventItem extends EventItem {
+}
+
+/**
+ * Arguments for script that is executed on a file / folder change.
+ */
+export interface DocumentOpenedEventActionScriptArguments extends WorkspaceScriptArguments {
+    /**
+     * The underlying document.
+     */
+    readonly document: vscode.TextDocument;
+}
+
+/**
  * An event action.
  */
 export interface EventAction {
