@@ -4,6 +4,7 @@ out/test/**
 doc/**
 src/**
 img/**
+.gitattributes
 .gitignore
 **/tsconfig.json
 **/tslint.json
