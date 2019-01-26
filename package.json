@@ -523,6 +523,92 @@
                                         "required": [
                                             "action"
                                         ]
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "action": {
+                                                "description": "The action.",
+                                                "oneOf": [
+                                                    {
+                                                        "description": "A script based event action.",
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "options": {
+                                                                "description": "Options for the script."
+                                                            },
+                                                            "script": {
+                                                                "description": "The path to the script to execute.",
+                                                                "type": "string"
+                                                            },
+                                                            "type": {
+                                                                "description": "The type.",
+                                                                "enum": [
+                                                                    "script"
+                                                                ],
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "script"
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "if": {
+                                                "description": "The JavaScript code that checks the avaibility of that event.",
+                                                "type": "string"
+                                            },
+                                            "importValues": {
+                                                "description": "Defines a list of properties, which uses (external) values for itself.",
+                                                "type": "object",
+                                                "patternProperties": {
+                                                    "(.*)": {
+                                                        "description": "The name of the property, which should be set / overwritten.",
+                                                        "oneOf": [
+                                                            {
+                                                                "description": "(property name) : (value name)",
+                                                                "type": "string"
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "onCreated": {
+                                                "description": "The (JavaScript) code to executed after event has been created.",
+                                                "type": "string"
+                                            },
+                                            "onDestroyed": {
+                                                "description": "The (JavaScript) code to executed after event has been destroyed.",
+                                                "type": "string"
+                                            },
+                                            "platforms": {
+                                                "description": "One or more platform names, that event is for.",
+                                                "type": "array",
+                                                "items": {
+                                                    "enum": [
+                                                        "aix",
+                                                        "darwin",
+                                                        "freebsd",
+                                                        "linux",
+                                                        "openbsd",
+                                                        "sunos",
+                                                        "win32"
+                                                    ],
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": {
+                                                "description": "The event type.",
+                                                "enum": [
+                                                    "document.opened"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "action"
+                                        ]
                                     }
                                 ]
                             }
@@ -1886,7 +1972,7 @@
         "typedoc": "^0.13.0",
         "typescript": "^3.2.4",
         "vsce": "^1.54.0",
-        "vscode": "^1.1.27"
+        "vscode": "^1.1.28"
     },
     "author": "e.GO Digital GmbH, Aachen, Germany",
     "license": "LGPL-3.0",
