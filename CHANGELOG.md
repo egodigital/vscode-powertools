@@ -1,6 +1,6 @@
 # Change Log (vscode-powertools)
 
-## 0.13.0 (January 23rd, 2019; global buttons and jobs)
+## 0.13.1 (January 26th, 2019; events and code execution)
 
 * added `document.opened` [event](https://github.com/egodigital/vscode-powertools/wiki/Events)
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
