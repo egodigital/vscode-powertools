@@ -4,9 +4,12 @@
 
 * added `globalState` and `state` properties to [ScriptArguments interface](https://egodigital.github.io/vscode-powertools/api/interfaces/_contracts_.scriptarguments.html)
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$alert`: shows a (warning) popup
   * `$full`: returns a full path
   * `$read`: reads data from a file
   * `$write`: writes data to a file
+* added following functions for [Scripts](https://github.com/egodigital/vscode-powertools/wiki/Scripts):
+  * `$alert`: shows a (warning) popup
 
 ## 0.13.1 (January 26th, 2019; events and code execution)
 

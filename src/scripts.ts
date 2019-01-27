@@ -174,6 +174,13 @@ export class ScriptConsoleWebView extends ego_webview.WebViewWithContextBase {
                             const $workspaces = ego_workspace.getWorkspaceList();
 
                             // @ts-ignore
+                            const $alert = async (msg: any) => {
+                                await $vscode.window.showWarningMessage(
+                                    $helpers.toStringSafe(msg)
+                                );
+                            };
+
+                            // @ts-ignore
                             const $clear = () => {
                                 _0c44c5cd8ea84aafbf9ad2ed69c54b38
                                     .postMessage('clear');

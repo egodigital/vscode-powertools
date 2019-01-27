@@ -49,6 +49,7 @@ export async function _exec_fcac50a111604220b8173024b6925905(
     // @ts-ignore
     const $vs = require('vscode');
 
+    // @ts-ignore
     const $unwrap = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
         async (val?: any, maxLevel?: number, level?: number) => {
             maxLevel = parseInt(
@@ -76,6 +77,15 @@ export async function _exec_fcac50a111604220b8173024b6925905(
             }
 
             return val;
+        }
+    );
+
+    // @ts-ignore
+    const $alert = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (msg: any) => {
+            await $vs.window.showWarningMessage(
+                $h.toStringSafe(msg)
+            );
         }
     );
 
@@ -539,6 +549,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '## Functions\n';
         md += 'Name | Description | Example\n';
         md += '---- | ----------- | -------\n';
+        md += '`$alert(msg)` | Shows a (wanring) popup. | `$alert("Hello, TM!")`\n';
         md += '`$asc(str)` | Handles a value as string and returns the ASCII (codes). | `$asc("T")`\n';
         md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
         md += '`$DELETE(url, body?, headers?)` | Starts a HTTP DELETE request. | `$DELETE("https://example.com/users/19861222")`\n';
