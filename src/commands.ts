@@ -36,6 +36,12 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 
+const SUPPORTED_LANGUAGES = [
+    'coffeescript',
+    'javascript',
+];
+
+
 /**
  * Registers all commands.
  *
@@ -525,7 +531,7 @@ export function registerCommands(
 
                 const ACTIVE_EDITOR = vscode.window.activeTextEditor;
                 if (ACTIVE_EDITOR && ACTIVE_EDITOR.document) {
-                    if ('javascript' === ego_helpers.normalizeString(ACTIVE_EDITOR.document.languageId)) {
+                    if (SUPPORTED_LANGUAGES.indexOf(ego_helpers.normalizeString(ACTIVE_EDITOR.document.languageId)) > -1) {
                         QUICK_PICKS.unshift({
                             action: async () => {
                                 const WEB_VIEW = new ego_scripts.ScriptConsoleWebView(

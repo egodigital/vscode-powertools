@@ -16,6 +16,7 @@
  */
 
 import * as _ from 'lodash';
+const coffeeScript = require('coffeescript');
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_webview from './webview';
@@ -243,8 +244,37 @@ export class ScriptConsoleWebView extends ego_webview.WebViewWithContextBase {
                                 });
                             };
 
-                            return await Promise.resolve(
-                                eval(`(async () => {
+                            let runner_ae2cd693a603498c80892714d92c03c2: () => any;
+                            switch (ego_helpers.normalizeString(_0c44c5cd8ea84aafbf9ad2ed69c54b38.editor.document.languageId)) {
+                                case 'coffeescript':
+                                    runner_ae2cd693a603498c80892714d92c03c2 = () => {
+                                        const COFFEE_LINES = _0c44c5cd8ea84aafbf9ad2ed69c54b38.editor
+                                            .document
+                                            .getText()
+                                            .split('\n')
+                                            .map(l => '    ' + l)
+                                            .join('\n');
+
+                                        const COFFEE_CODE = `runScript_334ea678a32a48949217e526b84da7b7 = (tm_83989812938141258fadc68906a0e2e8) ->
+${ COFFEE_LINES }
+
+return runScript_334ea678a32a48949217e526b84da7b7 19790905`;
+
+                                        const FINAL_CODE = coffeeScript.compile(COFFEE_CODE, {
+                                            bare: true,
+                                        });
+
+                                        return eval(`(async () => {
+
+${ FINAL_CODE }
+
+})()`);
+                                    };
+                                    break;
+
+                                default:
+                                    runner_ae2cd693a603498c80892714d92c03c2 = () => {
+                                        return eval(`(async () => {
 
 ${
     _0c44c5cd8ea84aafbf9ad2ed69c54b38.editor
@@ -252,7 +282,13 @@ ${
         .getText()
 }
 
-})()`)
+})()`);
+                                    };
+                                    break;
+                            }
+
+                            return await Promise.resolve(
+                                runner_ae2cd693a603498c80892714d92c03c2()
                             );
                         })();
                     } catch (e) {
