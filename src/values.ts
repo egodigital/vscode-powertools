@@ -21,6 +21,7 @@ import * as ego_code from './code';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_log from './log';
+import * as ego_states from './states';
 import * as ego_stores from './stores';
 import * as fsExtra from 'fs-extra';
 import * as os from 'os';
@@ -296,11 +297,18 @@ export class ScriptValue implements ego_contracts.Value {
             )
         );
         if (false !== SCRIPT_FILE) {
+            this.scriptFile = SCRIPT_FILE;
+
             this.scriptModule = ego_helpers.loadScriptModule<ego_contracts.ScriptValueModule>(
                 SCRIPT_FILE
             );
         }
     }
+
+    /**
+     * The full path of the script file.
+     */
+    public readonly scriptFile: string;
 
     /**
      * The underlying module.
@@ -315,6 +323,7 @@ export class ScriptValue implements ego_contracts.Value {
             const VALUES = storageToArray(this.otherValues);
 
             const ARGS: ego_contracts.ScriptValueArguments = {
+                globalState: ego_states.GLOBAL_STATE,
                 globalStore: new ego_stores.UserStore(),
                 logger: ego_log.CONSOLE,
                 options: ego_helpers.cloneObject(this.options),
@@ -327,14 +336,24 @@ export class ScriptValue implements ego_contracts.Value {
                 require: (id) => {
                     return ego_helpers.requireModule(id);
                 },
+                state: undefined,
                 store: new ego_stores.UserStore(this.script),
             };
 
+            // ARGS.output
             Object.defineProperty(ARGS, 'output', {
                 enumerable: true,
                 get: () => {
                     return this.getOutput();
                 },
+            });
+
+            // ARGS.state
+            const STATE_GETTER_SETTER = ego_states.getScriptState(this.scriptFile);
+            Object.defineProperty(ARGS, 'state', {
+                enumerable: true,
+                get: STATE_GETTER_SETTER.get,
+                set: STATE_GETTER_SETTER.set,
             });
 
             return this.scriptModule

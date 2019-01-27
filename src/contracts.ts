@@ -695,6 +695,11 @@ export interface FileSavedEventActionScriptModule extends ScriptModule<FileSaved
 }
 
 /**
+ * A storage with states, based on file paths.
+ */
+export type FileStateStorage = { [file: string]: GetterAndSetter };
+
+/**
  * A file value item.
  */
 export interface FileValueItem extends ValueItem {
@@ -716,6 +721,24 @@ export interface ForPlatforms {
      * One or more platform names, the object is for.
      */
     platforms?: string[];
+}
+
+/**
+ * An object that gets a value.
+ */
+export interface Getter {
+    /**
+     * Gets a value.
+     *
+     * @return {any} The (current) value.
+     */
+    readonly get: () => any;
+}
+
+/**
+ * An object that gets and sets a value.
+ */
+export interface GetterAndSetter extends Getter, Setter {
 }
 
 /**
@@ -928,6 +951,11 @@ export interface JobItemShellCommandAction extends JobItemAction, WithShellComma
 }
 
 /**
+ * An object that stores values as key/value pairs.
+ */
+export type KeyValuePairs<TValue = any> = { [key: string]: TValue };
+
+/**
  * Provides an output channel.
  *
  * @return {vscode.OutputChannel} The output channel.
@@ -968,6 +996,10 @@ export interface ScriptArguments {
      */
     readonly globals?: any;
     /**
+     * Gets the global state object.
+     */
+    readonly globalState: KeyValuePairs;
+    /**
      * The global store.
      */
     readonly globalStore: Store;
@@ -1000,6 +1032,10 @@ export interface ScriptArguments {
      */
     readonly require: (id: string) => any;
     /**
+     * Provides a property to save data permanently while the current (extension) session.
+     */
+    state: any;
+    /**
      * The user store for the underlying script.
      */
     readonly store: Store;
@@ -1009,12 +1045,6 @@ export interface ScriptArguments {
  * A button action based on a script.
  */
 export interface ScriptButtonAction extends ButtonAction, WithScript {
-}
-
-/**
- * A button action based on a shell command.
- */
-export interface ShellCommandButtonAction extends ButtonAction, WithShellCommand {
 }
 
 /**
@@ -1083,6 +1113,24 @@ export interface ScriptValueModule {
      * @return {any} The value.
      */
     readonly getValue: (args: ScriptValueArguments) => any;
+}
+
+/**
+ * An object that sets a value.
+ */
+export interface Setter {
+    /**
+     * Sets a value.
+     *
+     * @param {any} newValue The new value.
+     */
+    readonly set: (newValue: any) => void;
+}
+
+/**
+ * A button action based on a shell command.
+ */
+export interface ShellCommandButtonAction extends ButtonAction, WithShellCommand {
 }
 
 /**

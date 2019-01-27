@@ -25,6 +25,7 @@ import * as ego_global_config from './global/config';
 import * as ego_global_values from './global/values';
 import * as ego_helpers from './helpers';
 import * as ego_log from './log';
+import * as ego_states from './states';
 import * as ego_stores from './stores';
 import * as ego_values from './values';
 import * as ego_versions from './versions';
@@ -173,6 +174,7 @@ export async function executeScript<
         if (SCRIPT_MODULE.execute) {
             const BASE_ARGS: ego_contracts.WorkspaceScriptArguments = {
                 globals: ego_helpers.cloneObject(SETTINGS.globals),
+                globalState: ego_states.GLOBAL_STATE,
                 globalStore: new ego_stores.UserStore(),
                 logger: ego_log.CONSOLE,
                 options: ego_helpers.cloneObject(settings.options),
@@ -183,8 +185,17 @@ export async function executeScript<
                 require: (id) => {
                     return ego_helpers.requireModule(id);
                 },
+                state: undefined,
                 store: new ego_stores.UserStore(scriptPath),
             };
+
+            // BASE_ARGS.state
+            const STATE_GETTER_SETTER = ego_states.getScriptState(scriptPath);
+            Object.defineProperty(BASE_ARGS, 'state', {
+                enumerable: true,
+                get: STATE_GETTER_SETTER.get,
+                set: STATE_GETTER_SETTER.set,
+            });
 
             const ARGS: TArgs = await Promise.resolve(
                 argsFactory(

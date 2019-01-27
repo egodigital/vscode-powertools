@@ -20,6 +20,7 @@ import * as childProcess from 'child_process';
 import * as ego_code from './code';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
+import * as ego_states from './states';
 import * as ego_stores from './stores';
 import * as ego_values from './values';
 import * as ego_workspaces_apps from './workspaces/apps';
@@ -85,6 +86,7 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     private _configSrc: ego_helpers.WorkspaceConfigSource;
     private _isInitialized = false;
     private readonly _QUEUE = ego_helpers.createQueue();
+    private _scriptStates: ego_contracts.FileStateStorage;
     private _settings: WorkspaceSettings;
 
     /**
@@ -190,6 +192,7 @@ export class Workspace extends ego_helpers.WorkspaceBase {
             if (SCRIPT_MODULE.execute) {
                 const BASE_ARGS: ego_contracts.WorkspaceScriptArguments = {
                     globals: ego_helpers.cloneObject(this.settings.globals),
+                    globalState: ego_states.GLOBAL_STATE,
                     globalStore: new ego_stores.UserStore(),
                     logger: this.logger,
                     options: ego_helpers.cloneObject(settings.options),
@@ -200,8 +203,17 @@ export class Workspace extends ego_helpers.WorkspaceBase {
                     require: (id) => {
                         return ego_helpers.requireModule(id);
                     },
+                    state: undefined,
                     store: new ego_stores.UserStore(FULL_SCRIPT_PATH),
                 };
+
+                // BASE_ARGS.state
+                const STATE_GETTER_SETTER = ego_states.getScriptState(FULL_SCRIPT_PATH, this.scriptStates);
+                Object.defineProperty(BASE_ARGS, 'state', {
+                    enumerable: true,
+                    get: STATE_GETTER_SETTER.get,
+                    set: STATE_GETTER_SETTER.set,
+                });
 
                 const ARGS: TArgs = await Promise.resolve(
                     argsFactory(
@@ -839,6 +851,8 @@ export class Workspace extends ego_helpers.WorkspaceBase {
             this
         );
 
+        this._scriptStates = {};
+
         // commands
         await ego_workspaces_commands.reloadCommands.apply(
             this
@@ -1024,6 +1038,13 @@ export class Workspace extends ego_helpers.WorkspaceBase {
                 await COMMAND_ACTION(progress);
             });
         }
+    }
+
+    /**
+     * The storage with script states.
+     */
+    public get scriptStates(): ego_contracts.FileStateStorage {
+        return this._scriptStates;
     }
 
     /**

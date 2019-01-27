@@ -19,6 +19,7 @@ import * as _ from 'lodash';
 import * as ego_apps from '../apps';
 import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
+import * as ego_states from '../states';
 import * as ego_stores from '../stores';
 import * as ego_workspace from '../workspace';
 import * as ejs from 'ejs';
@@ -105,6 +106,7 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
                 return uri;
             },
             globals: ego_helpers.cloneObject(this.workspace.settings.globals),
+            globalState: ego_states.GLOBAL_STATE,
             globalStore: new ego_stores.UserStore(),
             logger: this.workspace.logger,
             options: ego_helpers.cloneObject(this.item.options),
@@ -156,6 +158,7 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
             stat: (p, lstat) => {
                 return this.fileSystemItemStat(p, lstat);
             },
+            state: undefined,
             store: new ego_stores.UserStore(this.scriptFile),
             tempFile: () => {
                 return this.createTempFile();
@@ -168,6 +171,14 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
                 this.writeFile(p, data);
             },
         };
+
+        // ARGS.state
+        const STATE_GETTER_SETTER = ego_states.getScriptState(this.scriptFile, this.workspace.scriptStates);
+        Object.defineProperty(ARGS, 'state', {
+            enumerable: true,
+            get: STATE_GETTER_SETTER.get,
+            set: STATE_GETTER_SETTER.set,
+        });
 
         // ARGS.workspaces
         Object.defineProperty(ARGS, 'workspaces', {

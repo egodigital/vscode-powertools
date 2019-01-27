@@ -21,6 +21,7 @@ import * as childProcess from 'child_process';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_log from './log';
+import * as ego_states from './states';
 import * as ego_stores from './stores';
 import * as ego_values from './values';
 import * as ego_workspace from './workspace';
@@ -517,6 +518,7 @@ export class AppWebView extends AppWebViewBase {
 
                 return uri;
             },
+            globalState: ego_states.GLOBAL_STATE,
             globalStore: new ego_stores.UserStore(),
             logger: ego_log.CONSOLE,
             options: options,
@@ -570,6 +572,7 @@ export class AppWebView extends AppWebViewBase {
             stat: (p, lstat) => {
                 return this.fileSystemItemStat(p, lstat);
             },
+            state: undefined,
             store: new ego_stores.UserStore(this.scriptFile),
             tempFile: () => {
                 return this.createTempFile();
@@ -582,6 +585,14 @@ export class AppWebView extends AppWebViewBase {
                 this.writeFile(p, data);
             },
         };
+
+        // ARGS.state
+        const STATE_GETTER_SETTER = ego_states.getScriptState(this.scriptFile);
+        Object.defineProperty(ARGS, 'state', {
+            enumerable: true,
+            get: STATE_GETTER_SETTER.get,
+            set: STATE_GETTER_SETTER.set,
+        });
 
         // ARGS.workspaces
         Object.defineProperty(ARGS, 'workspaces', {
