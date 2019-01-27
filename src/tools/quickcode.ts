@@ -432,6 +432,30 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         }
     );
 
+    // @ts-ignore
+    const $read = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async function (file: string, encoding?: string) {
+            file = getFullPath_fb9882a1f9c94d97a5f0d65e28f07cba(file);
+            encoding = $h.normalizeString(encoding);
+
+            return arguments.length < 2 ? await $fs.readFile(file)
+                : await $fs.readFile(file, encoding);
+        }
+    );
+    // @ts-ignore
+    const $write = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async function (file: string, data: any, encoding?: string) {
+            file = getFullPath_fb9882a1f9c94d97a5f0d65e28f07cba(file);
+            encoding = $h.normalizeString(encoding);
+
+            if (arguments.length < 3) {
+                await $fs.writeFile(file, data);
+            } else {
+                await $fs.writeFile(file, data, encoding);
+            }
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -465,6 +489,41 @@ function asAsync_628dffd9c1e74e5cb82620a2c575e5dd<TResult = any>(
     };
 }
 
+function getFullPath_fb9882a1f9c94d97a5f0d65e28f07cba(p: string) {
+    const fsExtra = require('fs-extra');
+    const helpers = require('../helpers');
+    const path = require('path');
+    const vscode = require('vscode');
+
+    p = helpers.toStringSafe(p);
+    if (!path.isAbsolute(p)) {
+        let basePath: string | false = false;
+
+        const EDITOR = vscode.window.activeTextEditor;
+        if (EDITOR) {
+            const DOC = EDITOR.document;
+            if (DOC) {
+                const FILE = DOC.fileName;
+                if (!helpers.isEmptyString(FILE) && fsExtra.existsSync(FILE)) {
+                    basePath = path.dirname(
+                        FILE
+                    );
+                }
+            }
+        }
+
+        if (false === basePath) {
+            basePath = <string>helpers.getExtensionDirInHome();
+        }
+
+        p = path.join(
+            basePath, p
+        );
+    }
+
+    return path.resolve(p);
+}
+
 async function showHelp_579c52a1992b472183db2fff8c764504() {
     let md = '# Code Execution Help\n\n';
 
@@ -493,6 +552,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$PUT(url, body?, headers?)` | Starts a HTTP PUT request. | `$PUT("https://example.com/users/19790905")`\n';
         md += '`$pwd(length?, allowedChars?)` | Generates a password. | `$pwd(64)`\n';
         md += '`$r(id)` | Extended [require() function](https://nodejs.org/api/modules.html#modules_require), which also allows to access the [modules of that extension](https://github.com/egodigital/vscode-powertools/blob/master/package.json). | `$r("moment").utc()`\n';
+        md += '`$read(file, enc?)` | Reads data from a file. Relative paths will be mapped to the directory of the currently opened editor or the `.vscode-powertools` sub folder inside the user\'s home directory. | `$read("myFile.txt")`\n';
         md += '`$res(val, mapper?)` | Resolves a value. | `$res( Promise.resolve("TM"), s => s.toLowerCase() )`\n';
         md += '`$sha1(val, asBlob?)` | Hashes a value with SHA-1. | `$sha1("TM+MK")`\n';
         md += '`$sha256(val, asBlob?)` | Hashes a value with SHA-256. | `$sha256("TM+MK")`\n';
@@ -501,6 +561,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$unwrap(val, maxLevel?, level?)` | Unwraps a value from being a function. | `$unwrap(() => 5979)` \n';
         md += '`$utc` | Returns the current [time](https://momentjs.com/) in [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time). | `$utc`\n';
         md += '`$uuid(version?)` | Alias for `guid`. | `$uuid("4")`\n';
+        md += '`$write(file, data, enc?)` | Writes data to a file. Relative paths will be mapped to the directory of the currently opened editor or the `.vscode-powertools` sub folder inside the user\'s home directory. | `$write("myFile.txt", "Data to write. Can be a string, stream or buffer")`\n';
         md += '\n';
     }
 

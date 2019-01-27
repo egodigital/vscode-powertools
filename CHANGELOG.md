@@ -1,5 +1,11 @@
 # Change Log (vscode-powertools)
 
+## 0.14.0 (January 28th, 2019; code execution)
+
+* added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$read`: reads data from a file
+  * `$write`: writes data to a file
+
 ## 0.13.1 (January 26th, 2019; events and code execution)
 
 * added `document.opened` [event](https://github.com/egodigital/vscode-powertools/wiki/Events)
