@@ -1,6 +1,6 @@
 # Change Log (vscode-powertools)
 
-## 0.14.0 (January 28th, 2019; code execution)
+## 0.14.0 (January 28th, 2019; scripts and code execution)
 
 * added `globalState` and `state` properties to [ScriptArguments interface](https://egodigital.github.io/vscode-powertools/api/interfaces/_contracts_.scriptarguments.html)
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
