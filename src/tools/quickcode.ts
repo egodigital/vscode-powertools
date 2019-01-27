@@ -47,6 +47,8 @@ export async function _exec_fcac50a111604220b8173024b6925905(
     const $m = require('moment');
     require('moment-timezone');
     // @ts-ignore
+    const $o = require('opn');
+    // @ts-ignore
     const $vs = require('vscode');
 
     // @ts-ignore
@@ -473,6 +475,18 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         }
     );
 
+    // @ts-ignore
+    const $md = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async function (markdown: any) {
+            markdown = await $h.asBuffer(markdown, 'utf8');
+
+            return {
+                '__markdown_tm_19790905': Symbol('MARKDOWN_DOCUMENT'),
+                'markdown': markdown.toString('utf8'),
+            };
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -564,6 +578,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$ip(v6?, timeout?)` | Tries to detect the public IP address. | `$ip(true)`\n';
         md += '`$ip4(timeout?)` | Tries to detect the public IP address (version 4). | `$ip4`\n';
         md += '`$ip6(timeout?)` | Tries to detect the public IP address (version 6). | `$ip6`\n';
+        md += '`$md(src)` | Handles a value as [Markdown](https://github.com/showdownjs/showdown) string. | `$md("# Header 1\\n\\nHello, TM!")`\n';
         md += '`$md5(val, asBlob?)` | Hashes a value with MD5. | `$md5("TM+MK")`\n';
         md += '`$now(timeZone?)` | Returns the current [time](https://momentjs.com/), with an optional [timezone](https://momentjs.com/timezone/). | `$now("Europe/Berlin")`\n';
         md += '`$PATCH(url, body?, headers?)` | Starts a HTTP PATCH request. | `$PATCH("https://example.com/users/19790905")`\n';
@@ -593,6 +608,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$fs` | [fs-extra](https://github.com/jprichardson/node-fs-extra) | `$fs.existsSync("/path/to/something")`\n';
         md += '`$h` | [helpers](https://github.com/egodigital/vscode-powertools/blob/master/src/helpers.ts) | `$h.normalizeString("TM+MK")`\n';
         md += '`$m` | [Moment.js](https://momentjs.com/) | `$m()`\n';
+        md += '`$o` | [opn](https://www.npmjs.com/package/opn) | `$o("https://e-go-digital.com")`\n';
         md += '`$vs` | [Visual Studio Code API](https://code.visualstudio.com/api/references/vscode-api) | `$vs.commands.getCommands`\n';
         md += '\n';
     }

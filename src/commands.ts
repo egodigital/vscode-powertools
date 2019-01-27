@@ -77,6 +77,13 @@ export function registerCommands(
 
                     await WEB_VIEW.initialize();
                     await WEB_VIEW.open();
+                } else if (RESULT && _.isSymbol(RESULT['__markdown_tm_19790905'])) {
+                    const WEB_VIEW = new ego_markdown.MarkdownWebView({
+                        markdown: RESULT.markdown,
+                        title: 'Code Execution Result (Markdown)'
+                    });
+
+                    await WEB_VIEW.open();
                 } else if (Buffer.isBuffer(RESULT)) {
                     let md = '# Code Execution Result (Buffer)\n\n';
                     md += '```';

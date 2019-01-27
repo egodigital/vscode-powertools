@@ -6,10 +6,13 @@
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$alert`: shows a (warning) popup
   * `$full`: returns a full path
+  * `$md`: handles a value as [Markdown](https://github.com/showdownjs/showdown) string
   * `$read`: reads data from a file
   * `$write`: writes data to a file
 * added following functions for [Scripts](https://github.com/egodigital/vscode-powertools/wiki/Scripts):
   * `$alert`: shows a (warning) popup
+* added following modules for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$o`: [opn]((https://www.npmjs.com/package/opn)
 
 ## 0.13.1 (January 26th, 2019; events and code execution)
 
