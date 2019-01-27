@@ -2001,6 +2001,7 @@
         "html-entities": "^1.2.1",
         "is-stream": "^1.1.0",
         "js-beautify": "^1.8.9",
+        "less": "^3.9.0",
         "lodash": "^4.17.11",
         "mime-types": "^2.1.21",
         "moment": "^2.24.0",

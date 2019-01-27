@@ -4,6 +4,7 @@
 
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$beautify`: beautifies the code in the active editor and opens the result in a new one
+  * `$compile`: compiles the code in the active editor and opens the result in a new one
 
 ## 0.14.0 (January 28th, 2019; scripts and code execution)
 

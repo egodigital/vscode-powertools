@@ -501,7 +501,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                     const TEXT: string = DOC.getText();
 
                     const LANG: string = DOC.languageId;
-                    switch ($h.normalizeString(DOC.languageId)) {
+                    switch ($h.normalizeString(LANG)) {
                         case 'css':
                             {
                                 const beautify = require('js-beautify').css;
@@ -535,6 +535,65 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                         '__neweditor_tm_19790905': Symbol('NEW_EDITOR'),
                         'column': $vs.ViewColumn.Two,
                         'lang': LANG,
+                        'text': $h.toStringSafe(result),
+                    };
+                }
+            }
+
+            throw new Error('No active editor found!');
+        }
+    );
+
+    // @ts-ignore
+    const $compile = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async () => {
+            const EDITOR = $vs.window.activeTextEditor;
+            if (EDITOR) {
+                const DOC = EDITOR.document;
+                if (DOC) {
+                    let result: any = Symbol('LANGUAGE_NOT_SUPPORTED');
+                    const TEXT: string = DOC.getText();
+                    let lang: string = DOC.languageId;
+
+                    switch ($h.normalizeString(DOC.languageId)) {
+                        case 'coffeescript':
+                            {
+                                const beautify = require('js-beautify').js;
+                                const coffeeScript = require('coffeescript');
+
+                                result = coffeeScript.compile(TEXT, {
+                                    bare: true,
+                                });
+                                result = beautify(result);
+
+                                lang = 'javascript';
+                            }
+                            break;
+
+                        case 'less':
+                            {
+                                const beautify = require('js-beautify').css;
+                                const less = require('less');
+
+                                const COMPILER_RESULT = await less.render(TEXT);
+
+                                result = beautify(
+                                    COMPILER_RESULT.css
+                                );
+
+                                lang = 'css';
+                            }
+                            break;
+                    }
+
+                    if (_.isSymbol(result)) {
+                        throw new Error(`Language '${ DOC.languageId }' is not supported!`);
+                    }
+
+                    return {
+                        '__neweditor_tm_19790905': Symbol('NEW_EDITOR'),
+                        'column': $vs.ViewColumn.Two,
+                        'lang': lang,
                         'text': $h.toStringSafe(result),
                     };
                 }
@@ -624,6 +683,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$asc(str)` | Handles a value as string and returns the ASCII (codes). | `$asc("T")`\n';
         md += '`$beautify` | Beautifies the code in the active editor and opens the result in a new one. | `$beautify`\n';
         md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
+        md += '`$compile` | Compiles the code in the active editor and opens the result in a new one. | `$compile`\n';
         md += '`$DELETE(url, body?, headers?)` | Starts a HTTP DELETE request. | `$DELETE("https://example.com/users/19861222")`\n';
         md += '`$emojis(search?)` | Returns a list of [emojis](https://www.npmjs.com/package/node-emoji), by using an optional filter. | `$emojis("heart")`\n';
         md += '`$exec` | Executes the code in the currently running editor. | `$exec`\n';
