@@ -3,6 +3,7 @@
 ## 0.14.0 (January 28th, 2019; code execution)
 
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$full`: returns a full path
   * `$read`: reads data from a file
   * `$write`: writes data to a file
 

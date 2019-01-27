@@ -433,6 +433,13 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
     );
 
     // @ts-ignore
+    const $full = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (p: string) => {
+            return getFullPath_fb9882a1f9c94d97a5f0d65e28f07cba(p);
+        }
+    );
+
+    // @ts-ignore
     const $read = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
         async function (file: string, encoding?: string) {
             file = getFullPath_fb9882a1f9c94d97a5f0d65e28f07cba(file);
@@ -537,6 +544,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$DELETE(url, body?, headers?)` | Starts a HTTP DELETE request. | `$DELETE("https://example.com/users/19861222")`\n';
         md += '`$emojis(search?)` | Returns a list of [emojis](https://www.npmjs.com/package/node-emoji), by using an optional filter. | `$emojis("heart")`\n';
         md += '`$exec` | Executes the code in the currently running editor. | `$exec`\n';
+        md += '`$full(path?)` | Returns a full path. | `$full("dir1/subDir1_1/myFile.txt")`\n';
         md += '`$GET(url, headers?)` | Starts a HTTP GET request. | `$GET("https://example.com/users/19790905")`\n';
         md += '`$guid(version?)` | Generates a GUID. | `$guid("4")`\n';
         md += '`$hash(algo, val, asBlob?)` | Hashes a value. | `$hash("sha1", "TM+MK")`\n';
