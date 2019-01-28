@@ -1991,6 +1991,7 @@
     },
     "dependencies": {
         "change-case": "^3.1.0",
+        "clean-css": "^4.2.1",
         "coffeescript": "^2.3.2",
         "cron": "^1.6.0",
         "deepmerge": "^3.1.0",
