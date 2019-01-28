@@ -499,9 +499,9 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                 if (DOC) {
                     let result: any = Symbol('LANGUAGE_NOT_SUPPORTED');
                     const TEXT: string = DOC.getText();
+                    let lang: string = DOC.languageId;
 
-                    const LANG: string = DOC.languageId;
-                    switch ($h.normalizeString(LANG)) {
+                    switch ($h.normalizeString(lang)) {
                         case 'css':
                             {
                                 const beautify = require('js-beautify').css;
@@ -528,13 +528,13 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                     }
 
                     if (_.isSymbol(result)) {
-                        throw new Error(`Language '${ LANG }' is not supported!`);
+                        throw new Error(`Language '${ DOC.languageId }' is not supported!`);
                     }
 
                     return {
                         '__neweditor_tm_19790905': Symbol('NEW_EDITOR'),
                         'column': $vs.ViewColumn.Two,
-                        'lang': LANG,
+                        'lang': lang,
                         'text': $h.toStringSafe(result),
                     };
                 }
@@ -582,6 +582,45 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                                 );
 
                                 lang = 'css';
+                            }
+                            break;
+                    }
+
+                    if (_.isSymbol(result)) {
+                        throw new Error(`Language '${ DOC.languageId }' is not supported!`);
+                    }
+
+                    return {
+                        '__neweditor_tm_19790905': Symbol('NEW_EDITOR'),
+                        'column': $vs.ViewColumn.Two,
+                        'lang': lang,
+                        'text': $h.toStringSafe(result),
+                    };
+                }
+            }
+
+            throw new Error('No active editor found!');
+        }
+    );
+
+    // @ts-ignore
+    const $uglify = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async () => {
+            const EDITOR = $vs.window.activeTextEditor;
+            if (EDITOR) {
+                const DOC = EDITOR.document;
+                if (DOC) {
+                    let result: any = Symbol('LANGUAGE_NOT_SUPPORTED');
+                    const TEXT: string = DOC.getText();
+                    let lang: string = DOC.languageId;
+
+                    switch ($h.normalizeString(DOC.languageId)) {
+                        case 'javascript':
+                            {
+                                const uglifyJS = require('uglify-js');
+
+                                result = uglifyJS.minify(TEXT)
+                                    .code;
                             }
                             break;
                     }
@@ -710,6 +749,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$sha256(val, asBlob?)` | Hashes a value with SHA-256. | `$sha256("TM+MK")`\n';
         md += '`$sha384(val, asBlob?)` | Hashes a value with SHA-384. | `$sha384("TM+MK")`\n';
         md += '`$sha512(val, asBlob?)` | Hashes a value with SHA-512. | `$sha512("TM+MK")`\n';
+        md += '`$uglify` | Uglifies the code in the active editor and opens the result in a new one. | `$uglify`\n';
         md += '`$unwrap(val, maxLevel?, level?)` | Unwraps a value from being a function. | `$unwrap(() => 5979)` \n';
         md += '`$utc` | Returns the current [time](https://momentjs.com/) in [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time). | `$utc`\n';
         md += '`$uuid(version?)` | Alias for `guid`. | `$uuid("4")`\n';
