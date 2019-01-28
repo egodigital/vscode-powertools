@@ -615,12 +615,51 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                     let lang: string = DOC.languageId;
 
                     switch ($h.normalizeString(DOC.languageId)) {
+                        case 'coffeescript':
+                            {
+                                const coffeeScript = require('coffeescript');
+                                const uglifyJS = require('uglify-js');
+
+                                result = coffeeScript.compile(TEXT, {
+                                    bare: true,
+                                });
+                                result = uglifyJS.minify(TEXT)
+                                    .code;
+
+                                lang = 'javascript';
+                            }
+                            break;
+
+                        case 'css':
+                            {
+                                const cleanCSS = require('clean-css');
+
+                                result = new cleanCSS()
+                                    .minify(TEXT);
+                            }
+                            break;
+
                         case 'javascript':
                             {
                                 const uglifyJS = require('uglify-js');
 
                                 result = uglifyJS.minify(TEXT)
                                     .code;
+                            }
+                            break;
+
+                        case 'less':
+                            {
+                                const cleanCSS = require('clean-css');
+                                const less = require('less');
+
+                                const COMPILER_RESULT = await less.render(TEXT);
+
+                                result = COMPILER_RESULT.css;
+                                result = new cleanCSS()
+                                    .minify(TEXT);
+
+                                lang = 'css';
                             }
                             break;
                     }
