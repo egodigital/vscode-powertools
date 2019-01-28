@@ -657,7 +657,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
 
                                 result = COMPILER_RESULT.css;
                                 result = new cleanCSS()
-                                    .minify(TEXT);
+                                    .minify(result);
 
                                 lang = 'css';
                             }
