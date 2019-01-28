@@ -623,7 +623,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                                 result = coffeeScript.compile(TEXT, {
                                     bare: true,
                                 });
-                                result = uglifyJS.minify(TEXT)
+                                result = uglifyJS.minify(result)
                                     .code;
 
                                 lang = 'javascript';
