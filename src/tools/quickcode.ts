@@ -765,7 +765,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '## Functions\n';
         md += 'Name | Description | Example\n';
         md += '---- | ----------- | -------\n';
-        md += '`$alert(msg)` | Shows a (wanring) popup. | `$alert("Hello, TM!")`\n';
+        md += '`$alert(msg)` | Shows a (warning) popup. | `$alert("Hello, TM!")`\n';
         md += '`$asc(str)` | Handles a value as string and returns the ASCII (codes). | `$asc("T")`\n';
         md += '`$beautify` | Beautifies the code in the active editor and opens the result in a new one. | `$beautify`\n';
         md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
