@@ -16,6 +16,7 @@
  */
 
 import * as _ from 'lodash';
+import * as beautify from 'js-beautify';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_webview from './webview';
@@ -57,6 +58,21 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
                 'http_response': this.httpResponse
             }
         );
+    }
+
+    private getCharSet() {
+        let charset: false | string = mimeTypes.charset(
+            this.getContentType()
+        );
+        if (false === charset) {
+            charset = 'ascii';
+        }
+        charset = charset.toLowerCase()
+            .split('-')
+            .join('')
+            .trim();
+
+        return charset;
     }
 
     private getContentType(): string {
@@ -101,13 +117,18 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
         this.httpResponse = '';
         this.httpResponse += `HTTP/${ this.result.version } ${ this.result.code } ${ this.result.status }\r\n`;
 
+        const CONTENT_TYPE = this.getContentType();
         if (this.response.headers) {
             const HEADER_NAMES = ego_helpers.from(
                 Object.keys(this.response.headers)
             ).orderBy(h => ego_helpers.normalizeString(h));
 
             for (const H of HEADER_NAMES) {
-                this.httpResponse += `${ headerCaseNormalizer(H) }: ${ this.response.headers[H] }\r\n`;
+                const HN = headerCaseNormalizer(H);
+                const HV = ego_helpers.asArray(this.response.headers[H])
+                    .join('\r\n');
+
+                this.httpResponse += `${ HN }: ${ HV }\r\n`;
             }
         }
 
@@ -115,7 +136,51 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
 
         const BODY = await this.result.readBody();
         if (BODY.length > 0) {
-            this.httpResponse += BODY.toString('ascii');
+            let bodyToAppend: false | string = false;
+
+            const CHARSET = this.getCharSet();
+
+            // JSON?
+            if (false === bodyToAppend) {
+                try {
+                    const OBJ = JSON.parse(
+                        BODY.toString(CHARSET)
+                    );
+
+                    bodyToAppend = JSON.stringify(
+                        OBJ, null, 2
+                    );
+                } catch (e) {
+                    if (e) { }
+                }
+            }
+
+            // CSS, HTML or JavaScript?
+            if (false === bodyToAppend) {
+                try {
+                    if ('' !== CONTENT_TYPE) {
+                        if (CONTENT_TYPE.startsWith('text/html')) {
+                            bodyToAppend = beautify.html(
+                                BODY.toString(CHARSET)
+                            );
+                        } else if (CONTENT_TYPE.startsWith('text/css')) {
+                            bodyToAppend = beautify.css(
+                                BODY.toString(CHARSET)
+                            );
+                        } else if (CONTENT_TYPE.startsWith('text/javascript')) {
+                            bodyToAppend = beautify.js(
+                                BODY.toString(CHARSET)
+                            );
+                        }
+                    }
+                } catch { }
+            }
+
+            if (false === bodyToAppend) {
+                bodyToAppend = BODY.toString(CHARSET);
+            }
+
+            this.httpResponse += bodyToAppend;
         }
     }
 
@@ -124,6 +189,37 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
      */
     protected async onWebViewMessage(msg: ego_contracts.WebViewMessage): Promise<boolean> {
         switch (msg.command) {
+            case 'copyContent':
+                {
+                    let err: any;
+                    try {
+                        const BODY = await this.result.readBody();
+
+                        await vscode.env.clipboard.writeText(
+                            BODY.toString(
+                                this.getCharSet()
+                            )
+                        );
+
+                        vscode.window.showInformationMessage(
+                            'HTTP content has been copied to clipboard.'
+                        );
+                    } catch (e) {
+                        ego_helpers.showErrorMessage(e);
+
+                        err = e;
+                    }
+
+                    await this.postMessage(
+                        'copyContentFinished',
+                        {
+                            success: _.isNil(err),
+                            error: err,
+                        }
+                    );
+                }
+                break;
+
             case 'saveContent':
                 {
                     let cancelled = true;
@@ -165,7 +261,7 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
                 }
                 break;
 
-            case 'saveRequest':
+            case 'saveResponse':
                 {
                     let cancelled = true;
                     let err: any;
@@ -176,7 +272,7 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
 
                         const FILE = await vscode.window.showSaveDialog({
                             filters: FILTERS,
-                            saveLabel: 'Save Request To ...',
+                            saveLabel: 'Save Response To ...',
                         });
 
                         if (FILE) {
@@ -193,7 +289,7 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
                     }
 
                     await this.postMessage(
-                        'saveRequestFinished',
+                        'saveResponseFinished',
                         {
                             success: _.isNil(err),
                             cancelled: _.isNil(err) ? cancelled : undefined,

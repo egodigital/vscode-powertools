@@ -10,13 +10,29 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col col-6">
-            <a class="btn btn-block btn-lg btn-primary" id="ego-save-content-btn">Save Content</a>
+    <div class="row" id="ego-buttons">
+        <div class="col col-4">
+            <a class="btn btn-block btn-primary" id="ego-copy-content-btn" title="Copy Content To Clipboard">
+                <i class="fa fa-clipboard" aria-hidden="true"></i>
+
+                Copy Content
+            </a>
         </div>
 
-        <div class="col col-6">
-            <a class="btn btn-block btn-lg btn-secondary" id="ego-save-request-btn">Save Request</a>
+        <div class="col col-4">
+            <a class="btn btn-block btn-secondary" id="ego-save-content-btn" title="Save Content / Body To File">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+
+                Save Content
+            </a>
+        </div>
+
+        <div class="col col-4">
+            <a class="btn btn-block btn-dark" id="ego-save-response-btn" title="Save Whole Response To File">
+                <i class="fa fa-envelope-open-o" aria-hidden="true"></i>
+
+                Save Response
+            </a>
         </div>
     </div>
 </div>

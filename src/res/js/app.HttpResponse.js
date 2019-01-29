@@ -25,7 +25,11 @@ function ego_on_loaded() {
         ego_post('saveContent');
     });
 
-    $('#ego-save-request-btn').on('click', () => {
-        ego_post('saveRequest');
+    $('#ego-save-response-btn').on('click', () => {
+        ego_post('saveResponse');
+    });
+
+    $('#ego-copy-content-btn').on('click', () => {
+        ego_post('copyContent');
     });
 }

@@ -19,3 +19,11 @@
 #ego-http-response pre {
     word-break: break-all;
 }
+
+#ego-buttons {
+    margin-bottom: 16px;
+}
+
+#ego-buttons .btn .fa {
+    margin-right: 8px;
+}
