@@ -1972,7 +1972,7 @@
         "tslint": "^5.12.1",
         "typedoc": "^0.13.0",
         "typescript": "^3.2.4",
-        "vsce": "^1.54.0",
+        "vsce": "^1.55.0",
         "vscode": "^1.1.28"
     },
     "author": "e.GO Digital GmbH, Aachen, Germany",
