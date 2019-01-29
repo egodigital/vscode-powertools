@@ -214,7 +214,7 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
                         'copyContentFinished',
                         {
                             success: _.isNil(err),
-                            error: err,
+                            error: _.isNil(err) ? undefined : ego_helpers.errorToString(err),
                         }
                     );
                 }
@@ -256,6 +256,7 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
                         {
                             success: _.isNil(err),
                             cancelled: _.isNil(err) ? cancelled : undefined,
+                            error: _.isNil(err) ? undefined : ego_helpers.errorToString(err),
                         }
                     );
                 }
@@ -293,6 +294,7 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
                         {
                             success: _.isNil(err),
                             cancelled: _.isNil(err) ? cancelled : undefined,
+                            error: _.isNil(err) ? undefined : ego_helpers.errorToString(err),
                         }
                     );
                 }
