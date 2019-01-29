@@ -635,7 +635,8 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                                 const cleanCSS = require('clean-css');
 
                                 result = new cleanCSS()
-                                    .minify(TEXT);
+                                    .minify(TEXT)
+                                    .styles;
                             }
                             break;
 
