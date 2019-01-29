@@ -6,6 +6,9 @@
   * `$beautify`: beautifies the code in the active editor and opens the result in a new one
   * `$compile`: compiles the code in the active editor and opens the result in a new one
   * `$uglify`: uglifies the code in the active editor and opens the result in a new one
+* HTTP responses, from [code executions](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution) e.g., are beautified and can be copied to clipboard now
+* progress is displayed, when [executing code](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution)
+* (bug)fixes
 
 ## 0.14.0 (January 28th, 2019; scripts and code execution)
 
