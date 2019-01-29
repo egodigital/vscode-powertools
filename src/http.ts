@@ -159,7 +159,7 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
             if (false === bodyToAppend) {
                 try {
                     if ('' !== CONTENT_TYPE) {
-                        if (CONTENT_TYPE.startsWith('text/html')) {
+                        if (CONTENT_TYPE.startsWith('text/html') || CONTENT_TYPE.startsWith('text/xml')) {
                             bodyToAppend = beautify.html(
                                 BODY.toString(CHARSET)
                             );

@@ -692,11 +692,17 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         _code_g93c97d35bd94b22b3041037bdc64780 += ' ;';
     }
 
-    return await $unwrap(eval(`(async () => {
+    return await $vs.window.withProgress({
+        cancellable: true,
+        location: $vs.ProgressLocation.Window,
+        title: 'Executing Code ...'
+    }, async ($progress: any, $cancel: any) => {
+        return await $unwrap(eval(`(async () => {
 
 ${ _code_g93c97d35bd94b22b3041037bdc64780 }
 
 })()`));
+    });
 }
 
 
