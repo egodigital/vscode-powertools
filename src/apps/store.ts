@@ -111,7 +111,9 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
                     message: `Loading app list from '${ appStoreUrl }' ...`,
                 });
 
-                return await loadStoreFrom(appStoreUrl);
+                return await loadStoreFrom(
+                    appStoreUrl, arguments.length < 1
+                );
             });
         } catch (e) {
             if (arguments.length < 1) {
