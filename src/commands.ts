@@ -17,6 +17,7 @@
 
 import * as _ from 'lodash';
 import * as ego_contracts from './contracts';
+import * as ego_data from './data';
 import * as ego_global_jobs from './global/jobs';
 import * as ego_helpers from './helpers';
 import * as ego_http from './http';
@@ -99,6 +100,14 @@ export function registerCommands(
                     await vscode.window.showTextDocument(
                         DOC, RESULT.column,
                     );
+                } else if (RESULT && _.isSymbol(RESULT['__csv_tm_19790905'])) {
+                    const WEB_VIEW = new ego_data.CsvTableWebView(
+                        RESULT.data,
+                        RESULT.options,
+                    );
+
+                    await WEB_VIEW.initialize();
+                    await WEB_VIEW.open();
                 } else if (Buffer.isBuffer(RESULT)) {
                     let md = '# Code Execution Result (Buffer)\n\n';
                     md += '```';

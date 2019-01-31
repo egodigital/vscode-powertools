@@ -52,6 +52,13 @@ export async function _exec_fcac50a111604220b8173024b6925905(
     const $vs = require('vscode');
 
     // @ts-ignore
+    const $e = (
+        $vs.window.activeTextEditor &&
+        $vs.window.activeTextEditor.document
+    ) ? $vs.window.activeTextEditor.document.getText()
+      : false;
+
+    // @ts-ignore
     const $unwrap = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
         async (val?: any, maxLevel?: number, level?: number) => {
             maxLevel = parseInt(
@@ -683,6 +690,18 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         }
     );
 
+    // @ts-ignore
+    const $csv = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async function(data: any) {
+            data = await $h.asBuffer(data);
+
+            return {
+                '__csv_tm_19790905': Symbol('CSV'),
+                'data': _.isNil(data) ? data : data.toString('utf8'),
+            };
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -762,6 +781,14 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
 
     // functions
     {
+        md += '## Constants\n';
+        md += 'Name | Description | Example\n';
+        md += '---- | ----------- | -------\n';
+        md += '`$e` | Stores the content of the content of the current, active editor, or `(false)` if no editor is open. | `$alert( $e )`\n';
+    }
+
+    // functions
+    {
         md += '## Functions\n';
         md += 'Name | Description | Example\n';
         md += '---- | ----------- | -------\n';
@@ -770,6 +797,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$beautify` | Beautifies the code in the active editor and opens the result in a new one. | `$beautify`\n';
         md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
         md += '`$compile` | Compiles the code in the active editor and opens the result in a new one. | `$compile`\n';
+        md += '`$csv(data)` | Handles data as CSV and displays them. | `$csv( "col 1, col2\\r\\nval1.1,val1.2\\r\\nval2.1,val2.2" )`\n';
         md += '`$DELETE(url, body?, headers?)` | Starts a HTTP DELETE request. | `$DELETE("https://example.com/users/19861222")`\n';
         md += '`$emojis(search?)` | Returns a list of [emojis](https://www.npmjs.com/package/node-emoji), by using an optional filter. | `$emojis("heart")`\n';
         md += '`$exec` | Executes the code in the currently running editor. | `$exec`\n';

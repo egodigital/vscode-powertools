@@ -1,5 +1,12 @@
 # Change Log (vscode-powertools)
 
+## 0.16.0 (February 1st, 2019; code execution)
+
+* added following constants for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$e`: stores the content of the active text editor, if available
+* added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$csv`: handles data as string in CSV format and displays them
+
 ## 0.15.0 (January 30th, 2019; code execution)
 
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
