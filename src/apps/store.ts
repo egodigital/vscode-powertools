@@ -497,7 +497,7 @@ export async function checkForNewApps(
         const LOAD_APPS = async () => {
             let apps: ego_contracts.AppStoreApp[];
 
-            const APP_STORE = await loadStoreFrom(APP_STORE_URL);
+            const APP_STORE = await loadStoreFrom(APP_STORE_URL, true);
             if (APP_STORE) {
                 apps = APP_STORE.apps;
             }
@@ -587,7 +587,7 @@ function getAppStoreUrl(
     return appStoreUrl.trim();
 }
 
-async function loadStoreFrom(url: string): Promise<ego_contracts.AppStore> {
+async function loadStoreFrom(url: string, loadImports: boolean): Promise<ego_contracts.AppStore> {
     const RESPONSE = await ego_helpers.GET(url, null, {
         timeout: 5000,
     });
@@ -612,7 +612,8 @@ async function loadStoreFrom(url: string): Promise<ego_contracts.AppStore> {
             };
         }
 
-        if (arguments.length < 1) {
+        // imports
+        if (loadImports) {
             const IMPORTS = ego_helpers.from(
                 ego_helpers.asArray(APP_STORE.imports)
             ).select(x => ego_helpers.toStringSafe(x).trim())
@@ -622,7 +623,7 @@ async function loadStoreFrom(url: string): Promise<ego_contracts.AppStore> {
              .toArray();
 
             for (const I of IMPORTS) {
-                const SUB_STORE = await this.loadStoreFromUrl(I);
+                const SUB_STORE = await loadStoreFrom(I, false);
                 if (SUB_STORE) {
                     ego_helpers.from(
                         ego_helpers.asArray(SUB_STORE.apps)

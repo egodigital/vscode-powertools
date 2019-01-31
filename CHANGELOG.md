@@ -7,7 +7,7 @@
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$csv`: handles data as string in CSV format and displays them
 
-## 0.15.0 (January 30th, 2019; code execution)
+## 0.15.1 (January 30th, 2019; code execution)
 
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$beautify`: beautifies the code in the active editor and opens the result in a new one
