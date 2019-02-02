@@ -3,7 +3,9 @@
 ## 0.16.0 (February 1st, 2019; code execution)
 
 * added following constants for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$cancel`: the [CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) object, to check the current progress state
   * `$e`: stores the content of the active text editor, if available
+  * `$progress`: the [Progress](https://code.visualstudio.com/api/references/vscode-api#Progress) object, to control the current progress state ... s. [withProgress()](https://code.visualstudio.com/api/references/vscode-api)
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$csv`: handles data as string in CSV format and displays them
   * `$ltrim`: handles data as string and trims from leading whitespaces
