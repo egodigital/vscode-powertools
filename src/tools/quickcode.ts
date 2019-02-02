@@ -722,6 +722,21 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         }
     );
 
+    // @ts-ignore
+    const $lower = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        (val: any) => {
+            return $h.toStringSafe(val)
+                .toLowerCase();
+        }
+    );
+    // @ts-ignore
+    const $upper = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        (val: any) => {
+            return $h.toStringSafe(val)
+                .toUpperCase();
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -830,6 +845,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$ip(v6?, timeout?)` | Tries to detect the public IP address. | `$ip(true)`\n';
         md += '`$ip4(timeout?)` | Tries to detect the public IP address (version 4). | `$ip4`\n';
         md += '`$ip6(timeout?)` | Tries to detect the public IP address (version 6). | `$ip6`\n';
+        md += '`$lower(val)` | Handles a value as string and converts to lower case characters. | `$lower("tm + MK")`\n';
         md += '`$ltrim(val)` | Handles a value as string and trims from leading whitespaces. | `$ltrim("  TM + MK   ")`\n';
         md += '`$md(src)` | Handles a value as [Markdown](https://github.com/showdownjs/showdown) string. | `$md("# Header 1\\n\\nHello, TM!")`\n';
         md += '`$md5(val, asBlob?)` | Hashes a value with MD5. | `$md5("TM+MK")`\n';
@@ -849,6 +865,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$trim(val)` | Handles a value as string and trims from leading and ending whitespaces. | `$trim("  TM + MK   ")`\n';
         md += '`$uglify` | Uglifies the code in the active editor and opens the result in a new one. | `$uglify`\n';
         md += '`$unwrap(val, maxLevel?, level?)` | Unwraps a value from being a function. | `$unwrap(() => 5979)` \n';
+        md += '`$upper(val)` | Handles a value as string and converts to upper case characters. | `$upper("tm + MK")`\n';
         md += '`$utc` | Returns the current [time](https://momentjs.com/) in [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time). | `$utc`\n';
         md += '`$uuid(version?)` | Alias for `guid`. | `$uuid("4")`\n';
         md += '`$write(file, data, enc?)` | Writes data to a file. Relative paths will be mapped to the directory of the currently opened editor or the `.vscode-powertools` sub folder inside the user\'s home directory. | `$write("myFile.txt", "Data to write. Can be a string, stream or buffer")`\n';

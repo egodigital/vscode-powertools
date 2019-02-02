@@ -9,8 +9,10 @@
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$csv`: handles data as string in CSV format and displays them
   * `$ltrim`: handles data as string and trims from leading whitespaces
+  * `$lower`: handles data as string and converts to lower case characters
   * `$rtrim`: handles data as string and trims from ending whitespaces
   * `$trim`: handles data as string and trims from leading and ending whitespaces
+  * `$upper`: handles data as string and converts to upper case characters
 
 ## 0.15.1 (January 30th, 2019; code execution)
 
