@@ -550,7 +550,6 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
             throw new Error('No active editor found!');
         }
     );
-
     // @ts-ignore
     const $compile = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
         async () => {
@@ -609,7 +608,6 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
             throw new Error('No active editor found!');
         }
     );
-
     // @ts-ignore
     const $uglify = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
         async () => {
@@ -699,6 +697,28 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                 '__csv_tm_19790905': Symbol('CSV'),
                 'data': _.isNil(data) ? data : data.toString('utf8'),
             };
+        }
+    );
+
+    // @ts-ignore
+    const $ltrim = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        (val: any) => {
+            return $h.toStringSafe(val)
+                .replace(/^\s+/, "");
+        }
+    );
+    // @ts-ignore
+    const $rtrim = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        (val: any) => {
+            return $h.toStringSafe(val)
+                .replace(/\s+$/, "");
+        }
+    );
+    // @ts-ignore
+    const $trim = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        (val: any) => {
+            return $h.toStringSafe(val)
+                .trim();
         }
     );
 
@@ -810,6 +830,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$ip(v6?, timeout?)` | Tries to detect the public IP address. | `$ip(true)`\n';
         md += '`$ip4(timeout?)` | Tries to detect the public IP address (version 4). | `$ip4`\n';
         md += '`$ip6(timeout?)` | Tries to detect the public IP address (version 6). | `$ip6`\n';
+        md += '`$ltrim(val)` | Handles a value as string and trims from leading whitespaces. | `$ltrim("  TM + MK   ")`\n';
         md += '`$md(src)` | Handles a value as [Markdown](https://github.com/showdownjs/showdown) string. | `$md("# Header 1\\n\\nHello, TM!")`\n';
         md += '`$md5(val, asBlob?)` | Hashes a value with MD5. | `$md5("TM+MK")`\n';
         md += '`$now(timeZone?)` | Returns the current [time](https://momentjs.com/), with an optional [timezone](https://momentjs.com/timezone/). | `$now("Europe/Berlin")`\n';
@@ -820,10 +841,12 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$r(id)` | Extended [require() function](https://nodejs.org/api/modules.html#modules_require), which also allows to access the [modules of that extension](https://github.com/egodigital/vscode-powertools/blob/master/package.json). | `$r("moment").utc()`\n';
         md += '`$read(file, enc?)` | Reads data from a file. Relative paths will be mapped to the directory of the currently opened editor or the `.vscode-powertools` sub folder inside the user\'s home directory. | `$read("myFile.txt")`\n';
         md += '`$res(val, mapper?)` | Resolves a value. | `$res( Promise.resolve("TM"), s => s.toLowerCase() )`\n';
+        md += '`$rtrim(val)` | Handles a value as string and trims from ending whitespaces. | `$rtrim("  TM + MK   ")`\n';
         md += '`$sha1(val, asBlob?)` | Hashes a value with SHA-1. | `$sha1("TM+MK")`\n';
         md += '`$sha256(val, asBlob?)` | Hashes a value with SHA-256. | `$sha256("TM+MK")`\n';
         md += '`$sha384(val, asBlob?)` | Hashes a value with SHA-384. | `$sha384("TM+MK")`\n';
         md += '`$sha512(val, asBlob?)` | Hashes a value with SHA-512. | `$sha512("TM+MK")`\n';
+        md += '`$trim(val)` | Handles a value as string and trims from leading and ending whitespaces. | `$trim("  TM + MK   ")`\n';
         md += '`$uglify` | Uglifies the code in the active editor and opens the result in a new one. | `$uglify`\n';
         md += '`$unwrap(val, maxLevel?, level?)` | Unwraps a value from being a function. | `$unwrap(() => 5979)` \n';
         md += '`$utc` | Returns the current [time](https://momentjs.com/) in [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time). | `$utc`\n';

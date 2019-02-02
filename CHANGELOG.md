@@ -6,6 +6,9 @@
   * `$e`: stores the content of the active text editor, if available
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$csv`: handles data as string in CSV format and displays them
+  * `$ltrim`: handles data as string and trims from leading whitespaces
+  * `$rtrim`: handles data as string and trims from ending whitespaces
+  * `$trim`: handles data as string and trims from leading and ending whitespaces
 
 ## 0.15.1 (January 30th, 2019; code execution)
 
