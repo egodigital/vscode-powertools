@@ -1,6 +1,6 @@
 # Change Log (vscode-powertools)
 
-## 0.16.0 (February 1st, 2019; code execution)
+## 0.16.0 (February 2nd, 2019; code execution)
 
 * added following constants for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$cancel`: the [CancellationToken](https://code.visualstudio.com/api/references/vscode-api#CancellationToken) object, to check the current progress state
