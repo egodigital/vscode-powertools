@@ -90,6 +90,36 @@ export async function _exec_fcac50a111604220b8173024b6925905(
     );
 
     // @ts-ignore
+    const $buff = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (val: any, enc?: string) => {
+            enc = $h.normalizeString(enc);
+            if ('' === enc) {
+                enc = 'utf8';
+            }
+
+            if (!_.isNil(val)) {
+                if (!Buffer.isBuffer(val)) {
+                    if (_.isString(val)) {
+                        val = new Buffer(val, enc);
+                    } else if (_.isSymbol(val['__httpresponse_tm_19790905'])) {
+                        val = await val.readBody();
+                    } else if (_.isSymbol(val['__markdown_tm_19790905'])) {
+                        val = new Buffer(val.markdown, enc);
+                    } else if (_.isSymbol(val['__neweditor_tm_19790905'])) {
+                        val = new Buffer(val.text, enc);
+                    } else if (_.isSymbol(val['__csv_tm_19790905'])) {
+                        val = await $h.asBuffer(val.data, enc);
+                    } else {
+                        val = await $h.asBuffer(val, enc);
+                    }
+                }
+            }
+
+            return val;
+        }
+    );
+
+    // @ts-ignore
     const $alert = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
         async (msg: any) => {
             await $vs.window.showWarningMessage(
@@ -236,7 +266,7 @@ export async function _exec_fcac50a111604220b8173024b6925905(
             asBlob = $h.toBooleanSafe(asBlob);
 
             if (isStream(val)) {
-                val = await $h.asBuffer(val);
+                val = await $buff(val);
             } else {
                 if (!Buffer.isBuffer(val)) {
                     val = new Buffer(
@@ -485,7 +515,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
     // @ts-ignore
     const $md = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
         async function (markdown: any) {
-            markdown = await $h.asBuffer(markdown, 'utf8');
+            markdown = await $buff(markdown, 'utf8');
 
             return {
                 '__markdown_tm_19790905': Symbol('MARKDOWN_DOCUMENT'),
@@ -691,7 +721,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
     // @ts-ignore
     const $csv = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
         async function(data: any) {
-            data = await $h.asBuffer(data);
+            data = await $buff(data);
 
             return {
                 '__csv_tm_19790905': Symbol('CSV'),
@@ -830,6 +860,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$alert(msg)` | Shows a (warning) popup. | `$alert("Hello, TM!")`\n';
         md += '`$asc(str)` | Handles a value as string and returns the ASCII (codes). | `$asc("T")`\n';
         md += '`$beautify` | Beautifies the code in the active editor and opens the result in a new one. | `$beautify`\n';
+        md += '`$buff(val, enc?)` | Converts a value to a [Buffer](https://nodejs.org/api/buffer.html), if needed. | `$buff("TM")\n';
         md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
         md += '`$compile` | Compiles the code in the active editor and opens the result in a new one. | `$compile`\n';
         md += '`$csv(data)` | Handles data as CSV and displays them. | `$csv( "col 1, col2\\r\\nval1.1,val1.2\\r\\nval2.1,val2.2" )`\n';

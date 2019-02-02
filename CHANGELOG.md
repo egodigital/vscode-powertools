@@ -7,6 +7,7 @@
   * `$e`: stores the content of the active text editor, if available
   * `$progress`: the [Progress](https://code.visualstudio.com/api/references/vscode-api#Progress) object, to control the current progress state ... s. [withProgress()](https://code.visualstudio.com/api/references/vscode-api)
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$buff`: converts a value to a [Buffer](https://nodejs.org/api/buffer.html), if needed
   * `$csv`: handles data as string in CSV format and displays them
   * `$ltrim`: handles data as string and trims from leading whitespaces
   * `$lower`: handles data as string and converts to lower case characters
