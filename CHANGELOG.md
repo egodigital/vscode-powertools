@@ -1,5 +1,9 @@
 # Change Log (vscode-powertools)
 
+## 0.17.0 (February 4th, 2019; ?????)
+
+* fixes
+
 ## 0.16.0 (February 2nd, 2019; code execution)
 
 * added following constants for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):

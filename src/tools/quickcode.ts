@@ -849,7 +849,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '## Constants\n';
         md += 'Name | Description | Example\n';
         md += '---- | ----------- | -------\n';
-        md += '`$e` | Stores the content of the content of the current, active editor, or `(false)` if no editor is open. | `$alert( $e )`\n';
+        md += '`$e` | Stores the content of the current, active editor, or `(false)` if no editor is open. | `$alert($e)`\n';
     }
 
     // functions
