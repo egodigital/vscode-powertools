@@ -2055,7 +2055,7 @@
         "tmp": "0.0.33",
         "uglify-js": "^3.4.9",
         "uuid": "^3.3.2",
-        "vscode-helpers": "^3.0.0",
+        "vscode-helpers": "^4.0.1",
         "yazl": "^2.5.1"
     }
 }
