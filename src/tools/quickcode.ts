@@ -556,6 +556,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                             break;
 
                         case 'javascript':
+                        case 'json':
                             {
                                 const beautify = require('js-beautify').js;
 
@@ -676,6 +677,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                             break;
 
                         case 'javascript':
+                        case 'json':
                             {
                                 const uglifyJS = require('uglify-js');
 
