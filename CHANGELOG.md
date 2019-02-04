@@ -5,6 +5,8 @@
 * added `extension` and `state` properties to [ScriptArguments](https://egodigital.github.io/vscode-powertools/api/interfaces/_contracts_.scriptarguments.html) interface
 * added `json` support for `$beautify` and `$uglify` functions of [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution)
 * fixes
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [vscode-helpers](https://www.npmjs.com/package/vscode-helpers) `^4.0.1`
 
 ## 0.16.0 (February 2nd, 2019; code execution)
 
