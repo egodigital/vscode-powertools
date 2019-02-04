@@ -645,6 +645,11 @@ export interface ExtensionConfiguration extends WithValues {
 }
 
 /**
+ * A function that provides the/an extension context.
+ */
+export type ExtensionContextProvider = () => vscode.ExtensionContext;
+
+/**
  * Arguments for script that is executed on a file / folder change.
  */
 export interface FileChangeEventActionScriptArguments extends WorkspaceScriptArguments {
@@ -991,6 +996,10 @@ export interface RunShellCommandOptions {
  * Arguments for a script.
  */
 export interface ScriptArguments {
+    /**
+     * The underlying extension (context).
+     */
+    readonly extension: vscode.ExtensionContext;
     /**
      * Global data which are available for all scripts.
      */

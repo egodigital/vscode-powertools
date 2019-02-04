@@ -173,6 +173,7 @@ export async function executeScript<
     if (SCRIPT_MODULE) {
         if (SCRIPT_MODULE.execute) {
             const BASE_ARGS: ego_contracts.WorkspaceScriptArguments = {
+                extension: currentContext,
                 globals: ego_helpers.cloneObject(SETTINGS.globals),
                 globalState: ego_states.GLOBAL_STATE,
                 globalStore: new ego_stores.UserStore(),
@@ -208,6 +209,15 @@ export async function executeScript<
             );
         }
     }
+}
+
+/**
+ * Returns the current extension context.
+ *
+ * @return {vscode.ExtensionContext} The current extension context.
+ */
+export function getContext(): vscode.ExtensionContext {
+    return currentContext;
 }
 
 /**

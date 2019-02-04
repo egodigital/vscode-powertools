@@ -2,6 +2,7 @@
 
 ## 0.17.0 (February 4th, 2019; ?????)
 
+* added `extension` property to [ScriptArguments](https://egodigital.github.io/vscode-powertools/api/interfaces/_contracts_.scriptarguments.html) interface
 * fixes
 
 ## 0.16.0 (February 2nd, 2019; code execution)

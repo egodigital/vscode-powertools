@@ -280,6 +280,7 @@ export class ScriptValue implements ego_contracts.Value {
      * @param {any} options Options for the script.
      * @param {ego_contracts.PathResolver} resolvePath The function that resolves a (relative) path.
      * @param {ego_contracts.ValueProvider} otherValues Provides the other values.
+     * @param {ego_contracts.ExtensionContextProvider} getExtensionContext Provides the extension context.
      * @param {ego_contracts.OutputChannelProvider} getOutput Provides the output channel.
      * @param {string} [name] The optional name.
      */
@@ -288,6 +289,7 @@ export class ScriptValue implements ego_contracts.Value {
         public readonly options: any,
         public readonly resolvePath: ego_contracts.PathResolver,
         public readonly otherValues: ego_contracts.ValueProvider,
+        public readonly getExtensionContext: ego_contracts.ExtensionContextProvider,
         public readonly getOutput: ego_contracts.OutputChannelProvider,
         public readonly name?: string,
     ) {
@@ -323,6 +325,7 @@ export class ScriptValue implements ego_contracts.Value {
             const VALUES = storageToArray(this.otherValues);
 
             const ARGS: ego_contracts.ScriptValueArguments = {
+                extension: this.getExtensionContext(),
                 globalState: ego_states.GLOBAL_STATE,
                 globalStore: new ego_stores.UserStore(),
                 logger: ego_log.CONSOLE,
@@ -718,6 +721,10 @@ export function toValues(
                                                 SCRIPT_ITEM.options,
                                                 opts.pathResolver,
                                                 GET_OTHER_VALUES,
+                                                () => {
+                                                    return require('./extension')
+                                                        .getContext();
+                                                },
                                                 outputProvider,
                                                 NAME,
                                             )
