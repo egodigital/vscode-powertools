@@ -120,6 +120,30 @@ export async function _exec_fcac50a111604220b8173024b6925905(
     );
 
     // @ts-ignore
+    const $str = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (val: any, enc?: string) => {
+            const isStream = require('is-stream');
+
+            enc = $h.normalizeString(enc);
+            if ('' === enc) {
+                enc = 'utf8';
+            }
+
+            if (isStream(val)) {
+                val = await $buff(val, enc);
+            }
+
+            if (Buffer.isBuffer(val)) {
+                return val.toString(enc);
+            }
+
+            return $h.toStringSafe(
+                val
+            );
+        }
+    );
+
+    // @ts-ignore
     const $alert = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
         async (msg: any) => {
             await $vs.window.showWarningMessage(
@@ -895,6 +919,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$sha256(val, asBlob?)` | Hashes a value with SHA-256. | `$sha256("TM+MK")`\n';
         md += '`$sha384(val, asBlob?)` | Hashes a value with SHA-384. | `$sha384("TM+MK")`\n';
         md += '`$sha512(val, asBlob?)` | Hashes a value with SHA-512. | `$sha512("TM+MK")`\n';
+        md += '`$str(val)` | Returns a value as string that is NOT `(null)` and NOT `(undefined)`. | `$str(5979 + 23979)`\n';
         md += '`$trim(val)` | Handles a value as string and trims from leading and ending whitespaces. | `$trim("  TM + MK   ")`\n';
         md += '`$uglify` | Uglifies the code in the active editor and opens the result in a new one. | `$uglify`\n';
         md += '`$unwrap(val, maxLevel?, level?)` | Unwraps a value from being a function. | `$unwrap(() => 5979)` \n';
