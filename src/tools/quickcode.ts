@@ -886,7 +886,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$alert(msg)` | Shows a (warning) popup. | `$alert("Hello, TM!")`\n';
         md += '`$asc(str)` | Handles a value as string and returns the ASCII (codes). | `$asc("T")`\n';
         md += '`$beautify` | Beautifies the code in the active editor and opens the result in a new one. | `$beautify`\n';
-        md += '`$buff(val, enc?)` | Converts a value to a [Buffer](https://nodejs.org/api/buffer.html), if needed. | `$buff("TM")\n';
+        md += '`$buff(val, enc?)` | Converts a value to a [Buffer](https://nodejs.org/api/buffer.html), if needed. | `$buff("TM")`\n';
         md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
         md += '`$compile` | Compiles the code in the active editor and opens the result in a new one. | `$compile`\n';
         md += '`$csv(data)` | Handles data as CSV and displays them. | `$csv( "col 1, col2\\r\\nval1.1,val1.2\\r\\nval2.1,val2.2" )`\n';
