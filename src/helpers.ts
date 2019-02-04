@@ -261,6 +261,26 @@ export function getExtensionDirInHome(): string {
 }
 
 /**
+ * Gets the initial state value from an object.
+ *
+ * @param {ego_contracts.WithState} obj The object with the value.
+ * @param {any} [defaultValue] The custom default value.
+ *
+ * @return {any} The initial state value.
+ */
+export function getInitialStateValue(obj: ego_contracts.WithState, defaultValue: any = {}): any {
+    let state: any;
+    if (!_.isNil(obj)) {
+        state = cloneObject(
+            obj.state
+        );
+    }
+
+    return _.isUndefined(state) ? defaultValue
+        : state;
+}
+
+/**
  * Imports values to an object.
  *
  * @param {TObj} obj The object where to import the values in.

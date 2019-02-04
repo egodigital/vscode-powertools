@@ -458,11 +458,13 @@ export class AppWebView extends AppWebViewBase {
      * @param {vscode.ExtensionContext} extension The underlying extension context.
      * @param {vscode.OutputChannel} output The output channel.
      * @param {string} scriptFile The path to the script file.
+     * @param {ego_contracts.WithState} [withState] An object with an initial state value.
      */
     public constructor(
         extension: vscode.ExtensionContext,
         public readonly output: vscode.OutputChannel,
         public readonly scriptFile: string,
+        private readonly withState?: ego_contracts.WithState,
     ) {
         super(extension);
 
@@ -587,7 +589,10 @@ export class AppWebView extends AppWebViewBase {
         };
 
         // ARGS.state
-        const STATE_GETTER_SETTER = ego_states.getScriptState(this.scriptFile);
+        const STATE_GETTER_SETTER = ego_states.getScriptState(
+            this.scriptFile, null,
+            ego_helpers.getInitialStateValue(this.withState),
+        );
         Object.defineProperty(ARGS, 'state', {
             enumerable: true,
             get: STATE_GETTER_SETTER.get,

@@ -278,6 +278,7 @@ export class ScriptValue implements ego_contracts.Value {
      *
      * @param {string} script The script to execute.
      * @param {any} options Options for the script.
+     * @param {any} initialState The (initial) state value.
      * @param {ego_contracts.PathResolver} resolvePath The function that resolves a (relative) path.
      * @param {ego_contracts.ValueProvider} otherValues Provides the other values.
      * @param {ego_contracts.ExtensionContextProvider} getExtensionContext Provides the extension context.
@@ -287,6 +288,7 @@ export class ScriptValue implements ego_contracts.Value {
     constructor(
         public readonly script: string,
         public readonly options: any,
+        private readonly initialState: any,
         public readonly resolvePath: ego_contracts.PathResolver,
         public readonly otherValues: ego_contracts.ValueProvider,
         public readonly getExtensionContext: ego_contracts.ExtensionContextProvider,
@@ -352,7 +354,10 @@ export class ScriptValue implements ego_contracts.Value {
             });
 
             // ARGS.state
-            const STATE_GETTER_SETTER = ego_states.getScriptState(this.scriptFile);
+            const STATE_GETTER_SETTER = ego_states.getScriptState(
+                this.scriptFile, null,
+                this.initialState,
+            );
             Object.defineProperty(ARGS, 'state', {
                 enumerable: true,
                 get: STATE_GETTER_SETTER.get,
@@ -719,6 +724,7 @@ export function toValues(
                                             new ScriptValue(
                                                 SCRIPT_ITEM.script,
                                                 SCRIPT_ITEM.options,
+                                                ego_helpers.getInitialStateValue(SCRIPT_ITEM),
                                                 opts.pathResolver,
                                                 GET_OTHER_VALUES,
                                                 () => {

@@ -161,6 +161,9 @@
                                             "script": {
                                                 "description": "The path to the app script.",
                                                 "type": "string"
+                                            },
+                                            "state": {
+                                                "description": "The initial state value."
                                             }
                                         },
                                         "required": [
@@ -195,6 +198,9 @@
                                                             "script": {
                                                                 "description": "The path of the script to execute.",
                                                                 "type": "string"
+                                                            },
+                                                            "state": {
+                                                                "description": "The initial state value."
                                                             },
                                                             "type": {
                                                                 "enum": [
@@ -407,6 +413,9 @@
                                         "script": {
                                             "description": "The path to the script that should be executed.",
                                             "type": "string"
+                                        },
+                                        "state": {
+                                            "description": "The initial state value."
                                         }
                                     },
                                     "required": [
@@ -436,6 +445,9 @@
                                                             "script": {
                                                                 "description": "The path to the script to execute.",
                                                                 "type": "string"
+                                                            },
+                                                            "state": {
+                                                                "description": "The initial state value."
                                                             },
                                                             "type": {
                                                                 "description": "The type.",
@@ -540,6 +552,9 @@
                                                             "script": {
                                                                 "description": "The path to the script to execute.",
                                                                 "type": "string"
+                                                            },
+                                                            "state": {
+                                                                "description": "The initial state value."
                                                             },
                                                             "type": {
                                                                 "description": "The type.",
@@ -658,6 +673,9 @@
                                                             "script": {
                                                                 "description": "The path of the script to execute.",
                                                                 "type": "string"
+                                                            },
+                                                            "state": {
+                                                                "description": "The initial state value."
                                                             },
                                                             "type": {
                                                                 "enum": [
@@ -946,6 +964,9 @@
                                                 "description": "The path to the script that should be executed.",
                                                 "type": "string"
                                             },
+                                            "state": {
+                                                "description": "The initial state value."
+                                            },
                                             "type": {
                                                 "description": "The type.",
                                                 "enum": [
@@ -1118,6 +1139,9 @@
                                                     "description": "The path to the script to execute.",
                                                     "type": "string"
                                                 },
+                                                "state": {
+                                                    "description": "The initial state value."
+                                                },
                                                 "type": {
                                                     "description": "The type.",
                                                     "enum": [
@@ -1257,6 +1281,9 @@
                                                             "script": {
                                                                 "description": "The path of the script to execute.",
                                                                 "type": "string"
+                                                            },
+                                                            "state": {
+                                                                "description": "The initial state value."
                                                             },
                                                             "type": {
                                                                 "enum": [
@@ -1469,6 +1496,9 @@
                                         "script": {
                                             "description": "The path to the script that should be executed.",
                                             "type": "string"
+                                        },
+                                        "state": {
+                                            "description": "The initial state value."
                                         }
                                     },
                                     "required": [
@@ -1505,6 +1535,9 @@
                                                             "script": {
                                                                 "description": "The path of the script to execute.",
                                                                 "type": "string"
+                                                            },
+                                                            "state": {
+                                                                "description": "The initial state value."
                                                             },
                                                             "type": {
                                                                 "enum": [
@@ -1824,6 +1857,9 @@
                                                 "script": {
                                                     "description": "The path to the script to execute.",
                                                     "type": "string"
+                                                },
+                                                "state": {
+                                                    "description": "The initial state value."
                                                 },
                                                 "type": {
                                                     "description": "The type.",

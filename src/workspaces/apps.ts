@@ -173,7 +173,12 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
         };
 
         // ARGS.state
-        const STATE_GETTER_SETTER = ego_states.getScriptState(this.scriptFile, this.workspace.scriptStates);
+        const STATE_GETTER_SETTER = ego_states.getScriptState(
+            this.scriptFile, this.workspace.scriptStates,
+            ego_helpers.getInitialStateValue(
+                this.item
+            )
+        );
         Object.defineProperty(ARGS, 'state', {
             enumerable: true,
             get: STATE_GETTER_SETTER.get,

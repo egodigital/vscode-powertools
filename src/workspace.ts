@@ -209,7 +209,10 @@ export class Workspace extends ego_helpers.WorkspaceBase {
                 };
 
                 // BASE_ARGS.state
-                const STATE_GETTER_SETTER = ego_states.getScriptState(FULL_SCRIPT_PATH, this.scriptStates);
+                const STATE_GETTER_SETTER = ego_states.getScriptState(
+                    FULL_SCRIPT_PATH, this.scriptStates,
+                    ego_helpers.getInitialStateValue(settings)
+                );
                 Object.defineProperty(BASE_ARGS, 'state', {
                     enumerable: true,
                     get: STATE_GETTER_SETTER.get,

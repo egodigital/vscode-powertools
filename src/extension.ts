@@ -191,7 +191,10 @@ export async function executeScript<
             };
 
             // BASE_ARGS.state
-            const STATE_GETTER_SETTER = ego_states.getScriptState(scriptPath);
+            const STATE_GETTER_SETTER = ego_states.getScriptState(
+                scriptPath, null,
+                ego_helpers.getInitialStateValue(settings)
+            );
             Object.defineProperty(BASE_ARGS, 'state', {
                 enumerable: true,
                 get: STATE_GETTER_SETTER.get,

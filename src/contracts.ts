@@ -188,7 +188,7 @@ export interface AppEventScriptArguments<TData = any> extends ScriptArguments {
 /**
  * An app item.
  */
-export interface AppItem extends CanImportValues, Conditional, ForPlatforms, WithCreationEvents {
+export interface AppItem extends CanImportValues, Conditional, ForPlatforms, WithCreationEvents, WithScript {
     /**
      * An optional button to define.
      */
@@ -201,14 +201,6 @@ export interface AppItem extends CanImportValues, Conditional, ForPlatforms, Wit
      * The (display) name.
      */
     name?: string;
-    /**
-     * Options for the script execution.
-     */
-    options?: any;
-    /**
-     * The path to the script, that should be invoked.
-     */
-    script: string;
 }
 
 /**
@@ -1307,7 +1299,7 @@ export interface WithCreationEvents {
 /**
  * An object that uses a script.
  */
-export interface WithScript {
+export interface WithScript extends WithState {
     /**
      * Options for running the script.
      */
@@ -1338,6 +1330,16 @@ export interface WithShellCommand {
      * Wait until command has been executed or not. Default: (true).
      */
     wait?: boolean;
+}
+
+/**
+ * An object with an initial state value.
+ */
+export interface WithState {
+    /**
+     * Stores the initial state.
+     */
+    state?: any;
 }
 
 /**

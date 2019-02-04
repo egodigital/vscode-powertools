@@ -32,18 +32,22 @@ const SCRIPT_STATES: ego_contracts.FileStateStorage = {};
  *
  * @param {string} script The path of the script.
  * @param {ego_contracts.FileStateStorage} [storage] The custom storage.
+ * @param {any} [initialValue] The custom, initial value.
  *
  * @return {ego_contracts.GetterAndSetter} The getter and setter.
  */
-export function getScriptState(script: string, storage?: ego_contracts.FileStateStorage): ego_contracts.GetterAndSetter {
+export function getScriptState(
+    script: string, storage?: ego_contracts.FileStateStorage,
+    initialValue: any = {},
+): ego_contracts.GetterAndSetter {
     script = ego_helpers.toStringSafe(script);
-    if (arguments.length < 2) {
+    if (_.isNil(storage)) {
         storage = SCRIPT_STATES;
     }
 
     let getterSetter = storage[script];
     if (_.isNil(getterSetter)) {
-        let state: any = {};
+        let state: any = initialValue;
         storage[script] = getterSetter = {
             get: () => {
                 return state;
