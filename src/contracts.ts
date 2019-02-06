@@ -852,9 +852,9 @@ export interface GlobalCommandScriptArgumentsForFiles extends GlobalCommandScrip
  */
 export interface GlobalCommandScriptArgumentsForFolders extends GlobalCommandScriptArguments {
     /**
-     * The underlying foilder.
+     * The underlying folder.
      */
-    readonly file: vscode.Uri;
+    readonly folder: vscode.Uri;
 }
 
 /**
@@ -1488,9 +1488,9 @@ export interface WorkspaceCommandScriptArgumentsForFiles extends WorkspaceComman
  */
 export interface WorkspaceCommandScriptArgumentsForFolders extends WorkspaceCommandScriptArguments {
     /**
-     * The underlying foilder.
+     * The underlying folder.
      */
-    readonly file: vscode.Uri;
+    readonly folder: vscode.Uri;
 }
 
 /**
