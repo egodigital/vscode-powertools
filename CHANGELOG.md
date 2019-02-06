@@ -1,5 +1,10 @@
 # Change Log (vscode-powertools)
 
+## 0.18.0 (February 6th, 2019; commands)
+
+* added `forFile` and `forFolder` properties for [commands](https://github.com/egodigital/vscode-powertools/wiki/Commands), which can define, if a command should be executed for a file of an active editor or an item, selected from the file explorer, by using `Execute Power Command` from context menu or the command palette (`F1`) ... s. [issue #10](https://github.com/egodigital/vscode-powertools/issues/10)
+* code cleanups and improvements
+
 ## 0.17.1 (February 4th, 2019; script arguments and code execution)
 
 * added `extension` and `state` properties to [ScriptArguments](https://egodigital.github.io/vscode-powertools/api/interfaces/_contracts_.scriptarguments.html) interface

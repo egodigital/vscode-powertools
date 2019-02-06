@@ -497,6 +497,34 @@ export interface CodeValueItem extends ValueItem {
 export type CommandEntry = CommandItem;
 
 /**
+ * The execution context of a command.
+ */
+export interface CommandExecutionContext {
+    /**
+     * The data.
+     */
+    readonly data?: KeyValuePairs;
+    /**
+     * The source.
+     */
+    readonly source?: CommandExecutionSource;
+}
+
+/**
+ * List of command execution sources.
+ */
+export enum CommandExecutionSource {
+    /**
+     * For a file.
+     */
+    File,
+    /**
+     * For a folder.
+     */
+    Folder,
+}
+
+/**
  * A command item.
  */
 export interface CommandItem extends CanImportValues, Conditional, ForPlatforms, WithCreationEvents, WithScript {
@@ -508,6 +536,14 @@ export interface CommandItem extends CanImportValues, Conditional, ForPlatforms,
      * A description for the command.
      */
     description?: string;
+    /**
+     * Indicates if that command can be executed for a current or selected file or not.
+     */
+    forFile?: boolean;
+    /**
+     * Indicates if that command can be executed for a current or selected folder or not.
+     */
+    forFolder?: boolean;
     /**
      * The name for display.
      */
@@ -763,11 +799,12 @@ export interface GlobalCommand extends vscode.Disposable {
     /**
      * Executes the command.
      *
+     * @param {CommandExecutionContext} context The execution context.
      * @param {any[]} [args] One or more argument for the execution.
      *
      * @return {any} The result of the execution.
      */
-    readonly execute: (...args: any[]) => any;
+    readonly execute: (context: CommandExecutionContext, ...args: any[]) => any;
     /**
      * The ID of the command.
      */
@@ -794,6 +831,30 @@ export interface GlobalCommandScriptArguments extends WorkspaceScriptArguments {
      * The ID of the command.
      */
     readonly command: string;
+    /**
+     * The source.
+     */
+    readonly source: CommandExecutionSource;
+}
+
+/**
+ * Arguments for a global command, which is executed for an active or selected file.
+ */
+export interface GlobalCommandScriptArgumentsForFiles extends GlobalCommandScriptArguments {
+    /**
+     * The underlying file.
+     */
+    readonly file: vscode.Uri;
+}
+
+/**
+ * Arguments for a global command, which is executed for an active or selected folder.
+ */
+export interface GlobalCommandScriptArgumentsForFolders extends GlobalCommandScriptArguments {
+    /**
+     * The underlying foilder.
+     */
+    readonly file: vscode.Uri;
 }
 
 /**
@@ -1410,6 +1471,26 @@ export interface WorkspaceCommand extends GlobalCommand {
  * Arguments for a workspace command script.
  */
 export interface WorkspaceCommandScriptArguments extends GlobalCommandScriptArguments {
+}
+
+/**
+ * Arguments for a workspace command, which is executed for an active or selected file.
+ */
+export interface WorkspaceCommandScriptArgumentsForFiles extends WorkspaceCommandScriptArguments {
+    /**
+     * The underlying file.
+     */
+    readonly file: vscode.Uri;
+}
+
+/**
+ * Arguments for a workspace command, which is executed for an active or selected folder.
+ */
+export interface WorkspaceCommandScriptArgumentsForFolders extends WorkspaceCommandScriptArguments {
+    /**
+     * The underlying foilder.
+     */
+    readonly file: vscode.Uri;
 }
 
 /**

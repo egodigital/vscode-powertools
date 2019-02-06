@@ -18,6 +18,7 @@
 import * as _ from 'lodash';
 import * as ego_contracts from './contracts';
 import * as ego_data from './data';
+import * as ego_global_commands from './global/commands';
 import * as ego_global_jobs from './global/jobs';
 import * as ego_helpers from './helpers';
 import * as ego_http from './http';
@@ -261,7 +262,7 @@ export function registerCommands(
                     return {
                         action: () => {
                             return x.command
-                                .execute();
+                                .execute({});
                         },
                         description: x.command.description,
                         detail: x.workspace.rootPath,
@@ -295,6 +296,144 @@ export function registerCommands(
             }
         }),
 
+        // execute command
+        vscode.commands.registerCommand('ego.power-tools.executeCommand.currentFileOrFolder', async function(fileOrFolder?: vscode.Uri) {
+            try {
+                if (_.isNil(fileOrFolder)) {
+                    // try active editor
+
+                    const ACTIVE_EDITOR = vscode.window.activeTextEditor;
+                    if (ACTIVE_EDITOR) {
+                        const DOC = ACTIVE_EDITOR.document;
+                        if (DOC) {
+                            fileOrFolder = vscode.Uri.file(
+                                DOC.fileName
+                            );
+                        }
+                    }
+                }
+
+                if (_.isNil(fileOrFolder)) {
+                    vscode.window.showWarningMessage(
+                        'No file or folder opened or selected!'
+                    );
+
+                    return;
+                }
+
+                if (!(await ego_helpers.exists(fileOrFolder.fsPath))) {
+                    vscode.window.showWarningMessage(
+                        `'${ fileOrFolder.fsPath }' does not exist!`
+                    );
+
+                    return;
+                }
+
+                let commandPredicate: (cmd: ego_contracts.GlobalCommand) => boolean;
+                let executionSource: ego_contracts.CommandExecutionSource;
+                const EXECUTION_DATA: ego_contracts.KeyValuePairs = {};
+                let typeForDisplay: string;
+                if (await ego_helpers.isDirectory(fileOrFolder.fsPath, false)) {
+                    // folder
+
+                    executionSource = ego_contracts.CommandExecutionSource.Folder;
+
+                    typeForDisplay = 'folder';
+                    EXECUTION_DATA['folder'] = fileOrFolder;
+
+                    commandPredicate = (cmd) => ego_helpers.toBooleanSafe(cmd.item.forFolder);
+                } else {
+                    // file
+
+                    executionSource = ego_contracts.CommandExecutionSource.File;
+
+                    typeForDisplay = 'file';
+                    EXECUTION_DATA['file'] = fileOrFolder;
+
+                    commandPredicate = (cmd) => ego_helpers.toBooleanSafe(cmd.item.forFile);
+                }
+
+                const MATCHING_COMMANDS: {
+                    command: ego_contracts.GlobalCommand,
+                    detail?: string,
+                }[] = [];
+
+                // collect all global commands
+                ego_global_commands.getGlobalUserCommands().forEach(cmd => {
+                    MATCHING_COMMANDS.push({
+                        command: cmd,
+                    });
+                });
+
+                // matching workspace commands
+                ego_helpers.from(
+                    ego_workspace.getAllWorkspaces()
+                ).where(ws => {
+                    return ws.isPathOf(fileOrFolder.fsPath);  // only workspaces, where item is part in
+                }).forEach(ws => {
+                    ws.getCommands().forEach(cmd => {
+                        // collect commands of
+                        // matching workspace
+                        MATCHING_COMMANDS.push({
+                            command: cmd,
+                            detail: ws.rootPath,
+                        });
+                    });
+                });
+
+                // generate wuick picks
+                const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = ego_helpers.from(
+                    MATCHING_COMMANDS
+                ).where(x => {
+                    return commandPredicate(x.command);
+                }).select(x => {
+                    return {
+                        action: async () => {
+                            await x.command.execute({
+                                data: EXECUTION_DATA,
+                                source: executionSource,
+                            });
+                        },
+                        description: x.command.description,
+                        detail: x.detail,
+                        label: x.command.name,
+                    };
+                }).orderBy(x => {
+                    return ego_helpers.normalizeString(x.label);
+                }).thenBy(x => {
+                    return ego_helpers.normalizeString(x.detail);
+                }).toArray();
+
+                if (QUICK_PICKS.length < 1) {
+                    vscode.window.showWarningMessage(
+                        `No command found for that ${ typeForDisplay }!`
+                    );
+
+                    return;
+                }
+
+                let selectedItem: ego_contracts.ActionQuickPickItem;
+                if (1 === QUICK_PICKS.length) {
+                    selectedItem = QUICK_PICKS[0];
+                } else {
+                    selectedItem = await vscode.window.showQuickPick(
+                        QUICK_PICKS,
+                        {
+                            canPickMany: false,
+                            ignoreFocusOut: true,
+                            placeHolder: `Select one or more command, that should be executed for that ${ typeForDisplay } ...`,
+                        }
+                    );
+                }
+
+                if (selectedItem) {
+                    await selectedItem.action();
+                }
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }),
+
         // help
         vscode.commands.registerCommand('ego.power-tools.help', async () => {
             try {
@@ -308,10 +447,8 @@ export function registerCommands(
         // jobs
         vscode.commands.registerCommand('ego.power-tools.jobs', async () => {
             try {
-                const ALL_WORKSPACES = ego_workspace.getAllWorkspaces();
-
                 const QUICK_PICKS: ego_contracts.ActionQuickPickItem<ego_contracts.WorkspaceJob>[] = ego_helpers.from(
-                    ALL_WORKSPACES
+                    ego_workspace.getAllWorkspaces()
                 ).selectMany(ws => {
                     return ego_helpers.from(
                         ws.getJobs()

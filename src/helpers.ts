@@ -384,3 +384,28 @@ export async function showErrorMessage(err: any): Promise<string> {
         );
     }
 }
+
+/**
+ * Updates a command script arguments object by an execution context.
+ *
+ * @param {ego_contracts.GlobalCommandScriptArguments} args The script arguments.
+ * @param {ego_contracts.CommandExecutionContext} context The execution context.
+ */
+export function updateCommandScriptArgumentsByExecutionContext(
+    args: ego_contracts.GlobalCommandScriptArguments,
+    context: ego_contracts.CommandExecutionContext,
+) {
+    // args.source
+    Object.defineProperty(args, 'source', {
+        enumerable: true,
+        get: () => {
+            return context.source;
+        },
+    });
+
+    if (ego_contracts.CommandExecutionSource.File === context.source) {
+        args['file'] = context.data['file'];
+    } else if (ego_contracts.CommandExecutionSource.Folder === context.source) {
+        args['folder'] = context.data['folder'];
+    }
+}

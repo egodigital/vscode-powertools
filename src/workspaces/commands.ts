@@ -105,8 +105,11 @@ export async function reloadCommands() {
             let newButton: vscode.StatusBarItem;
             let newCommand: vscode.Disposable;
             try {
-                newCommand = vscode.commands.registerCommand(ID, function() {
-                    const ARGS = ego_helpers.toArray(arguments);
+                newCommand = vscode.commands.registerCommand(ID, function(context: ego_contracts.CommandExecutionContext) {
+                    const ARGS = ego_helpers.from(
+                        ego_helpers.toArray(arguments)
+                    ).skip(1)
+                     .toArray();
 
                     return WORKSPACE.executeScript<ego_contracts.WorkspaceCommandScriptArguments>(
                         item,
@@ -126,6 +129,10 @@ export async function reloadCommands() {
                                     return key;
                                 },
                             });
+
+                            ego_helpers.updateCommandScriptArgumentsByExecutionContext(
+                                args, context,
+                            );
 
                             return args;
                         }

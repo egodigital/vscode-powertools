@@ -39,6 +39,17 @@ export function disposeGlobalUserCommands() {
 }
 
 /**
+ * Returns the list of all global commands.
+ *
+ * @return {ego_contracts.GlobalCommand[]} The list of commands.
+ */
+export function getGlobalUserCommands(): ego_contracts.GlobalCommand[] {
+    return ego_helpers.asArray(
+        GLOBAL_COMMANDS
+    );
+}
+
+/**
  * Reloads all global commands.
  */
 export async function reloadGlobalUserCommands() {
@@ -86,8 +97,11 @@ export async function reloadGlobalUserCommands() {
             let newButton: vscode.StatusBarItem;
             let newCommand: vscode.Disposable;
             try {
-                newCommand = vscode.commands.registerCommand(ID, function() {
-                    const ARGS = ego_helpers.toArray(arguments);
+                newCommand = vscode.commands.registerCommand(ID, function(context: ego_contracts.CommandExecutionContext) {
+                    const ARGS = ego_helpers.from(
+                        ego_helpers.toArray(arguments)
+                    ).skip(1)
+                     .toArray();
 
                     return ego_pt.executeScript<ego_contracts.GlobalCommandScriptArguments>(
                         item,
@@ -107,6 +121,10 @@ export async function reloadGlobalUserCommands() {
                                     return key;
                                 },
                             });
+
+                            ego_helpers.updateCommandScriptArgumentsByExecutionContext(
+                                args, context
+                            );
 
                             return args;
                         }

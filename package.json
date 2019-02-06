@@ -3,7 +3,7 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.17.1",
+    "version": "0.18.0",
     "engines": {
         "vscode": "^1.30.0"
     },
@@ -24,6 +24,11 @@
             {
                 "command": "ego.power-tools.commands",
                 "title": "Commands",
+                "category": "Power Tools"
+            },
+            {
+                "command": "ego.power-tools.executeCommand.currentFileOrFolder",
+                "title": "Execute Power Command",
                 "category": "Power Tools"
             },
             {
@@ -367,6 +372,16 @@
                                         "description": {
                                             "description": "A description for the command.",
                                             "type": "string"
+                                        },
+                                        "forFile": {
+                                            "description": "Indicates if that command can be executed for a current or selected file or not.",
+                                            "type": "boolean",
+                                            "default": false
+                                        },
+                                        "forFolder": {
+                                            "description": "Indicates if that command can be executed for a current or selected folder or not.",
+                                            "type": "boolean",
+                                            "default": false
                                         },
                                         "if": {
                                             "description": "The JavaScript code that checks the avaibility of that command.",
@@ -1451,6 +1466,16 @@
                                             "description": "A description for the command.",
                                             "type": "string"
                                         },
+                                        "forFile": {
+                                            "description": "Indicates if that command can be executed for a current or selected file or not.",
+                                            "type": "boolean",
+                                            "default": false
+                                        },
+                                        "forFolder": {
+                                            "description": "Indicates if that command can be executed for a current or selected folder or not.",
+                                            "type": "boolean",
+                                            "default": false
+                                        },
                                         "if": {
                                             "description": "The JavaScript code that checks the avaibility of that command.",
                                             "type": "string"
@@ -1972,6 +1997,26 @@
                     }
                 }
             }
+        },
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "ego.power-tools.executeCommand.currentFileOrFolder",
+                    "group": "egopowertools"
+                }
+            ],
+            "editor/title": [
+                {
+                    "command": "ego.power-tools.executeCommand.currentFileOrFolder",
+                    "group": "egopowertools"
+                }
+            ],
+            "explorer/context": [
+                {
+                    "command": "ego.power-tools.executeCommand.currentFileOrFolder",
+                    "group": "egopowertools"
+                }
+            ]
         }
     },
     "scripts": {
