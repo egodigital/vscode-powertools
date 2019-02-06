@@ -187,7 +187,7 @@ ${ this.generateHtmlFooter() }`;
             <div class="container">
                 <!-- Brand -->
                 <a class="navbar-brand waves-effect" href="https://www.e-go-digital.com/" target="_blank">
-                    <img src="${ this.getFileResourceUri('img/ego_digital.svg') }" id="ego-logo">
+                    <img src="${ this.getFileResourceUri('img/ego_digital.png') }" id="ego-logo">
                 </a>
 
                 <div id="ego-social-media-buttons">

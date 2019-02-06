@@ -5,7 +5,7 @@
 - /img/share/*
   - https://simplesharingbuttons.com
 
-- /src/res/img/ego_digital.svg
+- /src/res/img/ego_digital.png
   - e.GO Digital GmbH (https://www.e-go-digital.com/)
 
 - Webview make use [MD Bootstrap free](https://mdbootstrap.com/)
