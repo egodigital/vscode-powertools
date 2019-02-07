@@ -1476,21 +1476,13 @@ export interface WorkspaceCommandScriptArguments extends GlobalCommandScriptArgu
 /**
  * Arguments for a workspace command, which is executed for an active or selected file.
  */
-export interface WorkspaceCommandScriptArgumentsForFiles extends WorkspaceCommandScriptArguments {
-    /**
-     * The underlying file.
-     */
-    readonly file: vscode.Uri;
+export interface WorkspaceCommandScriptArgumentsForFiles extends GlobalCommandScriptArgumentsForFiles, WorkspaceCommandScriptArguments {
 }
 
 /**
  * Arguments for a workspace command, which is executed for an active or selected folder.
  */
-export interface WorkspaceCommandScriptArgumentsForFolders extends WorkspaceCommandScriptArguments {
-    /**
-     * The underlying folder.
-     */
-    readonly folder: vscode.Uri;
+export interface WorkspaceCommandScriptArgumentsForFolders extends GlobalCommandScriptArgumentsForFolders, WorkspaceCommandScriptArguments {
 }
 
 /**

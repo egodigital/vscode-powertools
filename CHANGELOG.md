@@ -1,6 +1,6 @@
 # Change Log (vscode-powertools)
 
-## 0.19.2 (February 6th, 2019; Visual Studio Code 1.31 and commands)
+## 0.19.3 (February 6th, 2019; Visual Studio Code 1.31 and commands)
 
 * extension requires at least [Visual Studio Code 1.31](https://code.visualstudio.com/updates/v1_31) now
 * added `forFile` and `forFolder` properties for [commands](https://github.com/egodigital/vscode-powertools/wiki/Commands#file-explorer-and-context-menus), which can define, if a command should be executed for a file of an active editor or an item, selected from the file explorer, by using `Execute Power Command` from context menu or the command palette (`F1`) ... s. [issue #10](https://github.com/egodigital/vscode-powertools/issues/10)
