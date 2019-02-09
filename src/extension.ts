@@ -570,6 +570,8 @@ export async function activate(context: vscode.ExtensionContext) {
         try {
             const NETWORK_INTERFACES = os.networkInterfaces();
 
+            outputChannel.appendLine('Your network configuration:');
+            outputChannel.appendLine('================================');
             outputChannel.appendLine('Hostname: ' + os.hostname());
 
             const LIST_OF_IFNAMES = Object.keys(NETWORK_INTERFACES).sort((x, y) => {
