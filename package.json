@@ -3,7 +3,7 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.19.3",
+    "version": "0.20.0",
     "engines": {
         "vscode": "^1.31.0"
     },
@@ -2037,6 +2037,7 @@
         "@types/ejs": "^2.6.1",
         "@types/fs-extra": "^5.0.4",
         "@types/html-entities": "^1.2.16",
+        "@types/html-minifier": "^3.5.2",
         "@types/is-stream": "^1.1.0",
         "@types/js-beautify": "^1.8.0",
         "@types/lodash": "^4.14.120",
@@ -2047,6 +2048,7 @@
         "@types/node-emoji": "^1.8.1",
         "@types/opn": "^5.1.0",
         "@types/p-queue": "^3.0.0",
+        "@types/pug": "^2.0.4",
         "@types/sanitize-filename": "^1.1.28",
         "@types/tmp": "0.0.33",
         "@types/uuid": "^3.4.4",
@@ -2054,8 +2056,8 @@
         "tslint": "^5.12.1",
         "typedoc": "^0.13.0",
         "typescript": "3.2.4",
-        "vsce": "^1.55.0",
-        "vscode": "^1.1.28"
+        "vsce": "^1.57.0",
+        "vscode": "^1.1.29"
     },
     "author": "e.GO Digital GmbH, Aachen, Germany",
     "license": "LGPL-3.0",
@@ -2085,6 +2087,7 @@
         "header-case-normalizer": "^1.0.3",
         "hexy": "^0.3.0",
         "html-entities": "^1.2.1",
+        "html-minifier": "^3.5.21",
         "is-stream": "^1.1.0",
         "js-beautify": "^1.8.9",
         "less": "^3.9.0",
@@ -2096,6 +2099,7 @@
         "node-zip": "^1.1.1",
         "opn": "^5.4.0",
         "public-ip": "^3.0.0",
+        "pug": "^2.0.3",
         "sanitize-filename": "^1.6.1",
         "tmp": "0.0.33",
         "uglify-js": "^3.4.9",

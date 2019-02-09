@@ -1,5 +1,13 @@
 # Change Log (vscode-powertools)
 
+## 0.20.0 (February 9th, 2019; code execution)
+
+* [$beautify](https://github.com/egodigital/vscode-powertools/wiki/Tools#beautify) now supports XML
+* [$compile](https://github.com/egodigital/vscode-powertools/wiki/Tools#compile) now supports [Pug](https://www.npmjs.com/package/pug)
+* [$uglify](https://github.com/egodigital/vscode-powertools/wiki/Tools#uglify) now supports HTML and XML
+* added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$base64`: converts a value to a Base64 string
+
 ## 0.19.3 (February 6th, 2019; Visual Studio Code 1.31 and commands)
 
 * extension requires at least [Visual Studio Code 1.31](https://code.visualstudio.com/updates/v1_31) now
