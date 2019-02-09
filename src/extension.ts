@@ -30,6 +30,7 @@ import * as ego_stores from './stores';
 import * as ego_values from './values';
 import * as ego_versions from './versions';
 import * as ego_workspace from './workspace';
+import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
@@ -562,6 +563,61 @@ export async function activate(context: vscode.ExtensionContext) {
         outputChannel.appendLine('');
         outputChannel.appendLine(`Extension has been initialized.`);
         outputChannel.appendLine('');
+    });
+
+    // display network info
+    WF.next(() => {
+        try {
+            const NETWORK_INTERFACES = os.networkInterfaces();
+
+            outputChannel.appendLine('Hostname: ' + os.hostname());
+
+            const LIST_OF_IFNAMES = Object.keys(NETWORK_INTERFACES).sort((x, y) => {
+                return ego_helpers.compareValuesBy(x, y, n => {
+                    return ego_helpers.normalizeString(n);
+                });
+            });
+
+            if (Object.keys(NETWORK_INTERFACES).length > 0) {
+                outputChannel.appendLine('Network interfaces:');
+
+                for (const IFNAME of LIST_OF_IFNAMES) {
+                    const IFACES = NETWORK_INTERFACES[IFNAME].filter(x => {
+                        return !x.internal;
+                    }).filter(x => {
+                        let addr = ego_helpers.normalizeString(x.address);
+
+                        if ('IPv4' === x.family) {
+                            return !/^(127\.[\d.]+|[0:]+1|localhost)$/.test(addr);
+                        }
+
+                        if ('IPv6' === x.family) {
+                            return '::1' !== addr;
+                        }
+
+                        return true;
+                    }).sort((x, y) => {
+                        return ego_helpers.compareValuesBy(x, y, (i) => {
+                            return 'IPv4' === i.family ? 0 : 1;
+                        });
+                    });
+
+                    if (IFACES.length > 0) {
+                        outputChannel.appendLine(`    - '${IFNAME}':`);
+                        IFACES.forEach(x => {
+                                            outputChannel.appendLine(`      [${x.family}] '${x.address}' / '${x.netmask}' ('${x.mac}')`);
+                                       });
+
+                        outputChannel.appendLine('');
+                    }
+                }
+            } else {
+                outputChannel.appendLine('');
+            }
+        } catch (e) {
+            ego_log.CONSOLE
+                .trace(e, 'extension.displayNetworkInfo()');
+        }
     });
 
     // CHANGELOG

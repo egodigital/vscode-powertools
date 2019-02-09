@@ -1,10 +1,11 @@
 # Change Log (vscode-powertools)
 
-## 0.20.0 (February 9th, 2019; code execution)
+## 0.20.0 (February 9th, 2019; code execution and output)
 
 * [$beautify](https://github.com/egodigital/vscode-powertools/wiki/Tools#beautify) now supports XML
 * [$compile](https://github.com/egodigital/vscode-powertools/wiki/Tools#compile) now supports [Pug](https://www.npmjs.com/package/pug)
 * [$uglify](https://github.com/egodigital/vscode-powertools/wiki/Tools#uglify) now supports HTML and XML
+* network interfaces are shown now in output (`CTRL+K CTRL+H`, `Power Tools by e.GO`) on startup
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$base64`: converts a value to a Base64 string
 
