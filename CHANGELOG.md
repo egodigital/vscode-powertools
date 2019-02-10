@@ -1,5 +1,9 @@
 # Change Log (vscode-powertools)
 
+## 0.21.0 (February 11th, 2019; code execution)
+
+* argument of [$csv](https://github.com/egodigital/vscode-powertools/wiki/Tools#csvdata) is optional now
+
 ## 0.20.0 (February 9th, 2019; code execution and output)
 
 * [$beautify](https://github.com/egodigital/vscode-powertools/wiki/Tools#beautify) now supports XML
