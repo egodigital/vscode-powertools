@@ -30,7 +30,7 @@ export class CsvTableWebView extends ego_webview.WebViewBase {
      * Initializes a new instance of that class.
      *
      * @param {any} csv The CSV data.
-     * @param {csvParse.Options} [opts] Custom parser options.
+     * @param {csvParse.Options} [parserOptions] Custom parser options.
      */
     public constructor(
         public readonly csv: any,
