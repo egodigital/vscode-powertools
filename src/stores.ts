@@ -144,7 +144,7 @@ export class UserStore extends StoreBase {
             if (!_.isNil(ENTRY)) {
                 switch (ego_helpers.normalizeString(ENTRY.type)) {
                     case 'binary':
-                        valueToReturn.value = new Buffer(
+                        valueToReturn.value = Buffer.from(
                             ENTRY.value,
                             'base64'
                         );

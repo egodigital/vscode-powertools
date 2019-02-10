@@ -100,13 +100,13 @@ export async function _exec_fcac50a111604220b8173024b6925905(
             if (!_.isNil(val)) {
                 if (!Buffer.isBuffer(val)) {
                     if (_.isString(val)) {
-                        val = new Buffer(val, enc);
+                        val = Buffer.from(val, enc);
                     } else if (_.isSymbol(val['__httpresponse_tm_19790905'])) {
                         val = await val.readBody();
                     } else if (_.isSymbol(val['__markdown_tm_19790905'])) {
-                        val = new Buffer(val.markdown, enc);
+                        val = Buffer.from(val.markdown, enc);
                     } else if (_.isSymbol(val['__neweditor_tm_19790905'])) {
-                        val = new Buffer(val.text, enc);
+                        val = Buffer.from(val.text, enc);
                     } else if (_.isSymbol(val['__csv_tm_19790905'])) {
                         val = await $h.asBuffer(val.data, enc);
                     } else {
@@ -293,7 +293,7 @@ export async function _exec_fcac50a111604220b8173024b6925905(
                 val = await $buff(val);
             } else {
                 if (!Buffer.isBuffer(val)) {
-                    val = new Buffer(
+                    val = Buffer.from(
                         $h.toStringSafe(val), 'utf8'
                     );
                 }
