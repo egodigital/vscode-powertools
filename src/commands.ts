@@ -172,6 +172,11 @@ export function registerCommands(
         }
     };
 
+    const SHOW_TCP_PROXY_ACTIONS = async () => {
+        await require('./tools/proxies')
+            .showTcpProxyActions(context, output)
+    };
+
     context.subscriptions.push(
         // apps
         vscode.commands.registerCommand('ego.power-tools.apps', async () => {
@@ -715,6 +720,15 @@ export function registerCommands(
             }
         }),
 
+        // TCP proxies
+        vscode.commands.registerCommand('ego.power-tools.tcpProxies', async () => {
+            try {
+                await SHOW_TCP_PROXY_ACTIONS();
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }),
+
         // tools
         vscode.commands.registerCommand('ego.power-tools.tools', async () => {
             try {
@@ -728,8 +742,7 @@ export function registerCommands(
                     },
                     {
                         action: () => {
-                            return require('./tools/proxies')
-                                .showTcpProxyActions();
+                            return SHOW_TCP_PROXY_ACTIONS();
                         },
                         label: '$(link)  TCP Proxies ...',
                         description: 'Starts or stops one or more TCP proxies.',

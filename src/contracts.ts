@@ -1269,6 +1269,42 @@ export interface Store {
 }
 
 /**
+ * An item of a TCP proxy list.
+ */
+export interface TcpProxyListItem {
+    /**
+     * The display name.
+     */
+    displayName?: string;
+    /**
+     * The (local) address, the proxy should listen on.
+     */
+    from: {
+        /**
+         * The hostname.
+         */
+        hostname: string;
+        /**
+         * The TCP port.
+         */
+        port: number;
+    };
+    /**
+     * The (remote) address, the proxy should connect to.
+     */
+    to: {
+        /**
+         * The hostname.
+         */
+        host: string;
+        /**
+         * The port.
+         */
+        port: number;
+    };
+}
+
+/**
  * A value.
  */
 export interface Value {
@@ -1630,3 +1666,8 @@ export const KEY_LAST_CODE_EXECUTION = 'egoPTLastCodeExecution';
  * The key for the global setting that stores if CHANGELOG should be opened on startup automatically.
  */
 export const KEY_GLOBAL_SETTING_OPEN_CHANGELOG_ON_STARTUP = 'egoPTOpenChangelogOnStartup';
+
+/**
+ * The key of known TCP proxies.
+ */
+export const KEY_TCP_PROXIES = 'egoPTTcpProxies';

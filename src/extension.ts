@@ -27,6 +27,7 @@ import * as ego_helpers from './helpers';
 import * as ego_log from './log';
 import * as ego_states from './states';
 import * as ego_stores from './stores';
+import * as ego_tools_proxies from './tools/proxies';
 import * as ego_values from './values';
 import * as ego_versions from './versions';
 import * as ego_workspace from './workspace';
@@ -557,6 +558,7 @@ export async function activate(context: vscode.ExtensionContext) {
         await workspaceWatcher.reload();
 
         await ego_global_config.reloadGlobalSettings();
+        ego_tools_proxies.TcpProxy.reloadGlobalList(context);
     });
 
     WF.next(() => {
