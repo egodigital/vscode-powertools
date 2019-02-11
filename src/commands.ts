@@ -725,6 +725,14 @@ export function registerCommands(
                         },
                         label: '$(zap)  Code Execution ...',
                         description: 'Executes one line JavaScript code.',
+                    },
+                    {
+                        action: () => {
+                            return require('./tools/proxies')
+                                .showTcpProxyActions();
+                        },
+                        label: '$(link)  TCP Proxies ...',
+                        description: 'Starts or stops one or more TCP proxies.',
                     }
                 ];
 
