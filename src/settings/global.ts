@@ -26,7 +26,9 @@ import * as vscode from 'vscode';
 
 interface SettingsFromWebView {
     appStoreUrl: string;
+    globalAzureDevOpsPAT: string;
     openChangelogOnStartup: boolean;
+    workspaceAzureDevOpsPAT: string;
 }
 
 interface SettingsForWebView extends SettingsFromWebView {
@@ -81,12 +83,22 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
                                     .globalState
                                     .get(ego_contracts.KEY_GLOBAL_SETTING_APP_STORE_URL)
                             ).trim(),
+                            globalAzureDevOpsPAT: ego_helpers.toStringSafe(
+                                this.extension
+                                    .globalState
+                                    .get(ego_contracts.KEY_GLOBAL_SETTING_AZURE_DEVOPS_GLOBAL_PAT)
+                            ).trim(),
                             openChangelogOnStartup: ego_helpers.toBooleanSafe(
                                 this.extension
                                     .globalState
                                     .get(ego_contracts.KEY_GLOBAL_SETTING_OPEN_CHANGELOG_ON_STARTUP, true),
                                 true,
                             ),
+                            workspaceAzureDevOpsPAT: ego_helpers.toStringSafe(
+                                this.extension
+                                    .workspaceState
+                                    .get(ego_contracts.KEY_GLOBAL_SETTING_AZURE_DEVOPS_WORKSPACE_PAT)
+                            ).trim(),
                         };
 
                         if ('' === settings.appStoreUrl) {
@@ -121,16 +133,40 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
                             appStoreUrl = undefined;
                         }
 
+                        let globalAzureDevOpsPAT = ego_helpers.toStringSafe(
+                            SETTINGS.globalAzureDevOpsPAT
+                        ).trim();
+                        if ('' === globalAzureDevOpsPAT) {
+                            globalAzureDevOpsPAT = undefined;
+                        }
+
+                        let workspaceAzureDevOpsPAT = ego_helpers.toStringSafe(
+                            SETTINGS.workspaceAzureDevOpsPAT
+                        ).trim();
+                        if ('' === workspaceAzureDevOpsPAT) {
+                            workspaceAzureDevOpsPAT = undefined;
+                        }
+
                         const OPEN_CHANGELOG_ON_STARTUP = ego_helpers.toBooleanSafe(
                             SETTINGS.openChangelogOnStartup, true
                         );
 
+                        // app store URL
                         await this.extension
                             .globalState
                             .update(ego_contracts.KEY_GLOBAL_SETTING_APP_STORE_URL, appStoreUrl);
+                        // open changelog on startup
                         await this.extension
                             .globalState
                             .update(ego_contracts.KEY_GLOBAL_SETTING_OPEN_CHANGELOG_ON_STARTUP, OPEN_CHANGELOG_ON_STARTUP);
+
+                        // Azure DevOps PATs
+                        await this.extension
+                            .globalState
+                            .update(ego_contracts.KEY_GLOBAL_SETTING_AZURE_DEVOPS_GLOBAL_PAT, globalAzureDevOpsPAT);
+                        await this.extension
+                            .workspaceState
+                            .update(ego_contracts.KEY_GLOBAL_SETTING_AZURE_DEVOPS_WORKSPACE_PAT, workspaceAzureDevOpsPAT);
                     } catch (e) {
                         err = ego_helpers.errorToString(e);
                     }

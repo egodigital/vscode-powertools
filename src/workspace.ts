@@ -1129,6 +1129,43 @@ export function getAllWorkspaces(): Workspace[] {
 }
 
 /**
+ * Tries to return the current workspace.
+ *
+ * @return {Workspace | false} The workspace or (false) if not found.
+ */
+export function getCurrentWorkspace(): Workspace | false {
+    try {
+        const ALL_WORKSPACES = getAllWorkspaces();
+        if (1 === ALL_WORKSPACES.length) {
+            return ALL_WORKSPACES[0];
+        } else {
+            const ACTIVE_EDITOR = vscode.window.activeTextEditor;
+            if (ACTIVE_EDITOR) {
+                const DOC = ACTIVE_EDITOR.document;
+                if (DOC) {
+                    if (DOC.uri && (['', 'file'].indexOf(ego_helpers.normalizeString(DOC.uri.scheme)) > -1)) {
+                        const FILE_NAME = ego_helpers.toStringSafe(DOC.uri.fsPath);
+                        if (!ego_helpers.isEmptyString(FILE_NAME)) {
+                            try {
+                                if (path.isAbsolute(FILE_NAME)) {
+                                    return ego_helpers.from(
+                                        ALL_WORKSPACES
+                                    ).singleOrDefault(ws => ws.isPathOf(FILE_NAME), false);
+                                }
+                            } catch { /** seems to have more than one matching workspace here */ }
+                        }
+                    }
+                }
+            }
+        }
+    } catch {
+        /** ignore errors here */
+    }
+
+    return false;
+}
+
+/**
  * Returns a list of workspace infos.
  *
  * @param {Workspace|Workspace[]} [workspaces] The custom list of workspaces.

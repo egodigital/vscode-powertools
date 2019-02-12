@@ -32,6 +32,13 @@ function ego_on_command(command, data) {
                     $('#ego-open-changelog-on-startup').prop(
                         'checked', data.settings.openChangelogOnStartup
                     );
+
+                    $('#ego-global-azuredevops-pat').val(
+                        data.settings.globalAzureDevOpsPAT
+                    );
+                    $('#ego-workspace-azuredevops-pat').val(
+                        data.settings.workspaceAzureDevOpsPAT                        
+                    );
                 }
             }
             break;
@@ -51,7 +58,9 @@ function ego_on_loaded() {
 
         ego_post('saveSettings', {
             appStoreUrl: $('#ego-app-store-url').val(),
+            globalAzureDevOpsPAT: $('#ego-global-azuredevops-pat').val(),
             openChangelogOnStartup: $('#ego-open-changelog-on-startup').prop('checked'),
+            workspaceAzureDevOpsPAT: $('#ego-workspace-azuredevops-pat').val(),
         });
     });
 

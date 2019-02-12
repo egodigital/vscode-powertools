@@ -33,8 +33,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                         <i class="fa fa-bolt mr-3"></i>Apps
                                     </a>
 
+                                    <a href="#" onclick="ego_select_area('azuredevops')" class="list-group-item list-group-item-action waves-effect ego-item ego-item-azuredevops">
+                                        <i class="fa fa-codepen mr-3"></i>Azure DevOps
+                                    </a>
+
                                     <a href="#" onclick="ego_select_area('notifications')" class="list-group-item list-group-item-action waves-effect ego-item ego-item-notifications">
-                                        <i class="fa fa-bolt mr-3"></i>Notifications
+                                        <i class="fa fa-envelope-open-o mr-3"></i>Notifications
                                     </a>
                                 </div>    
                             </div>
@@ -61,6 +65,42 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                                data-trigger="focus"
                                                data-placement="bottom"
                                                data-content="Enter an URL with a JSON file, which describes a custom app store.">
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="ego-area ego-area-azuredevops" style="display: none;">
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item active">Azure DevOps</li>
+                                    </ol>
+                                </nav>
+
+                                <form>
+                                    <!-- Global Personal Access Token -->
+                                    <div class="form-group">
+                                        <label for="ego-global-azuredevops-pat">Global Personal Access Token</label>
+                                        <input id="ego-global-azuredevops-pat"
+                                               class="form-control"
+                                               type="password"          
+                                               title="Global Personal Access Token"                             
+                                               data-toggle="popover"
+                                               data-trigger="focus"
+                                               data-placement="bottom"
+                                               data-content="Enter the Personal Access Token, to access the Azure DevOps API, which can be used in all workspaces.">
+                                    </div>
+
+                                    <!-- Workspace Personal Access Token -->
+                                    <div class="form-group">
+                                        <label for="ego-workspace-azuredevops-pat">Workspace Personal Access Token</label>
+                                        <input id="ego-workspace-azuredevops-pat"
+                                               class="form-control"
+                                               type="password"          
+                                               title="Workspace Personal Access Token"                             
+                                               data-toggle="popover"
+                                               data-trigger="focus"
+                                               data-placement="bottom"
+                                               data-content="Enter the Personal Access Token, to access the Azure DevOps API, which can be used in the current workspace.">
                                     </div>
                                 </form>
                             </div>

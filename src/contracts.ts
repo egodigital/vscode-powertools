@@ -1663,6 +1663,16 @@ export const KEY_KNOWN_APPS = 'egoPTKnownApps';
 export const KEY_LAST_CODE_EXECUTION = 'egoPTLastCodeExecution';
 
 /**
+ * The key for the global setting that stores if the global Azure DevOps PAT.
+ */
+export const KEY_GLOBAL_SETTING_AZURE_DEVOPS_GLOBAL_PAT = 'egoPTAzureDevOpsGlobalPAT';
+
+/**
+ * The key for the global setting that stores if the Azure DevOps PAT for the current workspace.
+ */
+export const KEY_GLOBAL_SETTING_AZURE_DEVOPS_WORKSPACE_PAT = 'egoPTAzureDevOpsWorkspacePAT';
+
+/**
  * The key for the global setting that stores if CHANGELOG should be opened on startup automatically.
  */
 export const KEY_GLOBAL_SETTING_OPEN_CHANGELOG_ON_STARTUP = 'egoPTOpenChangelogOnStartup';
