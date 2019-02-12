@@ -77,8 +77,28 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                 </nav>
 
                                 <form>
-                                    <!-- Global Personal Access Token -->
-                                    <div class="form-group">
+                                    <!-- Global AzureDev Ops credentials -->
+                                    <div class="form-group" id="ego-global-azure-devops-credentials">
+                                        <label for="ego-global-azuredevops-org">Organization (global)</label>
+                                        <input id="ego-global-azuredevops-org"
+                                               class="form-control"
+                                               type="text"          
+                                               title="Organization (global)"                             
+                                               data-toggle="popover"
+                                               data-trigger="focus"
+                                               data-placement="bottom"
+                                               data-content="Enter the organization, to access the Azure DevOps API, which can be used in all workspaces.">
+
+                                        <label for="ego-global-azuredevops-username">Username (global)</label>
+                                        <input id="ego-global-azuredevops-username"
+                                               class="form-control"
+                                               type="text"          
+                                               title="Username (global)"                             
+                                               data-toggle="popover"
+                                               data-trigger="focus"
+                                               data-placement="bottom"
+                                               data-content="Enter the username, to access the Azure DevOps API, which can be used in all workspaces.">
+    
                                         <label for="ego-global-azuredevops-pat">Global Personal Access Token</label>
                                         <input id="ego-global-azuredevops-pat"
                                                class="form-control"
@@ -90,8 +110,28 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                                data-content="Enter the Personal Access Token, to access the Azure DevOps API, which can be used in all workspaces.">
                                     </div>
 
-                                    <!-- Workspace Personal Access Token -->
-                                    <div class="form-group">
+                                    <!-- Workspace AzureDev Ops credentials -->
+                                    <div class="form-group" id="ego-workspace-azure-devops-credentials">
+                                        <label for="ego-workspace-azuredevops-org">Organization (workspace)</label>
+                                        <input id="ego-workspace-azuredevops-org"
+                                               class="form-control"
+                                               type="text"          
+                                               title="Organization (workspace)"                             
+                                               data-toggle="popover"
+                                               data-trigger="focus"
+                                               data-placement="bottom"
+                                               data-content="Enter the organization, to access the Azure DevOps API, which can be used in the current workspace.">
+    
+                                        <label for="ego-workspace-azuredevops-username">Username (workspace)</label>
+                                        <input id="ego-workspace-azuredevops-username"
+                                               class="form-control"
+                                               type="text"          
+                                               title="Username (workspace)"                             
+                                               data-toggle="popover"
+                                               data-trigger="focus"
+                                               data-placement="bottom"
+                                               data-content="Enter the username, to access the Azure DevOps API, which can be used in the current workspace.">
+                
                                         <label for="ego-workspace-azuredevops-pat">Workspace Personal Access Token</label>
                                         <input id="ego-workspace-azuredevops-pat"
                                                class="form-control"

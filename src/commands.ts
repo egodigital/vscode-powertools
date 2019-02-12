@@ -238,6 +238,16 @@ export function registerCommands(
             }
         }),
 
+        // Azure DevOps
+        vscode.commands.registerCommand('ego.power-tools.azureDevOps', async () => {
+            try {
+                await require('./azure')
+                    .showAzureDevOpsActions(context, output);
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }),
+
         // codeExecution
         vscode.commands.registerCommand('ego.power-tools.codeExecution', async () => {
             try {

@@ -23,6 +23,11 @@
                 "category": "Power Tools"
             },
             {
+                "command": "ego.power-tools.azureDevOps",
+                "title": "Azure DevOps",
+                "category": "Power Tools"
+            },
+            {
                 "command": "ego.power-tools.commands",
                 "title": "Commands",
                 "category": "Power Tools"

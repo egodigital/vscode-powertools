@@ -20,6 +20,20 @@ let isReloadingSettings = false;
 
 function ego_on_command(command, data) {
     switch (command) {
+        case 'selectSection':
+            {
+                const SECTION_TO_SELECT = ego_to_string(
+                    data
+                ).trim();
+
+                if ('' !== SECTION_TO_SELECT) {
+                    ego_select_area(
+                        SECTION_TO_SELECT
+                    );    
+                }
+            }
+            break;
+
         case 'settingsReloaded':
             {
                 isReloadingSettings = false;
@@ -33,11 +47,23 @@ function ego_on_command(command, data) {
                         'checked', data.settings.openChangelogOnStartup
                     );
 
+                    $('#ego-global-azuredevops-org').val(
+                        data.settings.globalAzureDevOpsOrg
+                    );
+                    $('#ego-global-azuredevops-username').val(
+                        data.settings.globalAzureDevOpsUsername
+                    );
                     $('#ego-global-azuredevops-pat').val(
                         data.settings.globalAzureDevOpsPAT
                     );
+                    $('#ego-workspace-azuredevops-org').val(
+                        data.settings.workspaceAzureDevOpsOrg
+                    );
+                    $('#ego-workspace-azuredevops-username').val(
+                        data.settings.workspaceAzureDevOpsUsername
+                    );
                     $('#ego-workspace-azuredevops-pat').val(
-                        data.settings.workspaceAzureDevOpsPAT                        
+                        data.settings.workspaceAzureDevOpsPAT
                     );
                 }
             }
@@ -58,9 +84,13 @@ function ego_on_loaded() {
 
         ego_post('saveSettings', {
             appStoreUrl: $('#ego-app-store-url').val(),
+            globalAzureDevOpsOrg: $('#ego-global-azuredevops-org').val(),
             globalAzureDevOpsPAT: $('#ego-global-azuredevops-pat').val(),
+            globalAzureDevOpsUsername: $('#ego-global-azuredevops-username').val(),
             openChangelogOnStartup: $('#ego-open-changelog-on-startup').prop('checked'),
+            workspaceAzureDevOpsOrg: $('#ego-workspace-azuredevops-org').val(),
             workspaceAzureDevOpsPAT: $('#ego-workspace-azuredevops-pat').val(),
+            workspaceAzureDevOpsUsername: $('#ego-workspace-azuredevops-username').val(),
         });
     });
 

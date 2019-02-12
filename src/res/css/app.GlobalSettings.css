@@ -62,3 +62,7 @@ table.ego-content td.ego-right .ego-area form {
     -webkit-border-radius: 5px;
     border-radius: 5px;
 }
+
+#ego-workspace-azure-devops-credentials {
+    margin-top: 32px;
+}

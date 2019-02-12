@@ -393,6 +393,28 @@ export interface AppStoreAppSource {
 }
 
 /**
+ * Azure DevOps API credentials.
+ */
+export interface AzureDevOpsAPICredentials {
+    /**
+     * The name of the organization.
+     */
+    readonly organization: string;
+    /**
+     * The personal access token.
+     */
+    readonly pat: string;
+    /**
+     * Creates a Base64 string for 'Authorization' HTTP header, e.g.
+     */
+    readonly toBase64: () => string;
+    /**
+     * The username / email
+     */
+    readonly username: string;
+}
+
+/**
  * A boxed value.
  */
 export interface BoxedValue<TValue = any> {
@@ -1663,14 +1685,34 @@ export const KEY_KNOWN_APPS = 'egoPTKnownApps';
 export const KEY_LAST_CODE_EXECUTION = 'egoPTLastCodeExecution';
 
 /**
+ * The key for the global setting that stores if the global Azure DevOps organization.
+ */
+export const KEY_GLOBAL_SETTING_AZURE_DEVOPS_GLOBAL_ORG = 'egoPTAzureDevOpsGlobalOrg';
+
+/**
  * The key for the global setting that stores if the global Azure DevOps PAT.
  */
 export const KEY_GLOBAL_SETTING_AZURE_DEVOPS_GLOBAL_PAT = 'egoPTAzureDevOpsGlobalPAT';
 
 /**
+ * The key for the global setting that stores if the global Azure DevOps username.
+ */
+export const KEY_GLOBAL_SETTING_AZURE_DEVOPS_GLOBAL_USERNAME = 'egoPTAzureDevOpsGlobalUsername';
+
+/**
+ * The key for the global setting that stores if the Azure DevOps organization for the current workspace.
+ */
+export const KEY_GLOBAL_SETTING_AZURE_DEVOPS_WORKSPACE_ORG = 'egoPTAzureDevOpsWorkspaceOrg';
+
+/**
  * The key for the global setting that stores if the Azure DevOps PAT for the current workspace.
  */
 export const KEY_GLOBAL_SETTING_AZURE_DEVOPS_WORKSPACE_PAT = 'egoPTAzureDevOpsWorkspacePAT';
+
+/**
+ * The key for the global setting that stores if the Azure DevOps username for the current workspace.
+ */
+export const KEY_GLOBAL_SETTING_AZURE_DEVOPS_WORKSPACE_USERNAME = 'egoPTAzureDevOpsWorkspaceUsername';
 
 /**
  * The key for the global setting that stores if CHANGELOG should be opened on startup automatically.
