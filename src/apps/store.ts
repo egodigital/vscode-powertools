@@ -217,6 +217,7 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
             case 'reloadApps':
                 try {
                     const APPS: App[] = [];
+                    let storeName: string;
 
                     // installed apps
                     const INSTALLED_APPS = await ego_apps.getInstalledApps();
@@ -289,6 +290,10 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
                     try {
                         const APP_STORE = await this.loadStoreFromUrl();
                         if (_.isObjectLike(APP_STORE)) {
+                            storeName = ego_helpers.toStringSafe(
+                                APP_STORE.name
+                            ).trim();
+
                             for (const A of APP_STORE.apps) {
                                 try {
                                     let name = ego_helpers.normalizeString(A.name);
@@ -371,6 +376,7 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
                                 .thenBy(x => ego_helpers.normalizeString(x.source))
                                 .thenBy(x => ego_helpers.normalizeString(x.upgradeSource))
                                 .toArray(),
+                            'store': storeName,
                         }
                     );
                 } catch (e) {

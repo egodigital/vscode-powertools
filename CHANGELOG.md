@@ -1,5 +1,12 @@
 # Change Log (vscode-powertools)
 
+## 0.22.0 (February 13th, 2019; app stores and npm update)
+
+* custom store name is shown in app webview now
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.3.2`
+* code cleanups
+
 ## 0.21.2 (February 11th, 2019; TCP proxies and code execution)
 
 * implemented [TCP proxies](https://github.com/egodigital/vscode-powertools/wiki/Tools#tcp-proxies) (`Power Tools: Tools` >> `TCP Proxies ...`)

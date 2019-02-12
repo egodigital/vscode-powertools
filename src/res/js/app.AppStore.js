@@ -52,6 +52,8 @@ function ego_open_app(app) {
 }
 
 function ego_reload_apps() {
+    $('#ego-store-name').text('');
+
     $('#ego-app-list').html('')
         .append($('<div class="loader small border-top-info ego-ajax-loader" />'));
 
@@ -67,6 +69,17 @@ function ego_update_app_list(data) {
     }
 
     if (data.success) {
+        let storeName = ego_to_string(
+            data.store
+        ).trim();
+        if ('' === storeName) {
+            storeName = 'App Store';
+        }
+
+        $('#ego-store-name').text(
+            storeName
+        );
+
         if (data.apps && data.apps.length) {
             const CARD_LIST = $('<div class="row" />');
 
