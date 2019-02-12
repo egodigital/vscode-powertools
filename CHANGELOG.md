@@ -2,7 +2,7 @@
 
 ## 0.22.0 (February 13th, 2019; app stores and npm update)
 
-* custom store name is shown in app webview now
+* custom store name is shown in [app webview](https://github.com/egodigital/vscode-powertools/wiki/Apps#app-stores) now
 * updated the following [npm](https://www.npmjs.com/) modules:
   * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.3.2`
 * code cleanups
