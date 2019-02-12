@@ -174,7 +174,7 @@ export function registerCommands(
 
     const SHOW_TCP_PROXY_ACTIONS = async () => {
         await require('./tools/proxies')
-            .showTcpProxyActions(context, output)
+            .showTcpProxyActions(context, output);
     };
 
     context.subscriptions.push(
