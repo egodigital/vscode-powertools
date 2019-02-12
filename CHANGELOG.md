@@ -1,10 +1,11 @@
 # Change Log (vscode-powertools)
 
-## 0.21.0 (February 11th, 2019; TCP proxies and code execution)
+## 0.21.1 (February 11th, 2019; TCP proxies and code execution)
 
 * implemented [TCP proxies](https://github.com/egodigital/vscode-powertools/wiki/Tools#tcp-proxies) (`Power Tools: Tools` >> `TCP Proxies ...`)
 * argument of [$csv](https://github.com/egodigital/vscode-powertools/wiki/Tools#csvdata) is optional now
 * updated to [MD Bootstrap 4.7.1 (free)](https://github.com/mdbootstrap/bootstrap-material-design)
+* bugfixes
 
 ## 0.20.0 (February 9th, 2019; code execution and output)
 

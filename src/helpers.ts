@@ -399,7 +399,8 @@ export function updateCommandScriptArgumentsByExecutionContext(
     Object.defineProperty(args, 'source', {
         enumerable: true,
         get: () => {
-            return context.source;
+            return context ? context.source
+                : undefined;
         },
     });
 
