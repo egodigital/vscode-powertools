@@ -395,18 +395,19 @@ export function updateCommandScriptArgumentsByExecutionContext(
     args: ego_contracts.GlobalCommandScriptArguments,
     context: ego_contracts.CommandExecutionContext,
 ) {
-    // args.source
-    Object.defineProperty(args, 'source', {
-        enumerable: true,
-        get: () => {
-            return context ? context.source
-                : undefined;
-        },
-    });
+    if (context) {
+        // args.source
+        Object.defineProperty(args, 'source', {
+            enumerable: true,
+            get: () => {
+                return context.source;
+            },
+        });
 
-    if (ego_contracts.CommandExecutionSource.File === context.source) {
-        args['file'] = context.data['file'];
-    } else if (ego_contracts.CommandExecutionSource.Folder === context.source) {
-        args['folder'] = context.data['folder'];
+        if (ego_contracts.CommandExecutionSource.File === context.source) {
+            args['file'] = context.data['file'];
+        } else if (ego_contracts.CommandExecutionSource.Folder === context.source) {
+            args['folder'] = context.data['folder'];
+        }
     }
 }
