@@ -2044,7 +2044,7 @@
         "@types/mime-types": "^2.1.0",
         "@types/mocha": "^2.2.42",
         "@types/moment-timezone": "^0.5.10",
-        "@types/node": "8.9.3",
+        "@types/node": "10.1.4",
         "@types/node-emoji": "^1.8.1",
         "@types/opn": "^5.1.0",
         "@types/p-queue": "^3.0.0",
