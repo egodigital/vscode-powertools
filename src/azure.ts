@@ -396,7 +396,6 @@ async function showAzureDevOpsProjectActions(cred: ego_contracts.AzureDevOpsAPIC
     }
 }
 
-
 async function showAzureDevOpsTeamActions(team: WebApiTeam) {
     const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [
         {
