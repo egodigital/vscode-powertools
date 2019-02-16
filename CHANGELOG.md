@@ -1,5 +1,13 @@
 # Change Log (vscode-powertools)
 
+## 0.23.0 (February 16th, 2019; npm update)
+
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.3.3`
+  * [deepmerge](https://www.npmjs.com/package/deepmerge) `^3.2.0`
+  * [mime-types](https://www.npmjs.com/package/mime-types) `^2.1.22`
+  * [node-emoji](https://www.npmjs.com/package/node-emoji) `^1.10.0`
+
 ## 0.22.0 (February 13th, 2019; Azure DevOps and app stores)
 
 * added `Power Tools: Azure DevOps` command, which first feature of opening project boards
