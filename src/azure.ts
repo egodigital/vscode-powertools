@@ -57,6 +57,15 @@ interface WebApiTeamReference {
 interface WebApiTeamResult extends Result<WebApiTeamReference> {
 }
 
+interface WikiV2 {
+    id: string;
+    name: string;
+    url: string;
+}
+
+interface WikiV2Result extends Result<WikiV2> {
+}
+
 
 class TeamProject {
     constructor(
@@ -95,10 +104,41 @@ class TeamProject {
          .toArray();
     }
 
-    public async openInBrower() {
-        const BORWSER_URL = `https://${ encodeURIComponent(this.credentials.organization) }.visualstudio.com/${ encodeURIComponent(this.azureObject.name) }`;
+    public async getWikis(): Promise<Wiki[]> {
+        const RESULT: WikiV2Result = await vscode.window.withProgress({
+            cancellable: false,
+            location: vscode.ProgressLocation.Window,
+            title: 'Azure DevOps Teams',
+        }, async (progress) => {
+            progress.report({
+                message: 'Loading teams ...',
+            });
 
-        opn(BORWSER_URL, {
+            const RESPONSE = await ego_helpers.GET(`https://dev.azure.com/${ encodeURIComponent(this.credentials.organization) }/${ encodeURIComponent(this.azureObject.id) }/_apis/wiki/wikis?api-version=5.0`, {
+                'Authorization': 'Basic ' + this.credentials.toBase64(),
+            });
+
+            if (200 !== RESPONSE.code) {
+                throw new Error(`Unexpected Response: [${ RESPONSE.code }] '${ RESPONSE.status }'`);
+            }
+
+            return JSON.parse(
+                (await RESPONSE.readBody())
+                    .toString('utf8')
+            );
+        });
+
+        return ego_helpers.from(
+            RESULT.value
+        ).orderBy(w => ego_helpers.normalizeString(w.name))
+         .select(w => new Wiki(this, w))
+         .toArray();
+    }
+
+    public async openInBrower() {
+        const BROWSER_URL = `https://${ encodeURIComponent(this.credentials.organization) }.visualstudio.com/${ encodeURIComponent(this.azureObject.name) }`;
+
+        opn(BROWSER_URL, {
             wait: false
         });
     }
@@ -109,6 +149,11 @@ class WebApiTeam {
         public readonly project: TeamProject,
         public readonly azureObject: WebApiTeamReference,
     ) { }
+
+    public get credentials() {
+        return this.project
+            .credentials;
+    }
 
     public async getBoards(): Promise<Board[]> {
         const RESULT: BoardResult = await vscode.window.withProgress({
@@ -140,11 +185,6 @@ class WebApiTeam {
          .select(b => new Board(this, b))
          .toArray();
     }
-
-    public get credentials() {
-        return this.project
-            .credentials;
-    }
 }
 
 class Board {
@@ -169,6 +209,32 @@ class Board {
 
         await opn(BROWSER_URL, {
             wait: false,
+        });
+    }
+}
+
+class Wiki {
+    constructor(
+        public readonly project: TeamProject,
+        public readonly azureObject: WikiV2,
+    ) { }
+
+    public get credentials() {
+        return this.project
+            .credentials;
+    }
+
+    public async openInBrower() {
+        const BROWSER_URL = `https://${
+            encodeURIComponent(this.credentials.organization)
+        }.visualstudio.com/${
+            encodeURIComponent(this.project.azureObject.name)
+        }/_wiki/wikis/${
+            encodeURIComponent(this.azureObject.name)
+        }`;
+
+        opn(BROWSER_URL, {
+            wait: false
         });
     }
 }
@@ -270,7 +336,7 @@ export async function showAzureDevOpsActions(
     const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [
         {
             'action': async () => {
-                await showAzureDevOpsProjectActions(API_CRED);
+                await showAzureDevOpsProjectSelector(API_CRED);
             },
             'label': 'Projects ...',
             'description': 'Opens a project.'
@@ -330,7 +396,39 @@ async function showAzureDevOpsBoardSelector(team: WebApiTeam) {
     }
 }
 
-async function showAzureDevOpsProjectActions(cred: ego_contracts.AzureDevOpsAPICredentials) {
+async function showAzureDevOpsProjectActions(proj: TeamProject) {
+    const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [
+        {
+            action: async () => {
+                await await showAzureDevOpsTeamSelector(proj);
+            },
+            label: 'Teams ...',
+            description: 'Selects a team.'
+        },
+        {
+            action: async () => {
+                await await showAzureDevOpsWikiSelector(proj);
+            },
+            label: 'Wikis ...',
+            description: 'Selects a wiki.'
+        },
+    ];
+
+    const SELECTED_ITEM = await vscode.window.showQuickPick(
+        QUICK_PICKS,
+        {
+            canPickMany: false,
+            ignoreFocusOut: true,
+            placeHolder: 'Please select a board ...'
+        }
+    );
+
+    if (SELECTED_ITEM) {
+        await SELECTED_ITEM.action();
+    }
+}
+
+async function showAzureDevOpsProjectSelector(cred: ego_contracts.AzureDevOpsAPICredentials) {
     const RESULT: TeamProjectResult = await vscode.window.withProgress({
         cancellable: false,
         location: vscode.ProgressLocation.Window,
@@ -360,7 +458,7 @@ async function showAzureDevOpsProjectActions(cred: ego_contracts.AzureDevOpsAPIC
 
             return {
                 action: async () => {
-                    await showAzureDevOpsTeamSelector(PROJ);
+                    await showAzureDevOpsProjectActions(PROJ);
                 },
                 description: p.description,
                 label: p.name,
@@ -404,7 +502,7 @@ async function showAzureDevOpsTeamActions(team: WebApiTeam) {
             },
             label: 'Boards ...',
             description: 'Selects a board.'
-        }
+        },
     ];
 
     const SELECTED_ITEM = await vscode.window.showQuickPick(
@@ -455,6 +553,48 @@ async function showAzureDevOpsTeamSelector(proj: TeamProject) {
                 canPickMany: false,
                 ignoreFocusOut: true,
                 placeHolder: 'Please select a team ...'
+            }
+        );
+    }
+
+    if (selectedItem) {
+        await selectedItem.action();
+    }
+}
+
+async function showAzureDevOpsWikiSelector(proj: TeamProject) {
+    const WIKIS = await proj.getWikis();
+
+    const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = ego_helpers.from(
+        WIKIS.map(w => {
+            return {
+                action: async () => {
+                    await w.openInBrower();
+                },
+                label: w.azureObject.name,
+            };
+        })
+    ).orderBy(qp => ego_helpers.normalizeString(qp.label))
+     .toArray();
+
+    if (!QUICK_PICKS.length) {
+        vscode.window.showWarningMessage(
+            'No wiki found!'
+        );
+
+        return;
+    }
+
+    let selectedItem: ego_contracts.ActionQuickPickItem;
+    if (1 === QUICK_PICKS.length) {
+        selectedItem = QUICK_PICKS[0];
+    } else {
+        selectedItem = await vscode.window.showQuickPick(
+            QUICK_PICKS,
+            {
+                canPickMany: false,
+                ignoreFocusOut: true,
+                placeHolder: 'Please select a wiki ...'
             }
         );
     }

@@ -2,6 +2,8 @@
 
 ## 0.23.0 (February 16th, 2019; npm update)
 
+* can open Azure DevOps wikis now via `Power Tools: Azure DevOps` command
+* fixes
 * updated the following [npm](https://www.npmjs.com/) modules:
   * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.3.3`
   * [deepmerge](https://www.npmjs.com/package/deepmerge) `^3.2.0`
