@@ -40,7 +40,7 @@ interface DashboardReference {
 }
 
 interface DashboardResult {
-    dashboardEntries: DashboardReference[]
+    dashboardEntries: DashboardReference[];
 }
 
 interface TeamProjectReference {
