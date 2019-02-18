@@ -32,6 +32,17 @@ interface BoardReference {
 interface BoardResult extends Result<BoardReference> {
 }
 
+interface DashboardReference {
+    description: string;
+    id: string;
+    name: string;
+    url: string;
+}
+
+interface DashboardResult {
+    dashboardEntries: DashboardReference[]
+}
+
 interface TeamProjectReference {
     description: string;
     id: string;
@@ -57,13 +68,13 @@ interface WebApiTeamReference {
 interface WebApiTeamResult extends Result<WebApiTeamReference> {
 }
 
-interface WikiV2 {
+interface WikiV2Reference {
     id: string;
     name: string;
     url: string;
 }
 
-interface WikiV2Result extends Result<WikiV2> {
+interface WikiV2Result extends Result<WikiV2Reference> {
 }
 
 
@@ -185,6 +196,37 @@ class WebApiTeam {
          .select(b => new Board(this, b))
          .toArray();
     }
+
+    public async getDashboards(): Promise<Dashboard[]> {
+        const RESULT: DashboardResult = await vscode.window.withProgress({
+            cancellable: false,
+            location: vscode.ProgressLocation.Window,
+            title: 'Azure DevOps Dashboards',
+        }, async (progress) => {
+            progress.report({
+                message: 'Loading dashboards ...',
+            });
+
+            const RESPONSE = await ego_helpers.GET(`https://dev.azure.com/${ encodeURIComponent(this.credentials.organization) }/${ encodeURIComponent(this.project.azureObject.id) }/${ encodeURIComponent(this.azureObject.id) }/_apis/dashboard/dashboards?api-version=5.0-preview.2`, {
+                'Authorization': 'Basic ' + this.credentials.toBase64(),
+            });
+
+            if (200 !== RESPONSE.code) {
+                throw new Error(`Unexpected Response: [${ RESPONSE.code }] '${ RESPONSE.status }'`);
+            }
+
+            return JSON.parse(
+                (await RESPONSE.readBody())
+                    .toString('utf8')
+            );
+        });
+
+        return ego_helpers.from(
+            RESULT.dashboardEntries
+        ).orderBy(d => ego_helpers.normalizeString(d.name))
+         .select(d => new Dashboard(this, d))
+         .toArray();
+    }
 }
 
 class Board {
@@ -213,10 +255,36 @@ class Board {
     }
 }
 
+class Dashboard {
+    constructor(
+        public readonly team: WebApiTeam,
+        public readonly azureObject: WikiV2Reference,
+    ) { }
+
+    public get credentials() {
+        return this.team
+            .credentials;
+    }
+
+    public async openInBrower() {
+        const BROWSER_URL = `https://${
+            encodeURIComponent(this.credentials.organization)
+        }.visualstudio.com/${
+            encodeURIComponent(this.team.project.azureObject.name)
+        }/_dashboards/dashboard/${
+            encodeURIComponent(this.azureObject.id)
+        }`;
+
+        opn(BROWSER_URL, {
+            wait: false
+        });
+    }
+}
+
 class Wiki {
     constructor(
         public readonly project: TeamProject,
-        public readonly azureObject: WikiV2,
+        public readonly azureObject: WikiV2Reference,
     ) { }
 
     public get credentials() {
@@ -396,6 +464,48 @@ async function showAzureDevOpsBoardSelector(team: WebApiTeam) {
     }
 }
 
+async function showAzureDevOpsDashboardSelector(team: WebApiTeam) {
+    const DASHBOARDS = await team.getDashboards();
+
+    const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = ego_helpers.from(
+        DASHBOARDS.map(db => {
+            return {
+                action: async () => {
+                    await db.openInBrower();
+                },
+                label: db.azureObject.name,
+            };
+        })
+    ).orderBy(qp => ego_helpers.normalizeString(qp.label))
+     .toArray();
+
+     if (!QUICK_PICKS.length) {
+        vscode.window.showWarningMessage(
+            'No dashboard found!'
+        );
+
+        return;
+    }
+
+    let selectedItem: ego_contracts.ActionQuickPickItem;
+    if (1 === QUICK_PICKS.length) {
+        selectedItem = QUICK_PICKS[0];
+    } else {
+        selectedItem = await vscode.window.showQuickPick(
+            QUICK_PICKS,
+            {
+                canPickMany: false,
+                ignoreFocusOut: true,
+                placeHolder: 'Please select a dashboard ...'
+            }
+        );
+    }
+
+    if (selectedItem) {
+        await selectedItem.action();
+    }
+}
+
 async function showAzureDevOpsProjectActions(proj: TeamProject) {
     const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [
         {
@@ -502,6 +612,13 @@ async function showAzureDevOpsTeamActions(team: WebApiTeam) {
             },
             label: 'Boards ...',
             description: 'Selects a board.'
+        },
+        {
+            action: async () => {
+                await showAzureDevOpsDashboardSelector(team);
+            },
+            label: 'Dashboards ...',
+            description: 'Selects a dashboards.'
         },
     ];
 

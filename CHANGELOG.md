@@ -1,6 +1,10 @@
 # Change Log (vscode-powertools)
 
-## 0.23.0 (February 16th, 2019; npm update)
+## 0.24.0 (February 18th, 2019; Azure DevOps)
+
+* can open Azure DevOps dashboards now via `Power Tools: Azure DevOps` command
+
+## 0.23.0 (February 16th, 2019; Azure DevOps)
 
 * can open Azure DevOps wikis now via `Power Tools: Azure DevOps` command
 * fixes
