@@ -109,6 +109,16 @@ export function registerCommands(
 
                     await WEB_VIEW.initialize();
                     await WEB_VIEW.open();
+                } else if (RESULT && _.isSymbol(RESULT['__clipboard_tm_19790905'])) {
+                    await vscode.env.clipboard.writeText(
+                        ego_helpers.toStringSafe(
+                            RESULT.text
+                        )
+                    );
+
+                    vscode.window.showInformationMessage(
+                        'Value has been copied to clipboard.'
+                    );
                 } else if (Buffer.isBuffer(RESULT)) {
                     let md = '# Code Execution Result (Buffer)\n\n';
                     md += '```';

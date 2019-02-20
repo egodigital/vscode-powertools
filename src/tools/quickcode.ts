@@ -109,6 +109,8 @@ export async function _exec_fcac50a111604220b8173024b6925905(
                         val = Buffer.from(val.text, enc);
                     } else if (_.isSymbol(val['__csv_tm_19790905'])) {
                         val = await $h.asBuffer(val.data, enc);
+                    } else if (_.isSymbol(val['__clipboard_tm_19790905'])) {
+                        val = await $h.asBuffer(val.text, enc);
                     } else {
                         val = await $h.asBuffer(val, enc);
                     }
@@ -839,6 +841,117 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         }
     );
 
+    // @ts-ignore
+    const $cmyk = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        function (cOrHex: number | string, m?: number, y?: number, k?: number) {
+            const colorConvert = require('color-convert');
+
+            if (arguments.length < 2) {
+                // to RBG
+                return colorConvert.hex.cmyk(
+                    $h.normalizeString(cOrHex)
+                );
+            }
+
+            cOrHex = parseInt($h.toStringSafe(cOrHex).trim());
+            if (isNaN(cOrHex)) {
+                cOrHex = 0;
+            }
+            m = parseInt($h.toStringSafe(m).trim());
+            if (isNaN(m)) {
+                m = 0;
+            }
+            y = parseInt($h.toStringSafe(y).trim());
+            if (isNaN(y)) {
+                y = 0;
+            }
+            k = parseInt($h.toStringSafe(k).trim());
+            if (isNaN(k)) {
+                k = 0;
+            }
+
+            // to hex
+            return colorConvert.cmyk
+                .hex([cOrHex, m, y, k]);
+        }
+    );
+    // @ts-ignore
+    const $hsl = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        function (hOrHex: number | string, s?: number, l?: number) {
+            const colorConvert = require('color-convert');
+
+            if (arguments.length < 2) {
+                // to HSL
+                return colorConvert.hex.hsl(
+                    $h.normalizeString(hOrHex)
+                );
+            }
+
+            hOrHex = parseInt($h.toStringSafe(hOrHex).trim());
+            if (isNaN(hOrHex)) {
+                hOrHex = 0;
+            }
+            s = parseInt($h.toStringSafe(s).trim());
+            if (isNaN(s)) {
+                s = 0;
+            }
+            l = parseInt($h.toStringSafe(l).trim());
+            if (isNaN(l)) {
+                l = 0;
+            }
+
+            // to hex
+            return colorConvert.hsl
+                .hex([hOrHex, s, l]);
+        }
+    );
+    // @ts-ignore
+    const $rgb = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        function (rOrHex: number | string, g?: number, b?: number) {
+            const colorConvert = require('color-convert');
+
+            if (arguments.length < 2) {
+                // to RBG
+                return colorConvert.hex.rgb(
+                    $h.normalizeString(rOrHex)
+                );
+            }
+
+            rOrHex = parseInt($h.toStringSafe(rOrHex).trim());
+            if (isNaN(rOrHex)) {
+                rOrHex = 0;
+            }
+            g = parseInt($h.toStringSafe(g).trim());
+            if (isNaN(g)) {
+                g = 0;
+            }
+            b = parseInt($h.toStringSafe(b).trim());
+            if (isNaN(b)) {
+                b = 0;
+            }
+
+            // to hex
+            return colorConvert.rgb
+                .hex([rOrHex, g, b]);
+        }
+    );
+
+    // @ts-ignore
+    const $cb = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (val: any) => {
+            val = await $buff(val);
+
+            if (_.isNil(val)) {
+                val = Buffer.alloc(0);
+            }
+
+            return {
+                '__clipboard_tm_19790905': Symbol('CLIPBOARD'),
+                'text': val.toString('utf8'),
+            };
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -934,7 +1047,9 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$base64(val, enc?)` | Converts a value to a Base64 string. | `$base64("mkloubert:P@ssword123!", "ascii")`\n';
         md += '`$beautify` | Beautifies the code in the active editor and opens the result in a new one. | `$beautify`\n';
         md += '`$buff(val, enc?)` | Converts a value to a [Buffer](https://nodejs.org/api/buffer.html), if needed. | `$buff("TM")`\n';
+        md += '`$cb(val)` | Copyies a value to clipboard. | `$cb("TM+MK")`\n';
         md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
+        md += '`$cmyk(cOrHex, m?, y?, k?)` | Converts CMYK color from or to hex. | `$cmyk(167, 255, 4)`\n';
         md += '`$compile` | Compiles the code in the active editor and opens the result in a new one. | `$compile`\n';
         md += '`$csv(data?)` | Handles data as CSV and displays them. If no argument is defined, the value from `$e` constant is used. | `$csv( "col 1, col2\\r\\nval1.1,val1.2\\r\\nval2.1,val2.2" )`\n';
         md += '`$DELETE(url, body?, headers?)` | Starts a HTTP DELETE request. | `$DELETE("https://example.com/users/19861222")`\n';
@@ -944,6 +1059,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$GET(url, headers?)` | Starts a HTTP GET request. | `$GET("https://example.com/users/19790905")`\n';
         md += '`$guid(version?)` | Generates a GUID. | `$guid("4")`\n';
         md += '`$hash(algo, val, asBlob?)` | Hashes a value. | `$hash("sha1", "TM+MK")`\n';
+        md += '`$hsl(hOrHex, s?, l?)` | Converts HSL color from or to hex. | `$hsl(1, 2, 3)`\n';
         md += '`$htmldec(val)` | Handles a values as string, and decodes the HTML entities. | `$htmldec("5979 &gt; 23979")`\n';
         md += '`$htmlenc(val)` | Handles a values as string, and encodes the HTML entities. | `$htmlenc("<tm>")`\n';
         md += '`$ip(v6?, timeout?)` | Tries to detect the public IP address. | `$ip(true)`\n';
@@ -961,6 +1077,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$r(id)` | Extended [require() function](https://nodejs.org/api/modules.html#modules_require), which also allows to access the [modules of that extension](https://github.com/egodigital/vscode-powertools/blob/master/package.json). | `$r("moment").utc()`\n';
         md += '`$read(file, enc?)` | Reads data from a file. Relative paths will be mapped to the directory of the currently opened editor or the `.vscode-powertools` sub folder inside the user\'s home directory. | `$read("myFile.txt")`\n';
         md += '`$res(val, mapper?)` | Resolves a value. | `$res( Promise.resolve("TM"), s => s.toLowerCase() )`\n';
+        md += '`$rgb(rOrHex, g?, b?)` | Converts RGB color from or to hex. | `$rgb("ff0000")`\n';
         md += '`$rtrim(val)` | Handles a value as string and trims from ending whitespaces. | `$rtrim("  TM + MK   ")`\n';
         md += '`$sha1(val, asBlob?)` | Hashes a value with SHA-1. | `$sha1("TM+MK")`\n';
         md += '`$sha256(val, asBlob?)` | Hashes a value with SHA-256. | `$sha256("TM+MK")`\n';
