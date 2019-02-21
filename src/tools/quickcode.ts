@@ -847,7 +847,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
             const colorConvert = require('color-convert');
 
             if (arguments.length < 2) {
-                // to RBG
+                // to CMYK
                 return colorConvert.hex.cmyk(
                     $h.normalizeString(cOrHex)
                 );
@@ -911,7 +911,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
             const colorConvert = require('color-convert');
 
             if (arguments.length < 2) {
-                // to RBG
+                // to RGB
                 return colorConvert.hex.rgb(
                     $h.normalizeString(rOrHex)
                 );

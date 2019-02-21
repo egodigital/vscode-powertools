@@ -6,7 +6,7 @@
   * `$cb`: copyies a value to clipboard
   * `$cmyk`: converts CMYK color from or to hex
   * `$hsl`: converts HSL color from or to hex
-  * `$rbg`: converts RGB color from or to hex
+  * `$rgb`: converts RGB color from or to hex
 
 ## 0.24.0 (February 18th, 2019; Azure DevOps)
 
