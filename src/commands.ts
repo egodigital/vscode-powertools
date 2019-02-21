@@ -28,6 +28,7 @@ import * as ego_resources from './resources';
 import * as ego_scripts from './scripts';
 import * as ego_settings_global from './settings/global';
 import * as ego_tools_quickcode from './tools/quickcode';
+import * as ego_tools_typescript from './tools/typescript';
 import * as ego_workspace from './workspace';
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
@@ -43,6 +44,11 @@ const SUPPORTED_LANGUAGES = [
     'javascript',
 ];
 
+const SUPPORTED_TYPESCRIPT_SRC_LANGUAGES = [
+    'javascript',
+    'json',
+];
+
 
 /**
  * Registers all commands.
@@ -54,6 +60,60 @@ export function registerCommands(
     context: vscode.ExtensionContext,
     output: vscode.OutputChannel,
 ) {
+    const GENERATE_TYPESCRIPT = async function (doc?: vscode.TextDocument) {
+        if (arguments.length < 1) {
+            const ACTIVE_EDITOR = vscode.window.activeTextEditor;
+            if (ACTIVE_EDITOR) {
+                doc = ACTIVE_EDITOR.document;
+            }
+        }
+
+        if (_.isNil(doc)) {
+            vscode.window.showWarningMessage(
+                'No active editor found.'
+            );
+
+            return;
+        }
+
+        const LANGUAGE_NOT_SUPPORTED = Symbol('LANGUAGE_NOT_SUPPORTED');
+
+        const LANGUAGE = ego_helpers.normalizeString(doc.languageId);
+
+        let val: any = LANGUAGE_NOT_SUPPORTED;
+        if ('json' === LANGUAGE) {
+            val = JSON.parse(
+                doc.getText()
+            );
+        } else if ('javascript' === LANGUAGE) {
+            val = await Promise.resolve(eval(`(async () => {
+
+${ doc.getText() }
+
+})()`));
+        }
+
+        if (val === LANGUAGE_NOT_SUPPORTED) {
+            vscode.window.showWarningMessage(
+                `Language '${ LANGUAGE }' is not supported.`
+            );
+        } else {
+            const TYPESCRIPT = ego_tools_typescript.toTypeScript(
+                val
+            );
+
+            const NEW_TEXT_DOCUMENT = await vscode.workspace.openTextDocument({
+                content: TYPESCRIPT,
+                language: 'typescript',
+            });
+
+            await vscode.window.showTextDocument(
+                NEW_TEXT_DOCUMENT,
+                vscode.ViewColumn.Two,
+            );
+        }
+    };
+
     const OPEN_CODE_EXECUTION = async () => {
         let lastCode = ego_helpers.toStringSafe(
             context.globalState
@@ -768,6 +828,23 @@ export function registerCommands(
                         description: 'Starts or stops one or more TCP proxies.',
                     }
                 ];
+
+                const ACTIVE_EDITOR = vscode.window.activeTextEditor;
+                if (ACTIVE_EDITOR) {
+                    const DOC = ACTIVE_EDITOR.document;
+                    if (DOC) {
+                        const LANG = ego_helpers.normalizeString(DOC.languageId);
+                        if (SUPPORTED_TYPESCRIPT_SRC_LANGUAGES.indexOf(LANG) > -1) {
+                            QUICK_PICKS.splice(1, 0, {
+                                action: () => {
+                                    return GENERATE_TYPESCRIPT(DOC);
+                                },
+                                label: '$(code)  Generate TypeScript code ...',
+                                description: 'Generates TypeScript code from the value of the current text editor.',
+                            });
+                        }
+                    }
+                }
 
                 const SELECTED_ITEM = await vscode.window.showQuickPick(
                     QUICK_PICKS
