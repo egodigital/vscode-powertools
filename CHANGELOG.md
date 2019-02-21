@@ -1,6 +1,6 @@
 # Change Log (vscode-powertools)
 
-## 0.25.0 (February 18th, 2019; code execution)
+## 0.25.0 (February 20th, 2019; code execution)
 
 * added following constants for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$cb`: copyies a value to clipboard
