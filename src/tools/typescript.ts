@@ -18,43 +18,68 @@
 import * as _ from 'lodash';
 import * as ego_helpers from '../helpers';
 
+
 /**
  * Options for 'toTypeScript()' function.
  */
 export interface ToTypeScriptOptions {
 }
 
-/**
- * Converts a value to TypeScript code.
- *
- * @param {any} val The value to convert.
- * @param {ToTypeScriptOptions} [opts] Custom options.
- *
- * @return {string} The generated TypeScript code.
- */
-export function toTypeScript(val: any, opts?: ToTypeScriptOptions): string {
-    if (!opts) {
-        opts = <any>{};
-    }
 
-    let interfaceName = 'IMyInterface';
-    let typescript = '';
+function getTypescriptType(val: any, level: number) {
+    const START_SPACES = ' '.repeat((level + 1) * 4);
+    const END_SPACES = ' '.repeat(level * 4);
+
+    let type = '';
 
     if (_.isNull(val)) {
-        typescript += `type ${ interfaceName } = null;`;
+        type += `null`;
     } else if (_.isUndefined(val)) {
-        typescript += `type ${ interfaceName } = undefined;`;
+        type += `undefined`;
     } else if (_.isSymbol(val)) {
-        typescript += `type ${ interfaceName } = ${ val };`;
-    } else if (_.isObject(val)) {
-        typescript += `type ${ interfaceName } = {\n`;
-        typescript += toTypeScriptObjectSource(val, 1, 0);
-        typescript += `};`;
+        type += `symbol`;
+    } else if (_.isFunction(val)) {
+        const REFLECTION = reflectFunction(val);
+
+        type += `(${
+            REFLECTION.arguments
+                .map(arg => arg + ': any')
+                .join(', ')
+        }) => any`;
+    } else if (Array.isArray(val)) {
+        type += `[\n${ START_SPACES }`;
+        type += val.map(av => {
+            return getTypescriptType(av, level + 1);
+        }).join(` |\n${ START_SPACES }`);
+        type += `\n${ END_SPACES }]`;
+    } else if (_.isObjectLike(val)) {
+        if (_.isPlainObject(val)) {
+            type += '{\n';
+
+            const PROPERTY_LIST = ego_helpers.from(
+                Object.keys(val)
+            ).orderBy(p => ego_helpers.normalizeString(p))
+             .toArray();
+
+            for (const PROP of PROPERTY_LIST) {
+                type += `${ START_SPACES }${ PROP }: ${ getTypescriptType(val[PROP], level + 1) };\n`;
+            }
+
+            type += `${ END_SPACES }}`;
+        } else {
+            if (val.constructor) {
+                type = val.constructor.name;
+            }
+        }
     } else {
-        typescript += `type ${ interfaceName } = ${ val };`;
+        type = typeof val;
     }
 
-    return typescript;
+    if ('' === type) {
+        type = 'any';
+    }
+
+    return type;
 }
 
 function reflectFunction(func: Function) {
@@ -71,55 +96,26 @@ function reflectFunction(func: Function) {
     };
 }
 
-function toTypeScriptObjectSource(val: any, spaceLevel: number, level: number): string {
-    const SPACES = 4 * spaceLevel;
+/**
+ * Converts a value to TypeScript code.
+ *
+ * @param {any} val The value to convert.
+ * @param {ToTypeScriptOptions} [opts] Custom options.
+ *
+ * @return {string} The generated TypeScript code.
+ */
+export function toTypeScript(val: any, opts?: ToTypeScriptOptions): string {
+    if (!opts) {
+        opts = <any>{};
+    }
+
+    let interfaceName = 'IMyType';
     let typescript = '';
 
-    const PROPERTIES = ego_helpers.from(
-        Object.keys(val)
-    ).orderBy(p => ego_helpers.normalizeString(p));
-    for (const PROP of PROPERTIES) {
-        const PROPERTY_VALUE = val[PROP];
-
-        let type = `any`;
-
-        if (_.isNull(PROPERTY_VALUE)) {
-            type = `null`;
-        } else if (_.isUndefined(PROPERTY_VALUE)) {
-            type = `undefined`;
-        } else if (_.isSymbol(PROPERTY_VALUE)) {
-            type = `symbol`;
-        } else if (_.isFunction(PROPERTY_VALUE)) {
-            const REFLECTION = reflectFunction(PROPERTY_VALUE);
-
-            type = `(${
-                REFLECTION.arguments
-                    .map(a => a + ': any')
-                    .join(', ')
-            }) => any`;
-        } else if (_.isObject(PROPERTY_VALUE)) {
-            if (Array.isArray(PROPERTY_VALUE)) {
-                type = `(${
-                    PROPERTY_VALUE.length ?
-                        PROPERTY_VALUE.map(av => {
-                            return '{\n' + toTypeScriptObjectSource(av, spaceLevel + 1, level + 1) +
-                                (' '.repeat(SPACES)) + '}';
-                        }).join(') | (') : 'any'
-                })[]`;
-            } else if (_.isPlainObject(PROPERTY_VALUE)) {
-                type = '{\n' + toTypeScriptObjectSource(PROPERTY_VALUE, spaceLevel + 1, level + 1) +
-                       (' '.repeat(SPACES)) + '}';
-            } else {
-                if (PROPERTY_VALUE.constructor) {
-                    type = PROPERTY_VALUE.constructor.name;
-                }
-            }
-        } else {
-            type = typeof PROPERTY_VALUE;
-        }
-
-        typescript += ' '.repeat(SPACES);
-        typescript += `${ PROP }: ${ type };\n`;
+    if (_.isPlainObject(val)) {
+        typescript += `interface ${ interfaceName } ${ getTypescriptType(val, 0) }`;
+    } else {
+        typescript += `type ${ interfaceName } = ${ getTypescriptType(val, 0) };`;
     }
 
     return typescript;
