@@ -24,6 +24,14 @@ import * as ego_helpers from '../helpers';
 export interface ToTypeScriptOptions {
 }
 
+/**
+ * Converts a value to TypeScript code.
+ *
+ * @param {any} val The value to convert.
+ * @param {ToTypeScriptOptions} [opts] Custom options.
+ *
+ * @return {string} The generated TypeScript code.
+ */
 export function toTypeScript(val: any, opts?: ToTypeScriptOptions): string {
     if (!opts) {
         opts = <any>{};
@@ -47,6 +55,20 @@ export function toTypeScript(val: any, opts?: ToTypeScriptOptions): string {
     }
 
     return typescript;
+}
+
+function reflectFunction(func: Function) {
+    // https://stackoverflow.com/questions/6921588/is-it-possible-to-reflect-the-arguments-of-a-javascript-function
+    const ARGS = func.toString()
+        .replace (/[\r\n\s]+/g, ' ')
+        .match (/(?:function\s*\w*)?\s*(?:\((.*?)\)|([^\s]+))/)
+        .slice (1, 3)
+        .join('')
+        .split (/\s*,\s*/);
+
+    return {
+        arguments: ARGS,
+    };
 }
 
 function toTypeScriptObjectSource(val: any, spaceLevel: number, level: number): string {
@@ -76,8 +98,14 @@ function toTypeScriptObjectSource(val: any, spaceLevel: number, level: number): 
                     .join(', ')
             }) => any`;
         } else if (_.isObject(PROPERTY_VALUE)) {
-            if (_.isArray(PROPERTY_VALUE)) {
-                type = 'any[]';
+            if (Array.isArray(PROPERTY_VALUE)) {
+                type = `(${
+                    PROPERTY_VALUE.length ?
+                        PROPERTY_VALUE.map(av => {
+                            return '{\n' + toTypeScriptObjectSource(av, spaceLevel + 1, level + 1) +
+                                (' '.repeat(SPACES)) + '}';
+                        }).join(') | (') : 'any'
+                })[]`;
             } else if (_.isPlainObject(PROPERTY_VALUE)) {
                 type = '{\n' + toTypeScriptObjectSource(PROPERTY_VALUE, spaceLevel + 1, level + 1) +
                        (' '.repeat(SPACES)) + '}';
@@ -95,18 +123,4 @@ function toTypeScriptObjectSource(val: any, spaceLevel: number, level: number): 
     }
 
     return typescript;
-}
-
-function reflectFunction(func: Function) {
-    // https://stackoverflow.com/questions/6921588/is-it-possible-to-reflect-the-arguments-of-a-javascript-function
-    const ARGS = func.toString()
-        .replace (/[\r\n\s]+/g, ' ')
-        .match (/(?:function\s*\w*)?\s*(?:\((.*?)\)|([^\s]+))/)
-        .slice (1, 3)
-        .join('')
-        .split (/\s*,\s*/);
-
-    return {
-        arguments: ARGS,
-    };
 }
