@@ -2,6 +2,8 @@
 
 ## 0.26.0 (February 23rd, 2019; tools)
 
+* added following constants for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$polyline`: converts from and to [polyline](https://developers.google.com/maps/documentation/utilities/polylinealgorithm)
 * added `Generate TypeScript code ...` sub command to `Power Tools: Tools`, which generates TypeScript code from a JSON or JavaScript editor
 
 ## 0.25.0 (February 20th, 2019; code execution)

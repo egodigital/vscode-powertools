@@ -373,7 +373,7 @@ export function getAzureDevOpsAPICredentials(extension: vscode.ExtensionContext)
         organization: organization,
         pat: pat,
         toBase64: function() {
-            return (new Buffer(`${ this.username }:${ this.pat }`, 'ascii'))
+            return Buffer.from(`${ this.username }:${ this.pat }`, 'ascii')
                 .toString('base64');
         },
         username: username,

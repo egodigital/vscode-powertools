@@ -32,6 +32,7 @@ import * as ego_tools_typescript from './tools/typescript';
 import * as ego_workspace from './workspace';
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
+const geodist = require('geodist');
 const hexy = require('hexy');
 import * as htmlEntities from 'html-entities';
 import * as moment from 'moment';
@@ -179,6 +180,57 @@ ${ doc.getText() }
                     vscode.window.showInformationMessage(
                         'Value has been copied to clipboard.'
                     );
+                } else if (RESULT && _.isSymbol(RESULT['__georoute_tm_19790905'])) {
+                    let md = `# Geo Route\n\n`;
+                    md += `Nr | Location (latitude, longitude) | Distance, in m | Bearing, in degree\n`;
+                    md += `----- | ----- | ----- | -----\n`;
+
+                    // array of [lat, lng]
+                    const LOCATIONS: [number, number][] = RESULT.locations;
+                    for (let i = 0; i < LOCATIONS.length; i++) {
+                        const LOC = RESULT.locations[i];
+
+                        const LAT = LOC[0];
+                        const LNG = LOC[1];
+
+                        let distanceCol = '';
+                        if (i > 0) {
+                            const PREV_LOC = RESULT.locations[i - 1];
+
+                            const DISTANCE: number = geodist({
+                                lat: PREV_LOC[0], lon: PREV_LOC[1]
+                            }, {
+                                lat: LAT, lon: LNG
+                            }, {
+                                exact: true,
+                                unit: 'meters',
+                            });
+
+                            distanceCol = DISTANCE.toString();
+                        }
+
+                        let bearingCol = '';
+                        if (LOCATIONS.length > 1) {
+                            const NEXT_LOC = RESULT.locations[i + 1];
+                            if (NEXT_LOC) {
+                                bearingCol = ego_helpers.calcBearing(
+                                    LOC[0], LOC[1],
+                                    NEXT_LOC[0], NEXT_LOC[1],
+                                ).toString();
+                            }
+                        }
+
+                        md += `${i + 1} | \`${ HTML.encode(
+                            JSON.stringify(LOC)
+                        )}\` (📍 [open](https://maps.google.com/?z=10&q=${ LAT },${ LNG })) | ${ distanceCol } | ${ bearingCol } \n`;
+                    }
+
+                    const WEB_VIEW = new ego_markdown.MarkdownWebView({
+                        markdown: md,
+                        title: `Geo Route`,
+                    });
+
+                    await WEB_VIEW.open();
                 } else if (Buffer.isBuffer(RESULT)) {
                     let md = '# Code Execution Result (Buffer)\n\n';
                     md += '```';

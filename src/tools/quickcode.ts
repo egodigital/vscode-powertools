@@ -952,6 +952,32 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         }
     );
 
+    // @ts-ignore
+    const $polyline = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        (val: any) => {
+            const polyline = require('@mapbox/polyline');
+
+            if (Array.isArray(val)) {
+                // to polyline
+                return polyline.encode(val);
+            }
+
+            if (_.isPlainObject(val)) {
+                // from GetJSON LineString
+                return polyline.fromGeoJSON(val);
+            }
+
+            // from polyline
+            return {
+                '__georoute_tm_19790905': Symbol('GEO_ROUTE'),
+                'locations': polyline.decode(
+                    $h.toStringSafe(val)
+                      .trim()
+                ),
+            };
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -1071,6 +1097,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$md5(val, asBlob?)` | Hashes a value with MD5. | `$md5("TM+MK")`\n';
         md += '`$now(timeZone?)` | Returns the current [time](https://momentjs.com/), with an optional [timezone](https://momentjs.com/timezone/). | `$now("Europe/Berlin")`\n';
         md += '`$PATCH(url, body?, headers?)` | Starts a HTTP PATCH request. | `$PATCH("https://example.com/users/19790905")`\n';
+        md += '`$polyline(val)` | Converts from an to [polyline](https://developers.google.com/maps/documentation/utilities/polylinealgorithm). | `$polyline("_p~iF~ps|U_ulLnnqC_mqNvxq`@")`\n';
         md += '`$POST(url, body?, headers?)` | Starts a HTTP POST request. | `$POST("https://example.com/users/19790905")`\n';
         md += '`$PUT(url, body?, headers?)` | Starts a HTTP PUT request. | `$PUT("https://example.com/users/19790905")`\n';
         md += '`$pwd(length?, allowedChars?)` | Generates a password. | `$pwd(64)`\n';

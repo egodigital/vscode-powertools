@@ -108,6 +108,29 @@ export function buildButtonSync<TButton extends ego_contracts.Button = ego_contr
 }
 
 /**
+ * Calculates the bearing between two locations.
+ *
+ * @param {number} lat1 The latitude of the 1st location.
+ * @param {number} lng1 The longitude of the 1st location.
+ * @param {number} lat2 The latitude of the 2nd location.
+ * @param {number} lng2 The longitude of the 2nd location.
+ *
+ * @return {number} The bearing, in degree.
+ */
+export function calcBearing(
+   lat1: number, lng1: number,
+   lat2: number, lng2: number,
+): number {
+    const D_LNG = lng2 - lng1;
+    const Y = Math.sin(D_LNG) * Math.cos(lat2);
+    const X = Math.cos(lat1) * Math.sin(lat2) -
+              Math.sin(lat1) * Math.cos(lat2) * Math.cos(D_LNG);
+    const B_RNG = toDegree(Math.atan2(Y, X));
+
+    return 360 - ((B_RNG + 360) % 360);
+}
+
+/**
  * Creates the extension's folder in the home directory, if it does not exist.
  *
  * @return {Promise<boolean>} The promise that indicates if directory has been created or not.
@@ -383,6 +406,21 @@ export async function showErrorMessage(err: any): Promise<string> {
             errorToString(err).trim()
         );
     }
+}
+
+/**
+ * Converts radian to degree.
+ *
+ * @param {number} rad The value, in radian.
+ *
+ * @return {number} The value, in degree.
+ */
+export function toDegree(rad: number): number {
+    rad = parseFloat(
+        toStringSafe(rad).trim()
+    );
+
+    return rad * 180 / Math.PI;
 }
 
 /**
