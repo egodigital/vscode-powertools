@@ -1,6 +1,6 @@
 # Change Log (vscode-powertools)
 
-## 0.26.0 (February 23rd, 2019; tools)
+## 0.26.1 (February 23rd, 2019; tools)
 
 * added following constants for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$polyline`: converts from and to [polyline](https://developers.google.com/maps/documentation/utilities/polylinealgorithm)

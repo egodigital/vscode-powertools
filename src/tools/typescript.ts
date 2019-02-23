@@ -46,14 +46,14 @@ function getTypescriptType(val: any, level: number) {
                 .map(arg => arg + ': any')
                 .join(', ')
         }) => any`;
-    } else if ('function' === typeof val[Symbol.iterator]) {
-        type += `Iterator<any>`;
     } else if (Array.isArray(val)) {
         type += `[\n${ START_SPACES }`;
         type += val.map(av => {
             return getTypescriptType(av, level + 1);
         }).join(` |\n${ START_SPACES }`);
         type += `\n${ END_SPACES }]`;
+    } else if ('function' === typeof val[Symbol.iterator]) {
+        type += `Iterator<any>`;
     } else if (_.isObjectLike(val)) {
         if (_.isPlainObject(val)) {
             type += '{\n';
