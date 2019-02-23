@@ -46,6 +46,8 @@ function getTypescriptType(val: any, level: number) {
                 .map(arg => arg + ': any')
                 .join(', ')
         }) => any`;
+    } else if ('function' === typeof val[Symbol.iterator]) {
+        type += `Iterator<any>`;
     } else if (Array.isArray(val)) {
         type += `[\n${ START_SPACES }`;
         type += val.map(av => {
