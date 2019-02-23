@@ -3,7 +3,7 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.26.1",
+    "version": "0.26.2",
     "engines": {
         "vscode": "^1.31.0"
     },

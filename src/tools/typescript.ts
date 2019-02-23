@@ -52,8 +52,6 @@ function getTypescriptType(val: any, level: number) {
             return getTypescriptType(av, level + 1);
         }).join(` |\n${ START_SPACES }`);
         type += `\n${ END_SPACES }]`;
-    } else if ('function' === typeof val[Symbol.iterator]) {
-        type += `Iterator<any>`;
     } else if (_.isObjectLike(val)) {
         if (_.isPlainObject(val)) {
             type += '{\n';
@@ -73,6 +71,8 @@ function getTypescriptType(val: any, level: number) {
                 type = val.constructor.name;
             }
         }
+    } else if (!_.isString(val) && ('function' === typeof val[Symbol.iterator])) {
+        type += `Iterator<any>`;
     } else {
         type = typeof val;
     }
