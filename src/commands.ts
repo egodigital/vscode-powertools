@@ -900,7 +900,7 @@ ${ codeToExecute }
                                 action: () => {
                                     return GENERATE_TYPESCRIPT(DOC);
                                 },
-                                label: '$(code)  Generate TypeScript code ...',
+                                label: '$(code)  Generate TypeScript Code ...',
                                 description: 'Generates TypeScript code from the value of the current text editor.',
                             });
                         }
