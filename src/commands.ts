@@ -87,9 +87,18 @@ export function registerCommands(
                 doc.getText()
             );
         } else if ('javascript' === LANGUAGE) {
+            let codeToExecute = doc.getText()
+                .trim();
+            if (!codeToExecute.startsWith('return ')) {
+                codeToExecute = 'return ' + codeToExecute;
+            }
+            if (!codeToExecute.endsWith(';')) {
+                codeToExecute += ';';
+            }
+
             val = await Promise.resolve(eval(`(async () => {
 
-${ doc.getText() }
+${ codeToExecute }
 
 })()`));
         }
