@@ -1,5 +1,10 @@
 # Change Log (vscode-powertools)
 
+## 0.27.0 (February 25th, 2019; settings)
+
+* added the following workspace settings (`.vscode/settings.json`):
+  * `runNPMInstall`: runs `npm install` automatically on startup, if a `package.json` file exists, but no `node_modules` has been found
+
 ## 0.26.2 (February 23rd, 2019; tools)
 
 * added following constants for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):

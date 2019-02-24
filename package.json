@@ -3,7 +3,7 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.26.2",
+    "version": "0.27.0",
     "engines": {
         "vscode": "^1.31.0"
     },
@@ -859,6 +859,11 @@
                                     }
                                 ]
                             }
+                        },
+                        "runNPMInstall": {
+                            "description": "Runs 'npm install' if a 'package.json' file exists, but no 'node_modules' has been found.",
+                            "type": "boolean",
+                            "default": false
                         },
                         "startup": {
                             "description": "One or more things to execute at startup.",
@@ -2060,7 +2065,7 @@
         "@types/tmp": "0.0.33",
         "@types/uuid": "^3.4.4",
         "@types/yazl": "^2.4.1",
-        "tslint": "^5.12.1",
+        "tslint": "^5.13.0",
         "typedoc": "^0.13.0",
         "typescript": "3.2.4",
         "vsce": "^1.57.1",

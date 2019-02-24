@@ -689,6 +689,10 @@ export interface ExtensionConfiguration extends WithValues {
      */
     jobs?: JobEntry[];
     /**
+     * Runs 'npm install' if a 'package.json' file exists, but no 'node_modules' has been found.
+     */
+    runNPMInstall?: boolean;
+    /**
      * One or more things to run at startup.
      */
     startup?: StartupEntry[];

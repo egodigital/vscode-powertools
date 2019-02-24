@@ -29,6 +29,7 @@ import * as ego_workspaces_commands from './workspaces/commands';
 import * as ego_workspaces_config from './workspaces/config';
 import * as ego_workspaces_events from './workspaces/events';
 import * as ego_workspaces_jobs from './workspaces/jobs';
+import * as ego_workspaces_npm from './workspaces/npm';
 import * as ego_workspaces_startup from './workspaces/startup';
 import * as fsExtra from 'fs-extra';
 import * as path from 'path';
@@ -879,6 +880,9 @@ export class Workspace extends ego_helpers.WorkspaceBase {
         );
 
         // startups !!!THIS HAS TO BE DONE AT LAST!!!
+        await ego_workspaces_npm.runNPMStartupTasks.apply(
+            this
+        );
         await ego_workspaces_startup.onStartup.apply(
             this
         );
