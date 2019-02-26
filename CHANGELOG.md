@@ -1,6 +1,6 @@
 # Change Log (vscode-powertools)
 
-## 0.28.0 (February 27th, 2019; settings and TypeScript)
+## 0.28.0 (February 26th, 2019; settings and TypeScript)
 
 * improved and fixed `Generate TypeScript Code ...` sub command of `Power Tools: Tools`
 * added the following workspace settings (`.vscode/settings.json`):
