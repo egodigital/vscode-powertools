@@ -242,11 +242,9 @@ export async function _exec_fcac50a111604220b8173024b6925905(
     );
 
     // @ts-ignore
-    const $r = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
-        (id: string) => {
-            return $h.requireModule(id);
-        }
-    );
+    const $r = (id: string) => {
+        return $h.requireModule(id);
+    };
 
     // @ts-ignore
     const $res = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
