@@ -1,11 +1,8 @@
 # Change Log (vscode-powertools)
 
-## 0.28.0 (February 27th, 2019; TypeScript)
+## 0.28.0 (February 27th, 2019; settings and TypeScript)
 
 * improved and fixed `Generate TypeScript Code ...` sub command of `Power Tools: Tools`
-
-## 0.27.0 (February 25th, 2019; settings)
-
 * added the following workspace settings (`.vscode/settings.json`):
   * `runNPMInstall`: runs `npm install` automatically on startup, if a `package.json` file exists, but no `node_modules` has been found
 
