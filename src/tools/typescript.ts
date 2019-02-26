@@ -54,18 +54,22 @@ function getTypescriptType(val: any, level: number) {
         type += `\n${ END_SPACES }]`;
     } else if (_.isObjectLike(val)) {
         if (_.isPlainObject(val)) {
-            type += '{\n';
-
             const PROPERTY_LIST = ego_helpers.from(
                 Object.keys(val)
             ).orderBy(p => ego_helpers.normalizeString(p))
              .toArray();
 
-            for (const PROP of PROPERTY_LIST) {
-                type += `${ START_SPACES }${ PROP }: ${ getTypescriptType(val[PROP], level + 1) };\n`;
-            }
+            if (PROPERTY_LIST.length) {
+                type += `{\n`;
 
-            type += `${ END_SPACES }}`;
+                for (const PROP of PROPERTY_LIST) {
+                    type += `${ START_SPACES }${ JSON.stringify(PROP) }: ${ getTypescriptType(val[PROP], level + 1) };\n`;
+                }
+
+                type += `${ END_SPACES }}`;
+            } else {
+                type += `{ [ key: string ]: any }`;
+            }
         } else {
             if (val.constructor) {
                 type = val.constructor.name;
