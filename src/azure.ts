@@ -19,6 +19,7 @@ import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_settings_global from './settings/global';
 import * as ego_log from './log';
+import * as moment from 'moment';
 const opn = require('opn');
 import * as vscode from 'vscode';
 
@@ -33,7 +34,10 @@ interface BoardResult extends Result<BoardReference> {
 }
 
 interface BuildReference {
+    buildNumber: string;
     id: number;
+    queueTime: string;
+    status: string;
     url: string;
 }
 
@@ -185,7 +189,7 @@ class TeamProject {
          .toArray();
     }
 
-    public async openInBrower() {
+    public async openInBrowser() {
         const BROWSER_URL = `https://${ encodeURIComponent(this.credentials.organization) }.visualstudio.com/${ encodeURIComponent(this.azureObject.name) }`;
 
         opn(BROWSER_URL, {
@@ -278,6 +282,18 @@ class Build {
         return this.project
             .credentials;
     }
+
+    public async openInBrowser() {
+        const BROWSER_URL = `https://egodigital.visualstudio.com/${
+            encodeURIComponent(this.project.azureObject.name)
+        }/_build/results?buildId=${
+            encodeURIComponent(this.azureObject.id.toString())
+        }`;
+
+        await opn(BROWSER_URL, {
+            wait: false,
+        });
+    }
 }
 
 class Board {
@@ -317,7 +333,7 @@ class Dashboard {
             .credentials;
     }
 
-    public async openInBrower() {
+    public async openInBrowser() {
         const BROWSER_URL = `https://${
             encodeURIComponent(this.credentials.organization)
         }.visualstudio.com/${
@@ -343,7 +359,7 @@ class Wiki {
             .credentials;
     }
 
-    public async openInBrower() {
+    public async openInBrowser() {
         const BROWSER_URL = `https://${
             encodeURIComponent(this.credentials.organization)
         }.visualstudio.com/${
@@ -517,7 +533,77 @@ async function showAzureDevOpsBoardSelector(team: WebApiTeam) {
 
 async function showAzureDevOpsBuildSelector(proj: TeamProject) {
     const BUILDS = await proj.getBuilds();
-    if (BUILDS) { }
+
+    const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = ego_helpers.from(
+        BUILDS.map(b => {
+            let icon = '';
+            switch (ego_helpers.normalizeString(b.azureObject.status)) {
+                case 'cancelling':
+                    icon = '$(circle-slash)';
+                    break;
+
+                case 'completed':
+                    icon = '$(check)';
+                    break;
+
+                case 'inprogress':
+                    icon = '$(triangle-right)';
+                    break;
+
+                case 'notstarted':
+                    icon = '$(watch)';
+                    break;
+
+                case 'postponed':
+                    icon = '$(primitive-square)';
+                    break;
+            }
+
+            return {
+                action: async () => {
+                    await b.openInBrowser();
+                },
+                build: b,
+                label: icon + ('' === icon ? '' : '  ') +
+                    b.azureObject.buildNumber,
+                detail: `${
+                    'Queued at: ' + moment.utc(b.azureObject.queueTime)
+                        .local()
+                        .format('YYYY-MM-DD HH:mm:ss')
+                }; Status: ${ ego_helpers.toStringSafe(b.azureObject.status) }`,
+            };
+        })
+    ).orderByDescending(qp => qp.detail)
+     .thenBy(qp => ego_helpers.normalizeString(qp.build.azureObject.buildNumber))
+     .toArray();
+
+     if (!QUICK_PICKS.length) {
+        vscode.window.showWarningMessage(
+            'No build found!'
+        );
+
+        return;
+    }
+
+    let selectedItem: ego_contracts.ActionQuickPickItem;
+    if (1 === QUICK_PICKS.length) {
+        selectedItem = QUICK_PICKS[0];
+    } else {
+        selectedItem = await vscode.window.showQuickPick(
+            QUICK_PICKS,
+            {
+                canPickMany: false,
+                ignoreFocusOut: true,
+                placeHolder: 'Please select a build ...',
+                matchOnDescription: true,
+                matchOnDetail: true,
+            }
+        );
+    }
+
+    if (selectedItem) {
+        await selectedItem.action();
+    }
 }
 
 async function showAzureDevOpsDashboardSelector(team: WebApiTeam) {
@@ -527,7 +613,7 @@ async function showAzureDevOpsDashboardSelector(team: WebApiTeam) {
         DASHBOARDS.map(db => {
             return {
                 action: async () => {
-                    await db.openInBrower();
+                    await db.openInBrowser();
                 },
                 label: db.azureObject.name,
             };
@@ -749,7 +835,7 @@ async function showAzureDevOpsWikiSelector(proj: TeamProject) {
         WIKIS.map(w => {
             return {
                 action: async () => {
-                    await w.openInBrower();
+                    await w.openInBrowser();
                 },
                 label: w.azureObject.name,
             };

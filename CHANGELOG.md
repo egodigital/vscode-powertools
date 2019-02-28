@@ -1,9 +1,11 @@
 # Change Log (vscode-powertools)
 
-## 0.29.0 (February 28th, 2019; npm update)
+## 0.29.0 (February 28th, 2019; Azure DevOps)
 
+* can open Azure DevOps builds now via `Power Tools: Azure DevOps` command
 * updated the following [npm](https://www.npmjs.com/) modules:
   * [js-beautify](https://www.npmjs.com/package/js-beautify) `^1.9.0`
+* fixes
 
 ## 0.28.1 (February 26th, 2019; settings and TypeScript)
 
