@@ -55,6 +55,15 @@ interface DashboardResult {
     dashboardEntries: DashboardReference[];
 }
 
+interface GitRepositoryReference {
+    defaultBranch: string;
+    id: string;
+    name: string;
+}
+
+interface GitRepositoryResult extends Result<GitRepositoryReference> {
+}
+
 interface TeamProjectReference {
     description: string;
     id: string;
@@ -127,6 +136,37 @@ class TeamProject {
          .toArray();
     }
 
+    public async getGitRepositories(): Promise<GitRepository[]> {
+        const RESULT: GitRepositoryResult = await vscode.window.withProgress({
+            cancellable: false,
+            location: vscode.ProgressLocation.Window,
+            title: 'Azure DevOps Git',
+        }, async (progress) => {
+            progress.report({
+                message: 'Loading git repositories ...',
+            });
+
+            const RESPONSE = await ego_helpers.GET(`https://dev.azure.com/${ encodeURIComponent(this.credentials.organization) }/${ encodeURIComponent(this.azureObject.id) }/_apis/git/repositories?api-version=5.0`, {
+                'Authorization': 'Basic ' + this.credentials.toBase64(),
+            });
+
+            if (200 !== RESPONSE.code) {
+                throw new Error(`Unexpected Response: [${ RESPONSE.code }] '${ RESPONSE.status }'`);
+            }
+
+            return JSON.parse(
+                (await RESPONSE.readBody())
+                    .toString('utf8')
+            );
+        });
+
+        return ego_helpers.from(
+            RESULT.value
+        ).orderByDescending(gr => ego_helpers.normalizeString(gr.name))
+         .select(gr => new GitRepository(this, gr))
+         .toArray();
+    }
+
     public async getTeams(): Promise<WebApiTeam[]> {
         const RESULT: WebApiTeamResult = await vscode.window.withProgress({
             cancellable: false,
@@ -194,6 +234,54 @@ class TeamProject {
 
         opn(BROWSER_URL, {
             wait: false
+        });
+    }
+}
+
+class Build {
+    constructor(
+        public readonly project: TeamProject,
+        public readonly azureObject: BuildReference,
+    ) { }
+
+    public get credentials() {
+        return this.project
+            .credentials;
+    }
+
+    public async openInBrowser() {
+        const BROWSER_URL = `https://egodigital.visualstudio.com/${
+            encodeURIComponent(this.project.azureObject.name)
+        }/_build/results?buildId=${
+            encodeURIComponent(this.azureObject.id.toString())
+        }`;
+
+        await opn(BROWSER_URL, {
+            wait: false,
+        });
+    }
+}
+
+class GitRepository {
+    constructor(
+        public readonly project: TeamProject,
+        public readonly azureObject: GitRepositoryReference,
+    ) { }
+
+    public get credentials() {
+        return this.project
+            .credentials;
+    }
+
+    public async openInBrowser() {
+        const BROWSER_URL = `https://egodigital.visualstudio.com/${
+            encodeURIComponent(this.project.azureObject.name)
+        }/_git/${
+            encodeURIComponent(this.azureObject.name)
+        }`;
+
+        await opn(BROWSER_URL, {
+            wait: false,
         });
     }
 }
@@ -269,30 +357,6 @@ class WebApiTeam {
         ).orderBy(d => ego_helpers.normalizeString(d.name))
          .select(d => new Dashboard(this, d))
          .toArray();
-    }
-}
-
-class Build {
-    constructor(
-        public readonly project: TeamProject,
-        public readonly azureObject: BuildReference,
-    ) { }
-
-    public get credentials() {
-        return this.project
-            .credentials;
-    }
-
-    public async openInBrowser() {
-        const BROWSER_URL = `https://egodigital.visualstudio.com/${
-            encodeURIComponent(this.project.azureObject.name)
-        }/_build/results?buildId=${
-            encodeURIComponent(this.azureObject.id.toString())
-        }`;
-
-        await opn(BROWSER_URL, {
-            wait: false,
-        });
     }
 }
 
@@ -504,7 +568,7 @@ async function showAzureDevOpsBoardSelector(team: WebApiTeam) {
     ).orderBy(qp => ego_helpers.normalizeString(qp.label))
      .toArray();
 
-     if (!QUICK_PICKS.length) {
+    if (!QUICK_PICKS.length) {
         vscode.window.showWarningMessage(
             'No board found!'
         );
@@ -573,11 +637,11 @@ async function showAzureDevOpsBuildSelector(proj: TeamProject) {
                 }; Status: ${ ego_helpers.toStringSafe(b.azureObject.status) }`,
             };
         })
-    ).orderByDescending(qp => qp.detail)
+    ).orderByDescending(qp => ego_helpers.normalizeString(qp.detail))
      .thenBy(qp => ego_helpers.normalizeString(qp.build.azureObject.buildNumber))
      .toArray();
 
-     if (!QUICK_PICKS.length) {
+    if (!QUICK_PICKS.length) {
         vscode.window.showWarningMessage(
             'No build found!'
         );
@@ -621,7 +685,7 @@ async function showAzureDevOpsDashboardSelector(team: WebApiTeam) {
     ).orderBy(qp => ego_helpers.normalizeString(qp.label))
      .toArray();
 
-     if (!QUICK_PICKS.length) {
+    if (!QUICK_PICKS.length) {
         vscode.window.showWarningMessage(
             'No dashboard found!'
         );
@@ -648,6 +712,48 @@ async function showAzureDevOpsDashboardSelector(team: WebApiTeam) {
     }
 }
 
+async function showAzureDevOpsGitRepoSelector(proj: TeamProject) {
+    const GIT_REPOS = await proj.getGitRepositories();
+
+    const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = ego_helpers.from(
+        GIT_REPOS.map(gr => {
+            return {
+                action: async () => {
+                    await gr.openInBrowser();
+                },
+                label: gr.azureObject.name,
+            };
+        })
+    ).orderBy(qp => ego_helpers.normalizeString(qp.label))
+     .toArray();
+
+    if (!QUICK_PICKS.length) {
+        vscode.window.showWarningMessage(
+            'No git repository found!'
+        );
+
+        return;
+    }
+
+    let selectedItem: ego_contracts.ActionQuickPickItem;
+    if (1 === QUICK_PICKS.length) {
+        selectedItem = QUICK_PICKS[0];
+    } else {
+        selectedItem = await vscode.window.showQuickPick(
+            QUICK_PICKS,
+            {
+                canPickMany: false,
+                ignoreFocusOut: true,
+                placeHolder: 'Please select a git repository ...',
+            }
+        );
+    }
+
+    if (selectedItem) {
+        await selectedItem.action();
+    }
+}
+
 async function showAzureDevOpsProjectActions(proj: TeamProject) {
     const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [
         {
@@ -656,6 +762,13 @@ async function showAzureDevOpsProjectActions(proj: TeamProject) {
             },
             label: 'Builds ...',
             description: 'Selects a build.'
+        },
+        {
+            action: async () => {
+                await showAzureDevOpsGitRepoSelector(proj);
+            },
+            label: 'Git Repositories ...',
+            description: 'Selects a git repository.'
         },
         {
             action: async () => {
