@@ -2075,7 +2075,8 @@
     "license": "LGPL-3.0",
     "homepage": "https://github.com/egodigital/vscode-powertools#readme",
     "keywords": [
-        "eGO",
+        "Azure",
+        "DevOps",
         "Tools",
         "CoffeeScript",
         "NodeJS",
