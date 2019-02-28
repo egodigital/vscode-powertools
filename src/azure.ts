@@ -64,6 +64,22 @@ interface GitRepositoryReference {
 interface GitRepositoryResult extends Result<GitRepositoryReference> {
 }
 
+interface ReleaseReference {
+    createdOn: string;
+    description: string;
+    id: number;
+    name: string;
+    status: string;
+}
+
+interface ReleaseResult extends Result<ReleaseReference> {
+}
+
+interface Result<TObject> {
+    count: number;
+    value: TObject[];
+}
+
 interface TeamProjectReference {
     description: string;
     id: string;
@@ -72,11 +88,6 @@ interface TeamProjectReference {
 }
 
 interface TeamProjectResult extends Result<TeamProjectReference> {
-}
-
-interface Result<TObject> {
-    count: number;
-    value: TObject[];
 }
 
 interface WebApiTeamReference {
@@ -164,6 +175,37 @@ class TeamProject {
             RESULT.value
         ).orderByDescending(gr => ego_helpers.normalizeString(gr.name))
          .select(gr => new GitRepository(this, gr))
+         .toArray();
+    }
+
+    public async getReleases(): Promise<Release[]> {
+        const RESULT: ReleaseResult = await vscode.window.withProgress({
+            cancellable: false,
+            location: vscode.ProgressLocation.Window,
+            title: 'Azure DevOps Releases',
+        }, async (progress) => {
+            progress.report({
+                message: 'Loading releases ...',
+            });
+
+            const RESPONSE = await ego_helpers.GET(`https://vsrm.dev.azure.com/${ encodeURIComponent(this.credentials.organization) }/${ encodeURIComponent(this.azureObject.id) }/_apis/release/releases?api-version=5.0`, {
+                'Authorization': 'Basic ' + this.credentials.toBase64(),
+            });
+
+            if (200 !== RESPONSE.code) {
+                throw new Error(`Unexpected Response: [${ RESPONSE.code }] '${ RESPONSE.status }'`);
+            }
+
+            return JSON.parse(
+                (await RESPONSE.readBody())
+                    .toString('utf8')
+            );
+        });
+
+        return ego_helpers.from(
+            RESULT.value
+        ).orderByDescending(r => r.id)
+         .select(r => new Release(this, r))
          .toArray();
     }
 
@@ -278,6 +320,30 @@ class GitRepository {
             encodeURIComponent(this.project.azureObject.name)
         }/_git/${
             encodeURIComponent(this.azureObject.name)
+        }`;
+
+        await opn(BROWSER_URL, {
+            wait: false,
+        });
+    }
+}
+
+class Release {
+    constructor(
+        public readonly project: TeamProject,
+        public readonly azureObject: ReleaseReference,
+    ) { }
+
+    public get credentials() {
+        return this.project
+            .credentials;
+    }
+
+    public async openInBrowser() {
+        const BROWSER_URL = `https://egodigital.visualstudio.com/${
+            encodeURIComponent(this.project.azureObject.name)
+        }/_releaseProgress?releaseId=${
+            encodeURIComponent(this.azureObject.id.toString())
         }`;
 
         await opn(BROWSER_URL, {
@@ -631,7 +697,7 @@ async function showAzureDevOpsBuildSelector(proj: TeamProject) {
                 label: icon + ('' === icon ? '' : '  ') +
                     b.azureObject.buildNumber,
                 detail: `${
-                    'Queued at: ' + moment.utc(b.azureObject.queueTime)
+                    'Queued on: ' + moment.utc(b.azureObject.queueTime)
                         .local()
                         .format('YYYY-MM-DD HH:mm:ss')
                 }; Status: ${ ego_helpers.toStringSafe(b.azureObject.status) }`,
@@ -772,6 +838,13 @@ async function showAzureDevOpsProjectActions(proj: TeamProject) {
         },
         {
             action: async () => {
+                await showAzureDevOpsReleaseSelector(proj);
+            },
+            label: 'Releases ...',
+            description: 'Selects a release.'
+        },
+        {
+            action: async () => {
                 await showAzureDevOpsTeamSelector(proj);
             },
             label: 'Teams ...',
@@ -857,6 +930,73 @@ async function showAzureDevOpsProjectSelector(cred: ego_contracts.AzureDevOpsAPI
                 canPickMany: false,
                 ignoreFocusOut: true,
                 placeHolder: 'Please select a project ...'
+            }
+        );
+    }
+
+    if (selectedItem) {
+        await selectedItem.action();
+    }
+}
+
+async function showAzureDevOpsReleaseSelector(proj: TeamProject) {
+    const RELEASES = await proj.getReleases();
+
+    const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = ego_helpers.from(
+        RELEASES.map(r => {
+            let icon = '';
+            switch (ego_helpers.normalizeString(r.azureObject.status)) {
+                case 'abandoned':
+                    icon = '$(circle-slash)';
+                    break;
+
+                case 'active':
+                    icon = '$(triangle-right)';
+                    break;
+
+                case 'draft':
+                    icon = '$(pencil)';
+                    break;
+            }
+
+            return {
+                action: async () => {
+                    await r.openInBrowser();
+                },
+                description: r.azureObject.description,
+                detail: `${
+                    'Created on: ' + moment.utc(r.azureObject.createdOn)
+                        .local()
+                        .format('YYYY-MM-DD HH:mm:ss')
+                }; Status: ${ ego_helpers.toStringSafe(r.azureObject.status) }`,
+                label: icon + ('' === icon ? '' : '  ') +
+                    r.azureObject.name,
+                release: r,
+            };
+        })
+    ).orderByDescending(qp => ego_helpers.normalizeString(qp.detail))
+     .thenByDescending(qp => ego_helpers.normalizeString(qp.release.azureObject.id))
+     .thenBy(qp => ego_helpers.normalizeString(qp.release.azureObject.name))
+     .toArray();
+
+    if (!QUICK_PICKS.length) {
+        vscode.window.showWarningMessage(
+            'No release found!'
+        );
+
+        return;
+    }
+
+    let selectedItem: ego_contracts.ActionQuickPickItem;
+    if (1 === QUICK_PICKS.length) {
+        selectedItem = QUICK_PICKS[0];
+    } else {
+        selectedItem = await vscode.window.showQuickPick(
+            QUICK_PICKS,
+            {
+                canPickMany: false,
+                ignoreFocusOut: true,
+                placeHolder: 'Please select a release ...',
             }
         );
     }

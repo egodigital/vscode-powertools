@@ -2,7 +2,7 @@
 
 ## 0.29.0 (February 28th, 2019; Azure DevOps)
 
-* can open Azure DevOps builds and git repositories now via `Power Tools: Azure DevOps` command
+* can open Azure DevOps builds, git repositories and releases now via `Power Tools: Azure DevOps` command
 * updated the following [npm](https://www.npmjs.com/) modules:
   * [js-beautify](https://www.npmjs.com/package/js-beautify) `^1.9.0`
 * fixes
