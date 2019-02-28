@@ -32,6 +32,14 @@ interface BoardReference {
 interface BoardResult extends Result<BoardReference> {
 }
 
+interface BuildReference {
+    id: number;
+    url: string;
+}
+
+interface BuildResult extends Result<BuildReference> {
+}
+
 interface DashboardReference {
     description: string;
     id: string;
@@ -83,6 +91,37 @@ class TeamProject {
         public readonly credentials: ego_contracts.AzureDevOpsAPICredentials,
         public readonly azureObject: TeamProjectReference
     ) { }
+
+    public async getBuilds(): Promise<Build[]> {
+        const RESULT: BuildResult = await vscode.window.withProgress({
+            cancellable: false,
+            location: vscode.ProgressLocation.Window,
+            title: 'Azure DevOps Builds',
+        }, async (progress) => {
+            progress.report({
+                message: 'Loading builds ...',
+            });
+
+            const RESPONSE = await ego_helpers.GET(`https://dev.azure.com/${ encodeURIComponent(this.credentials.organization) }/${ encodeURIComponent(this.azureObject.id) }/_apis/build/builds?api-version=5.0`, {
+                'Authorization': 'Basic ' + this.credentials.toBase64(),
+            });
+
+            if (200 !== RESPONSE.code) {
+                throw new Error(`Unexpected Response: [${ RESPONSE.code }] '${ RESPONSE.status }'`);
+            }
+
+            return JSON.parse(
+                (await RESPONSE.readBody())
+                    .toString('utf8')
+            );
+        });
+
+        return ego_helpers.from(
+            RESULT.value
+        ).orderByDescending(b => b.id)
+         .select(b => new Build(this, b))
+         .toArray();
+    }
 
     public async getTeams(): Promise<WebApiTeam[]> {
         const RESULT: WebApiTeamResult = await vscode.window.withProgress({
@@ -226,6 +265,18 @@ class WebApiTeam {
         ).orderBy(d => ego_helpers.normalizeString(d.name))
          .select(d => new Dashboard(this, d))
          .toArray();
+    }
+}
+
+class Build {
+    constructor(
+        public readonly project: TeamProject,
+        public readonly azureObject: BuildReference,
+    ) { }
+
+    public get credentials() {
+        return this.project
+            .credentials;
     }
 }
 
@@ -464,6 +515,11 @@ async function showAzureDevOpsBoardSelector(team: WebApiTeam) {
     }
 }
 
+async function showAzureDevOpsBuildSelector(proj: TeamProject) {
+    const BUILDS = await proj.getBuilds();
+    if (BUILDS) { }
+}
+
 async function showAzureDevOpsDashboardSelector(team: WebApiTeam) {
     const DASHBOARDS = await team.getDashboards();
 
@@ -510,14 +566,21 @@ async function showAzureDevOpsProjectActions(proj: TeamProject) {
     const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [
         {
             action: async () => {
-                await await showAzureDevOpsTeamSelector(proj);
+                await showAzureDevOpsBuildSelector(proj);
+            },
+            label: 'Builds ...',
+            description: 'Selects a build.'
+        },
+        {
+            action: async () => {
+                await showAzureDevOpsTeamSelector(proj);
             },
             label: 'Teams ...',
             description: 'Selects a team.'
         },
         {
             action: async () => {
-                await await showAzureDevOpsWikiSelector(proj);
+                await showAzureDevOpsWikiSelector(proj);
             },
             label: 'Wikis ...',
             description: 'Selects a wiki.'
