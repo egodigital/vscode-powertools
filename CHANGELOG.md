@@ -1,5 +1,9 @@
 # Change Log (vscode-powertools)
 
+## 0.30.0 (March 2nd, 2019; )
+
+@TODO
+
 ## 0.29.0 (February 28th, 2019; Azure DevOps)
 
 * can open Azure DevOps builds, git repositories and releases now via `Power Tools: Azure DevOps` command
