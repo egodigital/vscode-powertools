@@ -3,7 +3,7 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.30.0",
+    "version": "0.31.0",
     "engines": {
         "vscode": "^1.31.0"
     },
@@ -2047,6 +2047,7 @@
         "@types/cron": "^1.6.1",
         "@types/csv-parse": "^1.1.12",
         "@types/ejs": "^2.6.3",
+        "@types/exif": "^0.6.0",
         "@types/fs-extra": "^5.0.5",
         "@types/html-entities": "^1.2.16",
         "@types/html-minifier": "^3.5.3",
@@ -2099,6 +2100,7 @@
         "csv-parse": "^4.3.3",
         "deepmerge": "^3.2.0",
         "ejs": "^2.6.1",
+        "exif": "^0.6.0",
         "fs-extra": "^7.0.1",
         "geodist": "^0.2.1",
         "header-case-normalizer": "^1.0.3",

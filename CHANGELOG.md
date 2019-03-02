@@ -1,5 +1,10 @@
 # Change Log (vscode-powertools)
 
+## 0.31.0 (March 4th, 2019; tools)
+
+* [$img function](https://github.com/egodigital/vscode-powertools/wiki/Tools#imgval) can handle URIs as input values now
+* [$img function](https://github.com/egodigital/vscode-powertools/wiki/Tools#imgval) displays [EXIF data](https://www.exif.org/) of an image, if available
+
 ## 0.30.0 (March 2nd, 2019; tools)
 
 * added following constants for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):

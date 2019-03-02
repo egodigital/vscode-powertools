@@ -1047,19 +1047,58 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
 
     // @ts-ignore
     const $img = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
-        async (val: any) => {
-            val = await $buff(val, 'utf8');
+        async (dataOrUrl: any) => {
+            if (!Buffer.isBuffer(dataOrUrl)) {
+                // load from URL
+
+                dataOrUrl = await $load(
+                    $h.toStringSafe(dataOrUrl)
+                );
+            }
 
             const imageType = require('image-type');
 
-            const TYPE = imageType(val);
+            const TYPE = imageType(dataOrUrl);
             if (!TYPE) {
                 throw new Error('No known image type!');
             }
 
             let md = '';
             md += '# Code Execution Result (Image)\n';
-            md += `![Image Result](data:${ TYPE.mime };base64,${ val.toString('base64') })`;
+            md += `![Image Result](data:${ TYPE.mime };base64,${ dataOrUrl.toString('base64') })`;
+
+            try {
+                if (['image/jpeg', 'image/jpg', 'image/tiff'].indexOf(TYPE.mime) > -1) {
+                    const ExifImage = require('exif').ExifImage;
+
+                    const EXIF_DATA = await (() => {
+                        return new Promise((resolve, reject) => {
+                            try {
+                                // @ts-ignore
+                                const E = new ExifImage({ image : val }, function (err, data) {
+                                    if (err) {
+                                        reject(err);
+                                    } else {
+                                        resolve(data);
+                                    }
+                                });
+                            } catch (e) {
+                                reject(e);
+                            }
+                        });
+                    })();
+
+                    if (EXIF_DATA) {
+                        md += `\n\n`;
+                        md += `## EXIF\n`;
+                        md += `\`\`\`javascript\n`;
+                        md += `${
+                            JSON.stringify(EXIF_DATA, null, 2)
+                        }\n`;
+                        md += `\`\`\``;
+                    }
+                }
+            } catch { }
 
             return {
                 '__markdown_tm_19790905': Symbol('MARKDOWN_DOCUMENT'),
@@ -1180,7 +1219,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$hsl(hOrHex, s?, l?)` | Converts HSL color from or to hex. | `$hsl(1, 2, 3)`\n';
         md += '`$htmldec(val)` | Handles a values as string, and decodes the HTML entities. | `$htmldec("5979 &gt; 23979")`\n';
         md += '`$htmlenc(val)` | Handles a values as string, and encodes the HTML entities. | `$htmlenc("<tm>")`\n';
-        md += '`$img(val)` | Handles a value as image and displays it. | `$img( $load("https://www.e-go-mobile.com/site/assets/files/1965/batch_ego_life_website_weiss-1600x550px.jpg") )`\n';
+        md += '`$img(dataOrUrl)` | Handles a value as image or URL and displays it. | `$img("https://www.e-go-mobile.com/site/assets/files/1965/batch_ego_life_website_weiss-1600x550px.jpg")`\n';
         md += '`$ip(v6?, timeout?)` | Tries to detect the public IP address. | `$ip(true)`\n';
         md += '`$ip4(timeout?)` | Tries to detect the public IP address (version 4). | `$ip4`\n';
         md += '`$ip6(timeout?)` | Tries to detect the public IP address (version 6). | `$ip6`\n';
