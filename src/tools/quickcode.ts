@@ -976,6 +976,64 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         }
     );
 
+    // @ts-ignore
+    const $tab = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (val: any, lang?: string) => {
+            lang = $h.normalizeString(lang);
+            if ('' === lang) {
+                lang = 'text';
+            }
+
+            let result = '';
+            if (_.isNil(val)) {
+                result = '' + val;
+            } else {
+                if (_.isPlainObject(val)) {
+                    result = JSON.stringify(val, null, 2);
+                    lang = 'json';
+                } else {
+                    result = (await $buff(val, 'utf8'))
+                        .toString('utf8');
+                }
+            }
+
+            return {
+                '__neweditor_tm_19790905': Symbol('NEW_EDITOR'),
+                'column': $vs.ViewColumn.One,
+                'lang': lang,
+                'text': result,
+            };
+        }
+    );
+    // @ts-ignore
+    const $code = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (val: any, lang?: string) => {
+            lang = $h.normalizeString(lang);
+
+            let code = '';
+            if (!_.isNil(val)) {
+                if (_.isPlainObject(val)) {
+                    code = JSON.stringify(val, null, 2);
+                } else {
+                    code = (await $buff(val, 'utf8'))
+                        .toString('utf8');
+                }
+            }
+
+            let md = '';
+            md += '# Code Execution Result (Code Highlight)\n';
+            md += `\`\`\`${ lang }\n`;
+            md += code + '\n';
+            md += `\`\`\``;
+
+            return {
+                '__markdown_tm_19790905': Symbol('MARKDOWN_DOCUMENT'),
+                'markdown': md,
+                'title': 'Code Execution Result (Code Highlight)',
+            };
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -1074,6 +1132,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$cb(val)` | Copyies a value to clipboard. | `$cb("TM+MK")`\n';
         md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
         md += '`$cmyk(cOrHex, m?, y?, k?)` | Converts CMYK color from or to hex. | `$cmyk(167, 255, 4)`\n';
+        md += '`$code(val, lang?)` | Handles a value as string to display it in a webview with syntax highlight. | `$code("const TM = \'1979-09-05\';\\n\\nalert(TM);", "javascript")`\n';
         md += '`$compile` | Compiles the code in the active editor and opens the result in a new one. | `$compile`\n';
         md += '`$csv(data?)` | Handles data as CSV and displays them. If no argument is defined, the value from `$e` constant is used. | `$csv( "col 1, col2\\r\\nval1.1,val1.2\\r\\nval2.1,val2.2" )`\n';
         md += '`$DELETE(url, body?, headers?)` | Starts a HTTP DELETE request. | `$DELETE("https://example.com/users/19861222")`\n';
@@ -1109,6 +1168,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$sha384(val, asBlob?)` | Hashes a value with SHA-384. | `$sha384("TM+MK")`\n';
         md += '`$sha512(val, asBlob?)` | Hashes a value with SHA-512. | `$sha512("TM+MK")`\n';
         md += '`$str(val)` | Returns a value as string that is NOT `(null)` and NOT `(undefined)`. | `$str(5979 + 23979)`\n';
+        md += '`$tab(val)` | Opens a value as text in a new editor tab. | `$tab("TM+MK")`\n';
         md += '`$trim(val)` | Handles a value as string and trims from leading and ending whitespaces. | `$trim("  TM + MK   ")`\n';
         md += '`$uglify` | Uglifies the code in the active editor and opens the result in a new one. | `$uglify`\n';
         md += '`$unwrap(val, maxLevel?, level?)` | Unwraps a value from being a function. | `$unwrap(() => 5979)` \n';

@@ -1,8 +1,10 @@
 # Change Log (vscode-powertools)
 
-## 0.30.0 (March 2nd, 2019; )
+## 0.30.0 (March 2nd, 2019; tools)
 
-@TODO
+* added following constants for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$code`: handles a value as string to display it in a webview with syntax highlight
+  * `$tab`: opens a value as text in a new editor tab
 
 ## 0.29.0 (February 28th, 2019; Azure DevOps)
 
