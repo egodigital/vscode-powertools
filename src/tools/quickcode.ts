@@ -454,6 +454,17 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
     );
 
     // @ts-ignore
+    const $load = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (uri: string, headers?: any) => {
+            const RESPONSE = await $h.GET(
+                $h.toStringSafe(uri), headers,
+            );
+
+            return await RESPONSE.readBody();
+        }
+    );
+
+    // @ts-ignore
     const $ip = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
         async (v6?: boolean, timeout?: number) => {
             const publicIP = require('public-ip');
@@ -1148,6 +1159,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$ip(v6?, timeout?)` | Tries to detect the public IP address. | `$ip(true)`\n';
         md += '`$ip4(timeout?)` | Tries to detect the public IP address (version 4). | `$ip4`\n';
         md += '`$ip6(timeout?)` | Tries to detect the public IP address (version 6). | `$ip6`\n';
+        md += '`$load(uri, headers?)` | Loads data from an URI. | `$load("https://www.e-go-mobile.com/site/assets/files/1965/batch_ego_life_website_weiss-1600x550px.jpg")`\n';
         md += '`$lower(val)` | Handles a value as string and converts to lower case characters. | `$lower("tm + MK")`\n';
         md += '`$ltrim(val)` | Handles a value as string and trims from leading whitespaces. | `$ltrim("  TM + MK   ")`\n';
         md += '`$md(src)` | Handles a value as [Markdown](https://github.com/showdownjs/showdown) string. | `$md("# Header 1\\n\\nHello, TM!")`\n';

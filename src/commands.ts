@@ -242,8 +242,8 @@ ${ codeToExecute }
                     await WEB_VIEW.open();
                 } else if (Buffer.isBuffer(RESULT)) {
                     let md = '# Code Execution Result (Buffer)\n\n';
-                    md += '```';
-                    md += HTML.encode( hexy.hexy(RESULT) );
+                    md += '```\n';
+                    md += HTML.encode( hexy.hexy(RESULT) ) + "\n";
                     md += '```';
 
                     const WEB_VIEW = new ego_markdown.MarkdownWebView({
