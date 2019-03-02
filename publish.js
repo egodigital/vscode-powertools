@@ -18,15 +18,21 @@
 const vsce = require('vsce');
 
 (async () => {
-    // npm run deploy <PAT>
-    const PAT = process.argv[2].trim();
-    if ('' === PAT) {
-        throw new Error(`No Personal Access Token defined!`);
-    }
+    try {
+        // npm run deploy <PAT>
+        const PAT = process.argv[2].trim();
+        if ('' === PAT) {
+            throw new Error(`No Personal Access Token defined!`);
+        }
 
-    await vsce.publish({
-        cwd: __dirname,
-        pat: PAT,
-        useYarn: false,
-    });
+        await vsce.publish({
+            cwd: __dirname,
+            pat: PAT,
+            useYarn: false,
+        });
+    } catch (e) {
+        console.error(e);
+
+        process.exit(1);
+    }
 })();
