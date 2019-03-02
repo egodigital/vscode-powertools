@@ -4,6 +4,7 @@
 
 * added following constants for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$code`: handles a value as string to display it in a webview with syntax highlight
+  * `$img`: handles a value as image and displays it
   * `$load`: loads data from an URI
   * `$tab`: opens a value as text in a new editor tab
 * fixes

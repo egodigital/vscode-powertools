@@ -1045,6 +1045,30 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         }
     );
 
+    // @ts-ignore
+    const $img = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (val: any) => {
+            val = await $buff(val, 'utf8');
+
+            const imageType = require('image-type');
+
+            const TYPE = imageType(val);
+            if (!TYPE) {
+                throw new Error('No known image type!');
+            }
+
+            let md = '';
+            md += '# Code Execution Result (Image)\n';
+            md += `![Image Result](data:${ TYPE.mime };base64,${ val.toString('base64') })`;
+
+            return {
+                '__markdown_tm_19790905': Symbol('MARKDOWN_DOCUMENT'),
+                'markdown': md,
+                'title': 'Code Execution Result (Image)',
+            };
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -1156,6 +1180,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$hsl(hOrHex, s?, l?)` | Converts HSL color from or to hex. | `$hsl(1, 2, 3)`\n';
         md += '`$htmldec(val)` | Handles a values as string, and decodes the HTML entities. | `$htmldec("5979 &gt; 23979")`\n';
         md += '`$htmlenc(val)` | Handles a values as string, and encodes the HTML entities. | `$htmlenc("<tm>")`\n';
+        md += '`$img(val)` | Handles a value as image and display it. | `$img( $load("https://www.e-go-mobile.com/site/assets/files/1965/batch_ego_life_website_weiss-1600x550px.jpg") )`\n';
         md += '`$ip(v6?, timeout?)` | Tries to detect the public IP address. | `$ip(true)`\n';
         md += '`$ip4(timeout?)` | Tries to detect the public IP address (version 4). | `$ip4`\n';
         md += '`$ip6(timeout?)` | Tries to detect the public IP address (version 6). | `$ip6`\n';
