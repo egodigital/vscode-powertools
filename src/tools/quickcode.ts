@@ -1075,7 +1075,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                         return new Promise((resolve, reject) => {
                             try {
                                 // @ts-ignore
-                                const E = new ExifImage({ image : val }, function (err, data) {
+                                const E_IMG = new ExifImage({ image: val }, function (err: any, data?: any) {
                                     if (err) {
                                         reject(err);
                                     } else {
