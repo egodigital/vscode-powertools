@@ -1,5 +1,9 @@
 # Change Log (vscode-powertools)
 
+## 0.33.0 (March 9th, 2019; Visual Studio Code 1.32)
+
+* extension requires at least [Visual Studio Code 1.32](https://code.visualstudio.com/updates/v1_32) now
+
 ## 0.32.0 (March 7th, 2019; tools)
 
 * can send files to [Slack](https://slack.com/) channels via `Power Tools: Tools` now
