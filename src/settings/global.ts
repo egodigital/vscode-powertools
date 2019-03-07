@@ -30,10 +30,16 @@ interface SettingsFromWebView {
     globalAzureDevOpsOrg: string;
     globalAzureDevOpsPAT: string;
     globalAzureDevOpsUsername: string;
+    globalSlackAPICredentials: {
+        token: string;
+    };
     openChangelogOnStartup: boolean;
     workspaceAzureDevOpsOrg: string;
     workspaceAzureDevOpsPAT: string;
     workspaceAzureDevOpsUsername: string;
+    workspaceSlackAPICredentials: {
+        token: string;
+    };
 }
 
 interface SettingsForWebView extends SettingsFromWebView {
@@ -137,6 +143,9 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
                                     .globalState
                                     .get(ego_contracts.KEY_GLOBAL_SETTING_AZURE_DEVOPS_GLOBAL_USERNAME)
                             ).trim(),
+                            globalSlackAPICredentials: this.extension
+                                .globalState
+                                .get(ego_contracts.KEY_GLOBAL_SETTING_SLACK_API_CREDENTIALS),
                             openChangelogOnStartup: ego_helpers.toBooleanSafe(
                                 this.extension
                                     .globalState
@@ -158,6 +167,9 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
                                     .workspaceState
                                     .get(ego_contracts.KEY_GLOBAL_SETTING_AZURE_DEVOPS_WORKSPACE_USERNAME)
                             ).trim(),
+                            workspaceSlackAPICredentials: this.extension
+                                .workspaceState
+                                .get(ego_contracts.KEY_GLOBAL_SETTING_SLACK_API_CREDENTIALS),
                         };
 
                         if ('' === settings.appStoreUrl) {
@@ -262,6 +274,16 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
                         await this.extension
                             .workspaceState
                             .update(ego_contracts.KEY_GLOBAL_SETTING_AZURE_DEVOPS_WORKSPACE_USERNAME, workspaceAzureDevOpsUsername);
+
+                        // Slack
+                        await this.extension
+                            .globalState
+                            .update(ego_contracts.KEY_GLOBAL_SETTING_SLACK_API_CREDENTIALS,
+                                    SETTINGS.globalSlackAPICredentials);
+                        await this.extension
+                            .workspaceState
+                            .update(ego_contracts.KEY_GLOBAL_SETTING_SLACK_API_CREDENTIALS,
+                                    SETTINGS.workspaceSlackAPICredentials);
                     } catch (e) {
                         err = ego_helpers.errorToString(e);
                     }

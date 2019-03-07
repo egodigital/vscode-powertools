@@ -65,6 +65,17 @@ function ego_on_command(command, data) {
                     $('#ego-workspace-azuredevops-pat').val(
                         data.settings.workspaceAzureDevOpsPAT
                     );
+
+                    if (data.settings.globalSlackAPICredentials) {
+                        $('#ego-global-slack-token').val(
+                            data.settings.globalSlackAPICredentials.token
+                        );
+                    }
+                    if (data.settings.workspaceSlackAPICredentials) {
+                        $('#ego-workspace-slack-token').val(
+                            data.settings.workspaceSlackAPICredentials.token
+                        );   
+                    }
                 }
             }
             break;
@@ -87,10 +98,16 @@ function ego_on_loaded() {
             globalAzureDevOpsOrg: $('#ego-global-azuredevops-org').val(),
             globalAzureDevOpsPAT: $('#ego-global-azuredevops-pat').val(),
             globalAzureDevOpsUsername: $('#ego-global-azuredevops-username').val(),
+            globalSlackAPICredentials: {
+                token: $('#ego-global-slack-token').val(),
+            },
             openChangelogOnStartup: $('#ego-open-changelog-on-startup').prop('checked'),
             workspaceAzureDevOpsOrg: $('#ego-workspace-azuredevops-org').val(),
             workspaceAzureDevOpsPAT: $('#ego-workspace-azuredevops-pat').val(),
             workspaceAzureDevOpsUsername: $('#ego-workspace-azuredevops-username').val(),
+            workspaceSlackAPICredentials: {
+                token: $('#ego-workspace-slack-token').val(),
+            },
         });
     });
 

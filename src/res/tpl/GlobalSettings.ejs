@@ -40,6 +40,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                     <a href="#" onclick="ego_select_area('notifications')" class="list-group-item list-group-item-action waves-effect ego-item ego-item-notifications">
                                         <i class="fa fa-envelope-open-o mr-3"></i>Notifications
                                     </a>
+
+                                    <a href="#" onclick="ego_select_area('slack')" class="list-group-item list-group-item-action waves-effect ego-item ego-item-slack">
+                                        <i class="fa fa-slack mr-3"></i>Slack
+                                    </a>
                                 </div>    
                             </div>
                             <!-- Sidebar -->
@@ -157,6 +161,42 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input" id="ego-open-changelog-on-startup">
                                         <label class="custom-control-label" for="ego-open-changelog-on-startup">Open CHANGELOG on startup</label>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="ego-area ego-area-slack" style="display: none;">
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item active">Slack</li>
+                                    </ol>
+                                </nav>
+
+                                <form>
+                                    <!-- Global Slack credentials -->
+                                    <div class="form-group" id="ego-global-slack-credentials">
+                                        <label for="ego-global-slack-token">Global Slack Token</label>
+                                        <input id="ego-global-slack-token"
+                                               class="form-control"
+                                               type="password"          
+                                               title="Global Slack Token"                             
+                                               data-toggle="popover"
+                                               data-trigger="focus"
+                                               data-placement="bottom"
+                                               data-content="Enter the Access Token, to access the Slack API, which can be used in all workspaces.">
+                                    </div>
+
+                                    <!-- Workspace Slack credentials -->
+                                    <div class="form-group" id="ego-workspace-slack-credentials">
+                                        <label for="ego-workspace-slack-token">Workspace Slack Token</label>
+                                        <input id="ego-workspace-slack-token"
+                                               class="form-control"
+                                               type="password"          
+                                               title="Workspace Slack Token"                             
+                                               data-toggle="popover"
+                                               data-trigger="focus"
+                                               data-placement="bottom"
+                                               data-content="Enter the Access Token, to access the Slack API, which can be used in the current workspace.">
                                     </div>
                                 </form>
                             </div>

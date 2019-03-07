@@ -303,6 +303,29 @@ ${ codeToExecute }
         }
     };
 
+    const SEND_TO = async () => {
+        const QUICK_PICKS: ego_contracts.ActionQuickPickItem[] = [
+            {
+                action: () => {
+                    return require('./tools/slack')
+                        .sendToSlack(context, output);
+                },
+                label: `$(comment-discussion)  Slack ...`,
+                description: 'Sends the current file in the active editor to a Slack channel.',
+            },
+        ];
+
+        const SELECTED_ITEM = await vscode.window.showQuickPick(
+            QUICK_PICKS
+        );
+
+        if (SELECTED_ITEM) {
+            await Promise.resolve(
+                SELECTED_ITEM.action()
+            );
+        }
+    };
+
     const SHOW_TCP_PROXY_ACTIONS = async () => {
         await require('./tools/proxies')
             .showTcpProxyActions(context, output);
@@ -861,6 +884,15 @@ ${ codeToExecute }
             }
         }),
 
+        // send to
+        vscode.commands.registerCommand('ego.power-tools.sendTo', async () => {
+            try {
+                await SEND_TO();
+            } catch (e) {
+                ego_helpers.showErrorMessage(e);
+            }
+        }),
+
         // TCP proxies
         vscode.commands.registerCommand('ego.power-tools.tcpProxies', async () => {
             try {
@@ -880,6 +912,13 @@ ${ codeToExecute }
                         },
                         label: '$(zap)  Code Execution ...',
                         description: 'Executes one line JavaScript code.',
+                    },
+                    {
+                        action: () => {
+                            return SEND_TO();
+                        },
+                        label: '$(rocket)  Send To ...',
+                        description: 'Sends the current file in the active editor to a destination.',
                     },
                     {
                         action: () => {
