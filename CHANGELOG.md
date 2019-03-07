@@ -3,6 +3,7 @@
 ## 0.32.0 (March 7th, 2019; tools)
 
 * can send files to [Slack](https://slack.com/) channels via `Power Tools: Tools` now
+* [$img](https://github.com/egodigital/vscode-powertools/wiki/Tools#imgdataorurl) function can display image information, like width and height, now
 * updated the following [npm](https://www.npmjs.com/) modules:
   * [image-type](https://www.npmjs.com/package/image-type) `^3.1.0`
 

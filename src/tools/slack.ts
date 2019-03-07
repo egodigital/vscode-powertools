@@ -140,7 +140,7 @@ export async function sendToSlack(
         channelList.channels
     ).pipe((c: any) => {
         c['__tm_displayName'] = c.name;
-        c['__tm_prefix'] = '#';
+        c['__tm_prefix'] = '$(comment-discussion) #';
         c['__tm_sortOrder0'] = 1;
     }).concat(
         ego_helpers.from(

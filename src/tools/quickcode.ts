@@ -1067,6 +1067,23 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
             md += '# Code Execution Result (Image)\n';
             md += `![Image Result](data:${ TYPE.mime };base64,${ dataOrUrl.toString('base64') })`;
 
+            // image info
+            try {
+                const imageSize = require('image-size');
+
+                const IMAGE_INFO = imageSize(dataOrUrl);
+                if (IMAGE_INFO) {
+                    md += `\n\n`;
+                    md += `## Image information\n`;
+                    md += `\`\`\`javascript\n`;
+                    md += `${
+                        JSON.stringify(IMAGE_INFO, null, 2)
+                    }\n`;
+                    md += `\`\`\``;
+                }
+            } catch { }
+
+            // EXIF
             try {
                 if (['image/jpeg', 'image/jpg', 'image/tiff'].indexOf(TYPE.mime) > -1) {
                     const ExifImage = require('exif').ExifImage;
