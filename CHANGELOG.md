@@ -1,8 +1,12 @@
 # Change Log (vscode-powertools)
 
-## 0.33.0 (March 9th, 2019; Visual Studio Code 1.32)
+## 0.33.0 (March 9th, 2019; tools)
 
 * extension requires at least [Visual Studio Code 1.32](https://code.visualstudio.com/updates/v1_32) now
+* added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$insert`: handles a value as string and inserts it into the selected text (or cursor) of the currently opened text editor
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [@slack/client](https://www.npmjs.com/package/@slack/client) `^4.11.0`
 
 ## 0.32.0 (March 7th, 2019; tools)
 
@@ -19,7 +23,7 @@
 
 ## 0.30.0 (March 2nd, 2019; tools)
 
-* added following constants for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+* added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$code`: handles a value as string to display it in a webview with syntax highlight
   * `$img`: handles a value as image and displays it
   * `$load`: loads data from an URI
@@ -42,14 +46,14 @@
 
 ## 0.26.2 (February 23rd, 2019; tools)
 
-* added following constants for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+* added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$polyline`: converts from and to [polyline](https://developers.google.com/maps/documentation/utilities/polylinealgorithm)
 * added `Generate TypeScript Code ...` sub command to `Power Tools: Tools`, which generates TypeScript code from a JSON or JavaScript editor
 * bugfixes
 
 ## 0.25.0 (February 20th, 2019; code execution)
 
-* added following constants for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+* added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$cb`: copyies a value to clipboard
   * `$cmyk`: converts CMYK color from or to hex
   * `$hsl`: converts HSL color from or to hex

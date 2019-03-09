@@ -1125,6 +1125,35 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         }
     );
 
+    // @ts-ignore
+    const $insert = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (val: any) => {
+            let text = await $buff(
+                await $unwrap(val)
+            );
+            if (_.isNil(text)) {
+                text = Buffer.alloc(0);
+            }
+            text = text.toString('utf8');
+
+            const EDITOR = $vs.window.activeTextEditor;
+            if (EDITOR) {
+                const DOC = EDITOR.document;
+                if (DOC) {
+                    EDITOR.edit((builder: any) => {
+                        builder.replace(
+                            EDITOR.selection, text
+                        );
+                    });
+
+                    return;
+                }
+            }
+
+            throw new Error('No active editor found!');
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -1237,6 +1266,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$htmldec(val)` | Handles a values as string, and decodes the HTML entities. | `$htmldec("5979 &gt; 23979")`\n';
         md += '`$htmlenc(val)` | Handles a values as string, and encodes the HTML entities. | `$htmlenc("<tm>")`\n';
         md += '`$img(dataOrUrl)` | Handles a value as image or URL and displays it. | `$img("https://www.e-go-mobile.com/site/assets/files/1965/batch_ego_life_website_weiss-1600x550px.jpg")`\n';
+        md += '`$insert(val)` | Handles a value as string and inserts it into the selected text (or cursor) of the currently opened text editor. | `$insert( $uuid )`\n';
         md += '`$ip(v6?, timeout?)` | Tries to detect the public IP address. | `$ip(true)`\n';
         md += '`$ip4(timeout?)` | Tries to detect the public IP address (version 4). | `$ip4`\n';
         md += '`$ip6(timeout?)` | Tries to detect the public IP address (version 6). | `$ip6`\n';

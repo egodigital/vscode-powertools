@@ -2058,7 +2058,7 @@
         "@types/lodash": "^4.14.122",
         "@types/mime-types": "^2.1.0",
         "@types/mocha": "^2.2.42",
-        "@types/moment-timezone": "^0.5.10",
+        "@types/moment-timezone": "^0.5.11",
         "@types/node": "10.1.4",
         "@types/node-emoji": "^1.8.1",
         "@types/opn": "^5.1.0",
@@ -2093,7 +2093,7 @@
     },
     "dependencies": {
         "@mapbox/polyline": "^1.0.0",
-        "@slack/client": "^4.10.0",
+        "@slack/client": "^4.11.0",
         "change-case": "^3.1.0",
         "clean-css": "^4.2.1",
         "coffeescript": "^2.3.2",
