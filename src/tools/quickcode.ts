@@ -1048,6 +1048,10 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
     // @ts-ignore
     const $img = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
         async (dataOrUrl: any) => {
+            dataOrUrl = await $unwrap(
+                dataOrUrl
+            );
+
             if (!Buffer.isBuffer(dataOrUrl)) {
                 // load from URL
 

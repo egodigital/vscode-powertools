@@ -5,6 +5,7 @@
 * extension requires at least [Visual Studio Code 1.32](https://code.visualstudio.com/updates/v1_32) now
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$insert`: handles a value as string and inserts it into the selected text (or cursor) of the currently opened text editor
+* [$img](https://github.com/egodigital/vscode-powertools/wiki/Tools#imgdataorurl) [unwraps](https://github.com/egodigital/vscode-powertools/wiki/Tools#unwrapval-maxlevel-level) its argument now
 * updated the following [npm](https://www.npmjs.com/) modules:
   * [@slack/client](https://www.npmjs.com/package/@slack/client) `^4.11.0`
 
