@@ -1,6 +1,6 @@
 # Change Log (vscode-powertools)
 
-## 0.34.0 (March 12th, 2019; npm update)
+## 0.34.0 (March 12th, 2019; tools)
 
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
   * `$map`: handles geo locations and displays markers on a map
