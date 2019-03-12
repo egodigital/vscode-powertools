@@ -783,6 +783,20 @@ export interface ForPlatforms {
 }
 
 /**
+ * Stores geo coordinates.
+ */
+export interface GeoCoordinates {
+    /**
+     * The latitude.
+     */
+    lat: number;
+    /**
+     * The longitude.
+     */
+    lng: number;
+}
+
+/**
  * An object that gets a value.
  */
 export interface Getter {

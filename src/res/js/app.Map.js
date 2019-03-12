@@ -18,24 +18,73 @@
 
 let currentMap;
 
-function ego_init_map() {
+function ego_init_map(opts) {
     if (currentMap) {
         currentMap.remove();
         currentMap = null;
     }
 
+    mapboxgl.accessToken = EGO_MAPBOX_API_TOKEN;
+
     const MAP = $('#ego-map');
     MAP.html('');
 
+    const MAP_INFO = $('#ego-map-info');
+    MAP_INFO.html('');
+
     if (EGO_MAPBOX_API_TOKEN) {
+        let md = '';
+
         const NEW_MAP = new mapboxgl.Map({
             container: 'ego-map',
-            center: [ 6.04715, 50.782077 ],
-            style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
-            zoom: 14 // starting zoom
+            center: opts.center ? opts.center : undefined,
+            style: 'mapbox://styles/mapbox/streets-v9',
+            zoom: 10
         });
 
+        if (opts.markers && opts.markers.length) {
+            md += `# Markers
+
+Index | Location (lat, lng)
+----- | -------------------\n`
+
+            for (let i = 0; i < opts.markers.length; i++) {
+                const M = opts.markers[i];
+
+                const NEW_MARKER = new mapboxgl.Marker()
+                    .setLngLat(M)
+                    .addTo(NEW_MAP);
+
+                md += `${ i + 1 } | [${ M.lat }, ${ M.lng }](ego-map-marker:${ M.lat },${ M.lng })\n`;
+            }
+        }
+
         currentMap = NEW_MAP;
+
+        if ('' !== md) {
+            const MARKDOWN = ego_from_markdown(md);
+
+            MARKDOWN.find('a').each(function() {
+                const A = $(this);
+
+                const HREF = A.attr('ego-href');
+                if (HREF && HREF.trim().startsWith('ego-map-marker:')) {
+                    const LAT_LNG = HREF.trim().substr(15).trim()
+                        .split(',');
+
+                    A.off('click').on('click', function() {
+                        NEW_MAP.setCenter({
+                            lat: parseFloat(LAT_LNG[0].trim()),
+                            lng: parseFloat(LAT_LNG[1].trim()),
+                        });
+                    });
+                }
+            });
+
+            MAP_INFO.append(
+                MARKDOWN
+            );
+        }
     } else {
         const TEXT = $('<span>Please setup the MapBox API token in your <a href="#">settings</a>!</span>');
 
@@ -48,8 +97,10 @@ function ego_init_map() {
     }
 }
 
-function ego_on_loaded() {
-    mapboxgl.accessToken = EGO_MAPBOX_API_TOKEN;
-
-    ego_init_map();
+function ego_on_command(command, data) {
+    switch (command) {
+        case 'initMap':
+            ego_init_map(data);
+            break;
+    }
 }

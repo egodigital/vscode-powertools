@@ -18,6 +18,7 @@
 import * as _ from 'lodash';
 import * as ego_contracts from './contracts';
 import * as ego_data from './data';
+import * as ego_geo from './geo';
 import * as ego_global_commands from './global/commands';
 import * as ego_global_jobs from './global/jobs';
 import * as ego_helpers from './helpers';
@@ -170,6 +171,14 @@ ${ codeToExecute }
 
                     await vscode.window.showTextDocument(
                         DOC, RESULT.column,
+                    );
+                } else if (RESULT && _.isSymbol(RESULT['__map_tm_19790905'])) {
+                    await ego_geo.openMapView(
+                        context,
+                        {
+                            center: RESULT.center,
+                            markers: RESULT.markers,
+                        }
                     );
                 } else if (RESULT && _.isSymbol(RESULT['__csv_tm_19790905'])) {
                     const WEB_VIEW = new ego_data.CsvTableWebView(

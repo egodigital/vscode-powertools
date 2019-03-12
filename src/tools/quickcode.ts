@@ -1158,6 +1158,63 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         }
     );
 
+    // @ts-ignore
+    const $map = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (...loc: any[]) => {
+            const polyline = require('@mapbox/polyline');
+
+            const GEO_LOCATIONS: any[] = [];
+
+            for (let i = 0; i < loc.length; i++) {
+                loc[i] = await $unwrap(loc[i]);
+                if (_.isNil(loc[i])) {
+                    continue;
+                }
+
+                if (Array.isArray(loc[i])) {
+                    GEO_LOCATIONS.push({
+                        lat: parseFloat(
+                            (await $str(loc[i][0])).trim()
+                        ),
+                        lng: parseFloat(
+                            (await $str(loc[i][1])).trim()
+                        )
+                    });
+                } else if (Array.isArray(loc[i])) {
+                    GEO_LOCATIONS.push(loc[i]);
+                } else {
+                    for (const P of polyline.decode(await $str(loc[i]))) {
+                        GEO_LOCATIONS.push({
+                            lat: parseFloat(
+                                (await $str(P[0])).trim()
+                            ),
+                            lng: parseFloat(
+                                (await $str(P[1])).trim()
+                            )
+                        });
+                    }
+                }
+            }
+
+            const MARKERS = GEO_LOCATIONS.filter(gl => {
+                return !isNaN(gl.lat) &&
+                    !isNaN(gl.lng);
+            });
+
+            let center: any;
+            if (MARKERS.length) {
+                center = averageGeolocation(MARKERS);
+            }
+
+            return {
+                '__map_tm_19790905': Symbol('MAP'),
+                'center': center,
+                'markers': MARKERS,
+                'title': 'Code Execution Result (Map)',
+            };
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -1196,6 +1253,41 @@ function asAsync_628dffd9c1e74e5cb82620a2c575e5dd<TResult = any>(
         );
     };
 }
+
+// https://gist.github.com/tlhunter/0ea604b77775b3e7d7d25ea0f70a23eb
+function averageGeolocation(coords: any[]) {
+    if (1 === coords.length) {
+        return coords[0];
+    }
+
+    let x = 0.0;
+    let y = 0.0;
+    let z = 0.0;
+
+    for (const C of coords) {
+        const LATITUDE = C.lat * Math.PI / 180;
+        const LONGITUDE = C.lng * Math.PI / 180;
+
+        x += Math.cos(LATITUDE) * Math.cos(LONGITUDE);
+        y += Math.cos(LATITUDE) * Math.sin(LONGITUDE);
+        z += Math.sin(LATITUDE);
+    }
+
+    const TOTAL = coords.length;
+
+    x = x / TOTAL;
+    y = y / TOTAL;
+    z = z / TOTAL;
+
+    const CENTRAL_LNG = Math.atan2(y, x);
+    const SQUARE_ROOT = Math.sqrt(x * x + y * y);
+    const CENTRAL_LAT = Math.atan2(z, SQUARE_ROOT);
+
+    return {
+        lat: CENTRAL_LAT * 180 / Math.PI,
+        lng: CENTRAL_LNG * 180 / Math.PI,
+    };
+  }
 
 function getFullPath_fb9882a1f9c94d97a5f0d65e28f07cba(p: string) {
     const fsExtra = require('fs-extra');
@@ -1277,6 +1369,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$load(uri, headers?)` | Loads data from an URI. | `$load("https://www.e-go-mobile.com/site/assets/files/1965/batch_ego_life_website_weiss-1600x550px.jpg")`\n';
         md += '`$lower(val)` | Handles a value as string and converts to lower case characters. | `$lower("tm + MK")`\n';
         md += '`$ltrim(val)` | Handles a value as string and trims from leading whitespaces. | `$ltrim("  TM + MK   ")`\n';
+        md += '`$map(...locs)` | Handles geo locations and displays markers on a map. | $map("ik}tH{a|c@pg@gvO")`\n';
         md += '`$md(src)` | Handles a value as [Markdown](https://github.com/showdownjs/showdown) string. | `$md("# Header 1\\n\\nHello, TM!")`\n';
         md += '`$md5(val, asBlob?)` | Hashes a value with MD5. | `$md5("TM+MK")`\n';
         md += '`$now(timeZone?)` | Returns the current [time](https://momentjs.com/), with an optional [timezone](https://momentjs.com/timezone/). | `$now("Europe/Berlin")`\n';

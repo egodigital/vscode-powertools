@@ -32,7 +32,15 @@ export interface MapWebViewOptions {
     /**
      * The API token.
      */
-    apiToken: string;
+    apiToken?: string;
+    /**
+     * The center position of the map.
+     */
+    center?: ego_contracts.GeoCoordinates;
+    /**
+     * The list of markers.
+     */
+    markers?: ego_contracts.GeoCoordinates[];
     /**
      * The custom title.
      */
@@ -103,6 +111,19 @@ export class MapWebView extends ego_webview.WebViewWithContextBase {
      */
     protected getType(): string {
         return 'Map';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected async onLoaded() {
+        await this.postMessage(
+            'initMap',
+            {
+                center: this.options.center,
+                markers: this.options.markers,
+            }
+        );
     }
 
     /**

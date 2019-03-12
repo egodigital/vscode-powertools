@@ -2,6 +2,8 @@
 
 ## 0.34.0 (March 12th, 2019; npm update)
 
+* added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$map`: handles geo locations and displays markers on a map
 * updated the following [npm](https://www.npmjs.com/) modules:
   * [cron](https://www.npmjs.com/package/cron) `^1.7.0`
   * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.3.4`
