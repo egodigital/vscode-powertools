@@ -1,9 +1,9 @@
 # Change Log (vscode-powertools)
 
-## 0.34.1 (March 12th, 2019; tools)
+## 0.34.2 (March 12th, 2019; tools)
 
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
-  * `$map`: handles geo locations and displays markers on a map
+  * `$map`: handles geo locations and displays them as markers on a ([MapBox](https://www.mapbox.com/)) map
 * updated the following [npm](https://www.npmjs.com/) modules:
   * [cron](https://www.npmjs.com/package/cron) `^1.7.0`
   * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.3.4`

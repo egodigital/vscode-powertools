@@ -1203,7 +1203,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
 
             let center: any;
             if (MARKERS.length) {
-                center = averageGeolocation(MARKERS);
+                center = averageGeolocation_5ac90dd0ccf1466ba9d25d96563001e7(MARKERS);
             }
 
             return {
@@ -1255,7 +1255,7 @@ function asAsync_628dffd9c1e74e5cb82620a2c575e5dd<TResult = any>(
 }
 
 // https://gist.github.com/tlhunter/0ea604b77775b3e7d7d25ea0f70a23eb
-function averageGeolocation(coords: any[]) {
+function averageGeolocation_5ac90dd0ccf1466ba9d25d96563001e7(coords: any[]) {
     if (1 === coords.length) {
         return coords[0];
     }
