@@ -37,7 +37,14 @@ function ego_init_map() {
 
         currentMap = NEW_MAP;
     } else {
-        MAP.text('Please setup the MapBox API token in your settings!');
+        const TEXT = $('<span>Please setup the MapBox API token in your <a href="#">settings</a>!</span>');
+
+        const LINK = TEXT.find('a');
+        LINK.on('click', function() {
+            ego_post('openMapBoxSettings');
+        });
+
+        MAP.append(TEXT);
     }
 }
 

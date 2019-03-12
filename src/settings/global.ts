@@ -30,6 +30,7 @@ interface SettingsFromWebView {
     globalAzureDevOpsOrg: string;
     globalAzureDevOpsPAT: string;
     globalAzureDevOpsUsername: string;
+    globalMapBoxToken: string;
     globalSlackAPICredentials: {
         token: string;
     };
@@ -37,6 +38,7 @@ interface SettingsFromWebView {
     workspaceAzureDevOpsOrg: string;
     workspaceAzureDevOpsPAT: string;
     workspaceAzureDevOpsUsername: string;
+    workspaceMapBoxToken: string;
     workspaceSlackAPICredentials: {
         token: string;
     };
@@ -143,6 +145,11 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
                                     .globalState
                                     .get(ego_contracts.KEY_GLOBAL_SETTING_AZURE_DEVOPS_GLOBAL_USERNAME)
                             ).trim(),
+                            globalMapBoxToken: ego_helpers.toStringSafe(
+                                this.extension
+                                    .globalState
+                                    .get(ego_contracts.KEY_GLOBAL_SETTING_MAPBOX_API_TOKEN)
+                            ).trim(),
                             globalSlackAPICredentials: this.extension
                                 .globalState
                                 .get(ego_contracts.KEY_GLOBAL_SETTING_SLACK_API_CREDENTIALS),
@@ -166,6 +173,11 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
                                 this.extension
                                     .workspaceState
                                     .get(ego_contracts.KEY_GLOBAL_SETTING_AZURE_DEVOPS_WORKSPACE_USERNAME)
+                            ).trim(),
+                            workspaceMapBoxToken: ego_helpers.toStringSafe(
+                                this.extension
+                                    .workspaceState
+                                    .get(ego_contracts.KEY_GLOBAL_SETTING_MAPBOX_API_TOKEN)
                             ).trim(),
                             workspaceSlackAPICredentials: this.extension
                                 .workspaceState
@@ -223,6 +235,13 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
                             globalAzureDevOpsUsername = undefined;
                         }
 
+                        let globalMapBoxToken = ego_helpers.toStringSafe(
+                            SETTINGS.globalMapBoxToken
+                        ).trim();
+                        if ('' === globalMapBoxToken) {
+                            globalMapBoxToken = undefined;
+                        }
+
                         let workspaceAzureDevOpsOrg = ego_helpers.toStringSafe(
                             SETTINGS.workspaceAzureDevOpsOrg
                         ).trim();
@@ -240,6 +259,13 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
                         }
                         if ('' === workspaceAzureDevOpsUsername) {
                             workspaceAzureDevOpsUsername = undefined;
+                        }
+
+                        let workspaceMapBoxToken = ego_helpers.toStringSafe(
+                            SETTINGS.workspaceMapBoxToken
+                        ).trim();
+                        if ('' === workspaceMapBoxToken) {
+                            workspaceMapBoxToken = undefined;
                         }
 
                         const OPEN_CHANGELOG_ON_STARTUP = ego_helpers.toBooleanSafe(
@@ -284,6 +310,16 @@ export class GlobalSettingsWebView extends ego_webview.WebViewWithContextBase {
                             .workspaceState
                             .update(ego_contracts.KEY_GLOBAL_SETTING_SLACK_API_CREDENTIALS,
                                     SETTINGS.workspaceSlackAPICredentials);
+
+                        // MapBox
+                        await this.extension
+                            .globalState
+                            .update(ego_contracts.KEY_GLOBAL_SETTING_MAPBOX_API_TOKEN,
+                                    globalMapBoxToken);
+                        await this.extension
+                            .workspaceState
+                            .update(ego_contracts.KEY_GLOBAL_SETTING_MAPBOX_API_TOKEN,
+                                    workspaceMapBoxToken);
                     } catch (e) {
                         err = ego_helpers.errorToString(e);
                     }

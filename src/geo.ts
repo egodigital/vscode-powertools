@@ -16,7 +16,9 @@
  */
 
 import * as deepMerge from 'deepmerge';
+import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
+import * as ego_settings_global from './settings/global';
 import * as ego_webview from './webview';
 import * as ejs from 'ejs';
 import * as fsExtra from 'fs-extra';
@@ -41,16 +43,18 @@ export interface MapWebViewOptions {
 /**
  * A webview for displaying a map.
  */
-export class MapWebView extends ego_webview.WebViewBase {
+export class MapWebView extends ego_webview.WebViewWithContextBase {
     /**
      * Initializes a new instance of that class.
      *
+     * @param {vscode.ExtensionContext} extension The extension context.
      * @param {MapWebViewOptions} options The options.
      */
     public constructor(
+        public readonly extension: vscode.ExtensionContext,
         public readonly options: MapWebViewOptions,
     ) {
-        super();
+        super(extension);
     }
 
     /**
@@ -100,6 +104,24 @@ export class MapWebView extends ego_webview.WebViewBase {
     protected getType(): string {
         return 'Map';
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected async onWebViewMessage(msg: ego_contracts.WebViewMessage): Promise<boolean> {
+        switch (msg.command) {
+            case 'openMapBoxSettings':
+                await ego_settings_global.openGlobalSettings(
+                    this.extension, 'mapbox'
+                );
+                break;
+
+            default:
+                return false;
+        }
+
+        return true;
+    }
 }
 
 
@@ -115,11 +137,26 @@ export async function openMapView(
     extension: vscode.ExtensionContext,
     opts?: MapWebViewOptions,
 ) : Promise<MapWebView> {
-    opts = deepMerge({
-        // TODO
-    }, opts);
+    let apiToken: string;
 
-    const WEB_VIEW = new MapWebView(opts);
+    // first try for workspace
+    apiToken = ego_helpers.toStringSafe(
+        extension.workspaceState
+            .get(ego_contracts.KEY_GLOBAL_SETTING_MAPBOX_API_TOKEN, '')
+    ).trim();
+    if ('' === apiToken) {
+        // now try globally
+        apiToken = ego_helpers.toStringSafe(
+            extension.globalState
+                .get(ego_contracts.KEY_GLOBAL_SETTING_MAPBOX_API_TOKEN, '')
+        ).trim();
+    }
+
+    opts = deepMerge({
+        apiToken: '' === apiToken ? null : apiToken,
+    }, opts || {});
+
+    const WEB_VIEW = new MapWebView(extension, opts);
     if (!(await WEB_VIEW.open())) {
         throw new Error('Could not open map webview!');
     }

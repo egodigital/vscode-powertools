@@ -37,6 +37,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                         <i class="fa fa-codepen mr-3"></i>Azure DevOps
                                     </a>
 
+                                    <a href="#" onclick="ego_select_area('mapbox')" class="list-group-item list-group-item-action waves-effect ego-item ego-item-m mapbox">
+                                        <i class="fa fa-map mr-3"></i>MapBox
+                                    </a>
+
                                     <a href="#" onclick="ego_select_area('notifications')" class="list-group-item list-group-item-action waves-effect ego-item ego-item-notifications">
                                         <i class="fa fa-envelope-open-o mr-3"></i>Notifications
                                     </a>
@@ -145,6 +149,42 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                                data-trigger="focus"
                                                data-placement="bottom"
                                                data-content="Enter the Personal Access Token, to access the Azure DevOps API, which can be used in the current workspace.">
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="ego-area ego-area-mapbox" style="display: none;">
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item active">MapBox</li>
+                                    </ol>
+                                </nav>
+
+                                <form>
+                                    <!-- Global MapBox credentials -->
+                                    <div class="form-group" id="ego-global-mapbox-api-tokens">
+                                        <label for="ego-global-mapbox-token">Global MapBox Token</label>
+                                        <input id="ego-global-mapbox-token"
+                                               class="form-control"
+                                               type="password"          
+                                               title="Global MapBox Token"                             
+                                               data-toggle="popover"
+                                               data-trigger="focus"
+                                               data-placement="bottom"
+                                               data-content="Enter the API Token, to access the MapBox API, which can be used in all workspaces.">
+                                    </div>
+
+                                    <!-- Workspace MapBox credentials -->
+                                    <div class="form-group" id="ego-workspace-mapbox-api-tokens">
+                                        <label for="ego-workspace-mapbox-token">Workspace MapBox Token</label>
+                                        <input id="ego-workspace-mapbox-token"
+                                               class="form-control"
+                                               type="password"          
+                                               title="Workspace MapBox Token"                             
+                                               data-toggle="popover"
+                                               data-trigger="focus"
+                                               data-placement="bottom"
+                                               data-content="Enter the API Token, to access the MapBox API, which can be used in the current workspace.">
                                     </div>
                                 </form>
                             </div>

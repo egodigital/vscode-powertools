@@ -1729,6 +1729,11 @@ export const KEY_GLOBAL_SETTING_AZURE_DEVOPS_WORKSPACE_PAT = 'egoPTAzureDevOpsWo
 export const KEY_GLOBAL_SETTING_AZURE_DEVOPS_WORKSPACE_USERNAME = 'egoPTAzureDevOpsWorkspaceUsername';
 
 /**
+ * The key for the global setting that stores a MapBox API token.
+ */
+export const KEY_GLOBAL_SETTING_MAPBOX_API_TOKEN = 'egoPTMapBoxApiToken';
+
+/**
  * The key for the global setting that stores if CHANGELOG should be opened on startup automatically.
  */
 export const KEY_GLOBAL_SETTING_OPEN_CHANGELOG_ON_STARTUP = 'egoPTOpenChangelogOnStartup';
