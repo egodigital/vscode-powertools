@@ -681,6 +681,19 @@ export async function activate(context: vscode.ExtensionContext) {
         });
     });
 
+    // TODO: testcode
+    WF.next(async () => {
+        try {
+            const GEO = require('./geo');
+
+            await GEO.openMapView(context, {
+                apiToken: '<MAPBOX-API-TOKEN>',
+            });
+        } catch (e) {
+            if (e) { }
+        }
+    });
+
     await ego_helpers.QUEUE.add(async () => {
         if (isDeactivating) {
             return;

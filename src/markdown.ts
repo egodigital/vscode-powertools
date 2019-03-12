@@ -41,7 +41,7 @@ export class MarkdownWebView extends ego_webview.WebViewBase {
     /**
      * Initializes a new instance of that class.
      *
-     * @param {MarkdownWebViewOptions} markoptionsdown The options.
+     * @param {MarkdownWebViewOptions} options The options.
      */
     public constructor(
         public readonly options: MarkdownWebViewOptions,
