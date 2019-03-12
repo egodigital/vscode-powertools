@@ -1180,7 +1180,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                             (await $str(loc[i][1])).trim()
                         )
                     });
-                } else if (Array.isArray(loc[i])) {
+                } else if (_.isPlainObject(loc[i])) {
                     GEO_LOCATIONS.push(loc[i]);
                 } else {
                     for (const P of polyline.decode(await $str(loc[i]))) {
