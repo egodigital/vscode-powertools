@@ -1,5 +1,11 @@
 # Change Log (vscode-powertools)
 
+## 0.34.0 (March 12th, 2019; npm update)
+
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [cron](https://www.npmjs.com/package/cron) `^1.7.0`
+  * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.3.4`
+
 ## 0.33.0 (March 9th, 2019; tools)
 
 * extension requires at least [Visual Studio Code 1.32](https://code.visualstudio.com/updates/v1_32) now
