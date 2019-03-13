@@ -21,6 +21,7 @@ import * as ego_helpers from '../helpers';
 import * as ego_settings_global from '../settings/global';
 import * as ego_slack from '../slack';
 const opn = require('opn');
+import * as path from 'path';
 import * as sanitizeFilename from 'sanitize-filename';
 import * as vscode from 'vscode';
 
@@ -66,6 +67,8 @@ export async function sendToSlack(
     let fileName = doc.fileName;
     if (ego_helpers.isEmptyString(fileName)) {
         fileName = `vscode-powertools-${ NOW.format('YYYYMMDDHHmmss') }.txt`;
+    } else {
+        fileName = path.basename(fileName);
     }
     fileName = sanitizeFilename(fileName).trim();
 
