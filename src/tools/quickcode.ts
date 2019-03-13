@@ -1245,7 +1245,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
 
                     for (
                         const S of $h.from(Object.keys(WORKBOOK.Sheets))
-                                     .orderBy(x => $h.normalizeString(x))
+                                     .orderBy((x: string) => $h.normalizeString(x))
                     ) {
                         const SHEET = WORKBOOK.Sheets[S];
                         if (!SHEET) {
@@ -1253,7 +1253,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                         }
 
                         md += `
-## ${ S }
+## ${ $h.escapeMarkdown(S) }
 `;
 
                         let colCount = 0;
@@ -1282,7 +1282,9 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
 
                         md += `| `;
                         for (let ci = 0; ci < colCount; ci++) {
-                            md += `| ${ xlsx.utils.encode_col(ci) } `;
+                            md += `| ${ $h.escapeMarkdown(
+                                xlsx.utils.encode_col(ci)
+                             ) } `;
                         }
                         md += "\n";
                         for (let ci = 0; ci < colCount; ci++) {
@@ -1291,7 +1293,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                         md += "\n";
 
                         for (let ri = 0; ri < rowCount; ri++) {
-                            md += `| ${ ri + 1 } `;
+                            md += `| ${ $h.escapeMarkdown(ri + 1) } `;
 
                             for (let ci = 0; ci < colCount; ci++) {
                                 const COL = xlsx.utils.encode_col(ci);
@@ -1305,7 +1307,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                                     cellValue = CELL.w;
                                 }
 
-                                md += `| ${ $h.toStringSafe(cellValue) } `;
+                                md += `| ${ $h.escapeMarkdown(cellValue) } `;
                             }
 
                             md += "\n";

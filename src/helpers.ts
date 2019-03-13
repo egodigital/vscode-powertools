@@ -19,6 +19,7 @@ import * as _ from 'lodash';
 import * as ego_code from './code';
 import * as ego_contracts from './contracts';
 import * as fsExtra from 'fs-extra';
+const markdownEscapes = require('markdown-escapes');
 import * as path from 'path';
 import * as os from 'os';
 import * as vscode from 'vscode';
@@ -205,6 +206,31 @@ export function errorToString(err: any): string {
     }
 
     return '';
+}
+
+/**
+ * Escapes a value for handling as safe Markdown text.
+ *
+ * @param {any} val The input value.
+ *
+ * @return {string} The escaped value.
+ */
+export function escapeMarkdown(val: any): string {
+    val = toStringSafe(val);
+
+    const ESCAPES: string[] = markdownEscapes({
+        gfm: true,
+    });
+    let result = '';
+    for (let i = 0; i < val.length; i++) {
+        const C: string = val[i];
+
+        result += (
+            ESCAPES.indexOf(C) > -1 ? "\\" : ''
+        ) + C;
+    }
+
+    return result;
 }
 
 /**
