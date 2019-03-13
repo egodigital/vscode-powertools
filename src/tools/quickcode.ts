@@ -1056,7 +1056,7 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
                 // load from URL
 
                 dataOrUrl = await $load(
-                    $h.toStringSafe(dataOrUrl)
+                    await $str(dataOrUrl)
                 );
             }
 
@@ -1215,6 +1215,114 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         }
     );
 
+    // @ts-ignore
+    const $excel = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (dataOrUrl: any) => {
+            const xlsx = require('xlsx');
+
+            dataOrUrl = await $unwrap(
+                dataOrUrl
+            );
+
+            if (!Buffer.isBuffer(dataOrUrl)) {
+                // load from URL
+
+                dataOrUrl = await $load(
+                    await $str(dataOrUrl)
+                );
+            }
+
+            const WORKBOOK = xlsx.read(
+                dataOrUrl
+            );
+
+            if (WORKBOOK) {
+                let md = '';
+                md += '# Code Execution Result (Excel)\n';
+
+                if (WORKBOOK.Sheets) {
+                    const REGEX_CELL_NAME = /^([A-Z]{1,})([0-9]{1,})$/;
+
+                    for (
+                        const S of $h.from(Object.keys(WORKBOOK.Sheets))
+                                     .orderBy(x => $h.normalizeString(x))
+                    ) {
+                        const SHEET = WORKBOOK.Sheets[S];
+                        if (!SHEET) {
+                            continue;
+                        }
+
+                        md += `
+## ${ S }
+`;
+
+                        let colCount = 0;
+                        let rowCount = 0;
+
+                        for (const C in SHEET) {
+                            const CELL_NAME: string = $h.toStringSafe(C)
+                                .trim();
+                            if (!REGEX_CELL_NAME.test(CELL_NAME)) {
+                                continue;
+                            }
+
+                            const R_EXEC = REGEX_CELL_NAME.exec(CELL_NAME);
+
+                            colCount = Math.max(
+                                colCount, xlsx.utils.decode_col(R_EXEC[1]) + 1
+                            );
+                            rowCount = Math.max(
+                                rowCount, xlsx.utils.decode_row(R_EXEC[2]) + 1
+                            );
+                        }
+
+                        if (!colCount || !rowCount) {
+                            continue;
+                        }
+
+                        md += `| `;
+                        for (let ci = 0; ci < colCount; ci++) {
+                            md += `| ${ xlsx.utils.encode_col(ci) } `;
+                        }
+                        md += "\n";
+                        for (let ci = 0; ci < colCount; ci++) {
+                            md += `|-----`;
+                        }
+                        md += "\n";
+
+                        for (let ri = 0; ri < rowCount; ri++) {
+                            md += `| ${ ri + 1 } `;
+
+                            for (let ci = 0; ci < colCount; ci++) {
+                                const COL = xlsx.utils.encode_col(ci);
+                                const ROW = xlsx.utils.encode_row(ri);
+
+                                const CELL_NAME = `${ COL }${ ROW }`;
+                                const CELL = SHEET[CELL_NAME];
+
+                                let cellValue: any;
+                                if (CELL) {
+                                    cellValue = CELL.w;
+                                }
+
+                                md += `| ${ $h.toStringSafe(cellValue) } `;
+                            }
+
+                            md += "\n";
+                        }
+                    }
+                }
+
+                return {
+                    '__markdown_tm_19790905': Symbol('MARKDOWN_DOCUMENT'),
+                    'fullWidth': true,
+                    'markdown': md,
+                    'title': 'Code Execution Result (Excel)',
+                };
+            }
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -1353,6 +1461,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$csv(data?)` | Handles data as CSV and displays them. If no argument is defined, the value from `$e` constant is used. | `$csv( "col 1, col2\\r\\nval1.1,val1.2\\r\\nval2.1,val2.2" )`\n';
         md += '`$DELETE(url, body?, headers?)` | Starts a HTTP DELETE request. | `$DELETE("https://example.com/users/19861222")`\n';
         md += '`$emojis(search?)` | Returns a list of [emojis](https://www.npmjs.com/package/node-emoji), by using an optional filter. | `$emojis("heart")`\n';
+        md += '`$excel` | Handles data as Excel workbook and displays its data. | `$excel("https://example.com/myWorkbook.xlsx")`\n';
         md += '`$exec` | Executes the code in the currently running editor. | `$exec`\n';
         md += '`$full(path?)` | Returns a full path. | `$full("dir1/subDir1_1/myFile.txt")`\n';
         md += '`$GET(url, headers?)` | Starts a HTTP GET request. | `$GET("https://example.com/users/19790905")`\n';

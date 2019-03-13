@@ -15,12 +15,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-function ego_update_markdown(md) {
+function ego_update_markdown(md, fullWidth) {
     if (arguments.length < 1) {
         md = EGO_MARKDOWN_CONTENT;
     }
 
-    const DOCUMENT = $('<div class="container" />');
+    if (arguments.length < 2) {
+        fullWidth = EGO_FULL_WIDTH;
+    }
+
+    const DOCUMENT = $('<div />');
+    if (fullWidth) {
+        DOCUMENT.addClass('container-fluid');
+    } else {
+        DOCUMENT.addClass('container');
+    }
+
     DOCUMENT.append(
         ego_from_markdown(md)
     );

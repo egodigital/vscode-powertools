@@ -158,6 +158,7 @@ ${ codeToExecute }
                     await WEB_VIEW.open();
                 } else if (RESULT && _.isSymbol(RESULT['__markdown_tm_19790905'])) {
                     const WEB_VIEW = new ego_markdown.MarkdownWebView({
+                        fullWidth: ego_helpers.toBooleanSafe(RESULT.fullWidth),
                         markdown: RESULT.markdown,
                         title: 'Code Execution Result (Markdown)'
                     });

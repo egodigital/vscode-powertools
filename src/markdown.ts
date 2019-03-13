@@ -24,6 +24,10 @@ import * as ego_webview from './webview';
  */
 export interface MarkdownWebViewOptions {
     /**
+     * Display in full page with or not.
+     */
+    fullWidth?: boolean;
+    /**
      * The markdown content.
      */
     markdown: any;
@@ -56,6 +60,9 @@ export class MarkdownWebView extends ego_webview.WebViewBase {
         return `
 <script type="text/javascript">
 
+const EGO_FULL_WIDTH = ${ JSON.stringify(
+    ego_helpers.toBooleanSafe(this.options.fullWidth)
+) };
 const EGO_MARKDOWN_CONTENT = ${ JSON.stringify(
     ego_helpers.toStringSafe(this.options.markdown)
 ) };

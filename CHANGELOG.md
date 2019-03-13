@@ -1,7 +1,9 @@
 # Change Log (vscode-powertools)
 
-## 0.35.0 (March 14th, 2019; fixes)
+## 0.35.0 (March 14th, 2019; tools)
 
+* added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$excel`: handles data as Excel workbook and displays its data
 * bug fixes
 
 ## 0.34.2 (March 12th, 2019; tools)

@@ -2067,8 +2067,9 @@
         "@types/sanitize-filename": "^1.1.28",
         "@types/tmp": "0.0.33",
         "@types/uuid": "^3.4.4",
+        "@types/xlsx": "0.0.36",
         "@types/yazl": "^2.4.1",
-        "tslint": "^5.13.1",
+        "tslint": "^5.14.0",
         "typedoc": "^0.13.0",
         "typescript": "3.2.4",
         "vsce": "^1.58.0",
@@ -2128,6 +2129,7 @@
         "uglify-js": "^3.4.9",
         "uuid": "^3.3.2",
         "vscode-helpers": "^4.0.1",
+        "xlsx": "^0.14.1",
         "yazl": "^2.5.1"
     }
 }
