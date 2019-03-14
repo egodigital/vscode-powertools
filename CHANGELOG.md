@@ -1,5 +1,9 @@
 # Change Log (vscode-powertools)
 
+## 0.36.0 (March 16th, 2019; apps)
+
+* added `ego_escape_markdown()` function to [app.js](https://github.com/egodigital/vscode-powertools/wiki/Apps#web-view)
+
 ## 0.35.1 (March 14th, 2019; tools)
 
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):

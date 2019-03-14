@@ -31,6 +31,28 @@ function ego_apply_highlight(selector) {
     });
 }
 
+/**
+ * Escapes a value for handling as safe Markdown text.
+ *
+ * @param {any} val The input value.
+ *
+ * @return {String} The escaped value.
+ */
+function ego_escape_markdown(val) {
+    val = ego_to_string(val);
+
+    const SPECIAL_CHARS = ["\\", "`", "*", "{", "}", "[", "]", "(",")", "#", "+", "-", ".", "!", "_", ">", "~", "|"];
+    let result = '';
+    for (let i = 0; i < val.length; i++) {
+        const C = val[i];
+
+        result += (
+            SPECIAL_CHARS.indexOf(C) > -1 ? "\\" : ''
+        ) + C;
+    }
+
+    return result;
+}
 
 /**
  * Creates an element from Markdown.
