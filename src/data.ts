@@ -116,9 +116,7 @@ export class CsvTableWebView extends ego_webview.WebViewBase {
 
                         row.forEach(cell => {
                             this.htmlContent += '<td>';
-                            this.htmlContent += HTML_ENC.encode(
-                                ego_helpers.toStringSafe(cell)
-                            );
+                            this.htmlContent += ego_helpers.escapeMarkdown(cell);
                             this.htmlContent += '</td>';
                         });
                     }
