@@ -160,7 +160,8 @@ ${ codeToExecute }
                     const WEB_VIEW = new ego_markdown.MarkdownWebView({
                         fullWidth: ego_helpers.toBooleanSafe(RESULT.fullWidth),
                         markdown: RESULT.markdown,
-                        title: 'Code Execution Result (Markdown)'
+                        title: ego_helpers.isEmptyString(RESULT.title) ? 'Code Execution Result (Markdown)'
+                            : ego_helpers.toStringSafe(RESULT.title).trim()
                     });
 
                     await WEB_VIEW.open();
