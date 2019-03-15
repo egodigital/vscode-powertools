@@ -545,7 +545,7 @@ export function toCodeButton(
         return <any>STATUS_BTN;
     }
 
-    const BTN_ITEM: ego_contracts.ButtonItem = btn['__item'];
+    const BTN_ITEM: ego_contracts.Button = btn['__item'];
     const CMD_ID: string = _.isUndefined(btn['__command']) ?
         STATUS_BTN.command : btn['__command'];
 

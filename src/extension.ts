@@ -22,6 +22,7 @@ import * as ego_code from './code';
 import * as ego_commands from './commands';
 import * as ego_contracts from './contracts';
 import * as ego_global_buttons from './global/buttons';
+import * as ego_global_commands from './global/commands';
 import * as ego_global_config from './global/config';
 import * as ego_global_values from './global/values';
 import * as ego_helpers from './helpers';
@@ -33,6 +34,7 @@ import * as ego_values from './values';
 import * as ego_versions from './versions';
 import * as ego_workspace from './workspace';
 import * as ego_workspaces_buttons from './workspaces/buttons';
+import * as ego_workspaces_commands from './workspaces/commands';
 import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -584,6 +586,22 @@ export async function activate(context: vscode.ExtensionContext) {
         } catch (e) {
             ego_log.CONSOLE
                 .trace(e, 'extension.globalEvents(workspaces.buttons)');
+        }
+
+        // global commands
+        try {
+            ego_global_commands.initGlobalCommandEvents(context);
+        } catch (e) {
+            ego_log.CONSOLE
+                .trace(e, 'extension.globalEvents(global.commands)');
+        }
+
+        // workspace commands
+        try {
+            ego_workspaces_commands.initCommandEvents(context);
+        } catch (e) {
+            ego_log.CONSOLE
+                .trace(e, 'extension.globalEvents(workspaces.commands)');
         }
     });
 

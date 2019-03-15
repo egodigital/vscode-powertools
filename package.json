@@ -292,7 +292,7 @@
                                                 "type": "string"
                                             },
                                             "ifFile": {
-                                                "description": "The regular expression, that checks if an object should be visible for an active editor or not.",
+                                                "description": "The regular expression, that checks if that button should be visible for an active editor or not.",
                                                 "type": "string"
                                             },
                                             "importValues": {
@@ -379,6 +379,10 @@
                                                     "description": "The color.",
                                                     "type": "string"
                                                 },
+                                                "ifFile": {
+                                                    "description": "The regular expression, that checks if that button should be visible for an active editor or not.",
+                                                    "type": "string"
+                                                },
                                                 "isRight": {
                                                     "description": "Display button on the right side or not.",
                                                     "type": "boolean",
@@ -390,6 +394,10 @@
                                                 },
                                                 "onDestroyed": {
                                                     "description": "The (JavaScript) code to executed after command has been destroyed.",
+                                                    "type": "string"
+                                                },
+                                                "onEditorChanged": {
+                                                    "description": "The (JavaScript) code to executed after active editor has changed.",
                                                     "type": "string"
                                                 },
                                                 "priority": {
@@ -1421,7 +1429,7 @@
                                                 "type": "string"
                                             },
                                             "ifFile": {
-                                                "description": "The regular expression, that checks if an object should be visible for an active editor or not.",
+                                                "description": "The regular expression, that checks if that button should be visible for an active editor or not.",
                                                 "type": "string"
                                             },
                                             "importValues": {
@@ -1506,6 +1514,10 @@
                                             "properties": {
                                                 "color": {
                                                     "description": "The color.",
+                                                    "type": "string"
+                                                },
+                                                "ifFile": {
+                                                    "description": "The regular expression, that checks if that button should be visible for an active editor or not.",
                                                     "type": "string"
                                                 },
                                                 "isRight": {

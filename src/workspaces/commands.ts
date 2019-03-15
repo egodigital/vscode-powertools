@@ -18,6 +18,7 @@
 import * as _ from 'lodash';
 import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
+import * as ego_log from '../log';
 import * as ego_workspace from '../workspace';
 import * as vscode from 'vscode';
 
@@ -42,6 +43,92 @@ export function disposeCommands() {
 
         ego_helpers.tryDispose(CMD);
     }
+}
+
+/**
+ * Inits events for workspace commands.
+ *
+ * @param {vscode.ExtensionContext} extension The extension context.
+ */
+export function initCommandEvents(extension: vscode.ExtensionContext) {
+    extension.subscriptions.push(
+        vscode.window.onDidChangeActiveTextEditor((editor) => {
+            try {
+                ego_workspace.getAllWorkspaces().forEach(ws => {
+                    try {
+                        const LIST_OF_COMMANDS = (<ego_contracts.WorkspaceCommand[]>ws.instanceState[KEY_COMMANDS]).map(cmd => {
+                            const ITEM: ego_contracts.CommandItem = cmd['__item'];
+
+                            return {
+                                command: cmd,
+                                item: ITEM,
+                            };
+                        });
+
+                        // update button visibility
+                        LIST_OF_COMMANDS.forEach(x => {
+                            try {
+                                if (x.command.button) {
+                                    let isVisible = true;
+
+                                    if (x.item.button) {
+                                        isVisible = ego_helpers.isVisibleForActiveEditor(x.item.button);
+                                    }
+
+                                    if (isVisible) {
+                                        x.command.button.show();
+                                    } else {
+                                        x.command.button.hide();
+                                    }
+                                }
+                            } catch (e) {
+                                ego_log.CONSOLE
+                                    .trace(e, 'workspaces.commands.initCommandEvents.onDidChangeActiveTextEditor(3)');
+                            }
+                        });
+
+                        // onEditorChanged events
+                        ws.executeOnEditorChangedEvents(
+                            LIST_OF_COMMANDS.filter(x => {
+                                return !!x.item.button &&
+                                    !!x.command.button;
+                            }).map(x => {
+                                const CMD_ID: string = x.command['__id'];
+
+                                return {
+                                    button: x.command.button,
+                                    command: CMD_ID,
+                                    item: x.item,
+                                    onEditorChanged: x.item.button.onEditorChanged,
+                                };
+                            }),
+                            (code: string, x) => {
+                                return ws.executeCode(code, [{
+                                    name: 'button',
+                                    value: ego_helpers.toCodeButton(
+                                        <any>{
+                                            '__command': x.command,
+                                            '__item': x.item.button,
+                                            '__status_item': x.button,
+                                        },
+                                        (v) => {
+                                            return ws.replaceValues(v);
+                                        },
+                                    ),
+                                }]);
+                            }
+                        );
+                    } catch (e) {
+                        ego_log.CONSOLE
+                            .trace(e, 'workspaces.commands.initCommandEvents.onDidChangeActiveTextEditor(2)');
+                    }
+                });
+            } catch (e) {
+                ego_log.CONSOLE
+                    .trace(e, 'workspaces.commands.initCommandEvents.onDidChangeActiveTextEditor(1)');
+            }
+        }),
+    );
 }
 
 /**
@@ -139,7 +226,9 @@ export async function reloadCommands() {
                     );
                 });
 
-                const NEW_WORKSPACE_CMD: ego_contracts.WorkspaceCommand = {
+                const NEW_WORKSPACE_CMD: ego_contracts.WorkspaceCommand = <any>{
+                    '__id': ID,
+                    '__item': item,
                     button: undefined,
                     command: newCommand,
                     description: undefined,
@@ -227,7 +316,11 @@ export async function reloadCommands() {
                 }
 
                 if (newButton) {
-                    newButton.show();
+                    if (ego_helpers.isVisibleForActiveEditor(item.button)) {
+                        newButton.show();
+                    } else {
+                        newButton.hide();
+                    }
                 }
             } catch (e) {
                 ego_helpers.tryDispose(newButton);

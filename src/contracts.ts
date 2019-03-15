@@ -555,6 +555,12 @@ export interface CodeValueItem extends ValueItem {
 }
 
 /**
+ * A button for an command.
+ */
+export interface CommandButton extends Button, ConditionalForActiveEditor, WithEditorChangedEvents {
+}
+
+/**
  * A button action based on a command.
  */
 export interface CommandButtonAction extends ButtonAction {
@@ -608,7 +614,7 @@ export interface CommandItem extends CanImportValues, Conditional, ForPlatforms,
     /**
      * Settings for an optional button.
      */
-    button?: Button;
+    button?: CommandButton;
     /**
      * A description for the command.
      */
