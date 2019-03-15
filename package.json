@@ -296,6 +296,10 @@
                                                 "description": "The (JavaScript) code to executed after button has been destroyed.",
                                                 "type": "string"
                                             },
+                                            "onEditorChanged": {
+                                                "description": "The (JavaScript) code to executed after active editor has changed.",
+                                                "type": "string"
+                                            },
                                             "platforms": {
                                                 "description": "One or more platform names, that button is for.",
                                                 "type": "array",
@@ -1392,6 +1396,10 @@
                                             },
                                             "onDestroyed": {
                                                 "description": "The (JavaScript) code to executed after button has been destroyed.",
+                                                "type": "string"
+                                            },
+                                            "onEditorChanged": {
+                                                "description": "The (JavaScript) code to executed after active editor has changed.",
                                                 "type": "string"
                                             },
                                             "platforms": {

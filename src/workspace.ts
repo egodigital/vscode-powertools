@@ -142,10 +142,14 @@ export class Workspace extends ego_helpers.WorkspaceBase {
      * Executes code for that workspace.
      *
      * @param {string} code The code to execute.
+     * @param {ego_contracts.Value|ego_contracts.Value[]} [values] One or more additional value.
      *
      * @return {any} The result of the execution.
      */
-    public executeCode(code: string): any {
+    public executeCode(
+        code: string,
+        values?: ego_contracts.Value | ego_contracts.Value[],
+    ): any {
         code = ego_helpers.toStringSafe(code);
         if ('' === code.trim()) {
             return;
@@ -155,8 +159,32 @@ export class Workspace extends ego_helpers.WorkspaceBase {
             code: code,
             values: ego_values.toValueStorage(
                 this.getValues(true)
+                    .concat( ego_helpers.asArray(values) )
             ),
         });
+    }
+
+    /**
+     * Executes the code in 'onEditorChanged' of an object for that workspace.
+     *
+     * @param {TObj|TObj[]} objs One or more objects.
+     * @param {Function} codeExecutor A custom code executor.
+     */
+    public executeOnEditorChangedEvents<
+        TObj extends ego_contracts.WithEditorChangedEvents,
+    >(
+        objs: TObj | TObj[],
+        codeExecutor?: (code: string, obj: TObj) => any,
+    ) {
+        if (arguments.length < 2) {
+            codeExecutor = (code) => {
+                return this.executeCode(code);
+            };
+        }
+
+        return ego_helpers.executeOnEditorChangedEvents(
+            objs, codeExecutor
+        );
     }
 
     /**

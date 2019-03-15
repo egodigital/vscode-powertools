@@ -18,6 +18,7 @@
 import * as _ from 'lodash';
 import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
+import * as ego_log from '../log';
 import * as ego_workspace from '../workspace';
 import * as vscode from 'vscode';
 
@@ -43,6 +44,51 @@ export async function disposeButtons() {
 
         ego_helpers.tryDispose(BTN);
     }
+}
+
+/**
+ * Inits events for workspace buttons.
+ *
+ * @param {vscode.ExtensionContext} extension The extension context.
+ */
+export function initButtonEvents(extension: vscode.ExtensionContext) {
+    extension.subscriptions.push(
+        vscode.window.onDidChangeActiveTextEditor((editor) => {
+            try {
+                ego_workspace.getAllWorkspaces().forEach(ws => {
+                    try {
+                        ws.executeOnEditorChangedEvents(
+                            (<ego_contracts.WorkspaceButton[]>ws.instanceState[KEY_BUTTONS]).map(wsb => {
+                                const ITEM: ego_contracts.ButtonItem = wsb['__item'];
+
+                                return {
+                                    button: wsb,
+                                    onEditorChanged: ITEM.onEditorChanged,
+                                };
+                            }),
+                            (code: string, b) => {
+                                return ws.executeCode(code, [{
+                                    name: 'button',
+                                    value: ego_helpers.toCodeButton(
+                                        b.button,
+                                        (v) => {
+                                            return ws.replaceValues(v);
+                                        },
+                                    ),
+                                }]);
+                            }
+                        );
+                    } catch (e) {
+                        ws.logger
+                          .trace(e, 'workspaces.buttons.initButtonEvents.onDidChangeActiveTextEditor(2)');
+                    }
+                });
+            } catch (e) {
+                ego_log.CONSOLE
+                    .trace(e, 'workspaces.buttons.initButtonEvents.onDidChangeActiveTextEditor(1)');
+            }
+        })
+    );
 }
 
 /**
@@ -179,7 +225,10 @@ export async function reloadButtons() {
                         newBtn.command = CMD_ID;
                     });
 
-                    BUTTON_LIST.push({
+                    BUTTON_LIST.push(<any>{
+                        '__command': CMD_ID,
+                        '__item': b,
+                        '__status_item': newButton,
                         dispose: () => {
                             DISPOSE_BTN();
 

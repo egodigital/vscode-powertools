@@ -481,7 +481,7 @@ export type ButtonEntry = ButtonItem;
 /**
  * A button item in the settings.
  */
-export interface ButtonItem extends Button, CanImportValues, Conditional, ForPlatforms, WithCreationEvents {
+export interface ButtonItem extends Button, CanImportValues, Conditional, ForPlatforms, WithCreationEvents, WithEditorChangedEvents {
     /**
      * The action to invoke, when clicked.
      */
@@ -501,6 +501,44 @@ export interface CanImportValues {
      * Defines a list of properties, which uses (external) values for itself.
      */
     importValues?: { [propertyName: string]: CanImportValueEntry };
+}
+
+/**
+ * A button for use in code.
+ */
+export interface CodeButton {
+    /**
+     * Gets or sets the color.
+     */
+    color: string;
+    /**
+     * Disables the button.
+     */
+    readonly disable: () => void;
+    /**
+     * Enables the button.
+     */
+    readonly enable: () => void;
+    /**
+     * Hides the button.
+     */
+    readonly hide: () => void;
+    /**
+     * Shows the button.
+     */
+    readonly show: () => void;
+    /**
+     * Gets or sets the text.
+     */
+    text: string;
+    /**
+     * Gets or sets the tooltip.
+     */
+    tooltip: string;
+    /**
+     * Updates the button.
+     */
+    readonly update: () => void;
 }
 
 /**
@@ -1441,6 +1479,16 @@ export interface WithCreationEvents {
      * The (JavaScript) code to executed after object has been destroyed.
      */
     onDestroyed?: string;
+}
+
+/**
+ * An object, which can execute optional (JavaScript) code after active editor has changed events.
+ */
+export interface WithEditorChangedEvents {
+    /**
+     * The (JavaScript) code to executed after active editor has changed.
+     */
+    onEditorChanged?: string;
 }
 
 /**

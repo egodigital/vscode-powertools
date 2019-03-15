@@ -234,6 +234,49 @@ export function escapeMarkdown(val: any): string {
 }
 
 /**
+ * Executes the code in 'onEditorChanged' of an object.
+ *
+ * @param {TObj|TObj[]} objs One or more objects.
+ * @param {Function} codeExecutor A custom code executor.
+ */
+export function executeOnEditorChangedEvents<
+    TObj extends ego_contracts.WithEditorChangedEvents,
+>(
+    objs: TObj | TObj[],
+    codeExecutor?: (code: string, obj: TObj) => any,
+) {
+    if (arguments.length < 2) {
+        codeExecutor = (code, o) => {
+            return require('./extension').executeCode(
+                code,
+                [
+                    {
+                        'name': 'object',
+                        'value': o,
+                    }
+                ]
+            );
+        };
+    }
+
+    objs = asArray(objs);
+
+    objs.forEach(o => {
+        try {
+            const CODE = toStringSafe(o.onEditorChanged);
+            if ('' !== CODE) {
+                codeExecutor(
+                    CODE, o
+                );
+            }
+        } catch (e) {
+            require('./log').CONSOLE
+                .trace(e, 'helpers.executeOnEditorChangedEvents(1)');
+        }
+    });
+}
+
+/**
  * Filters "conditional" items.
  *
  * @param {TObj|TObj[]} objs The objects to check.
@@ -432,6 +475,117 @@ export async function showErrorMessage(err: any): Promise<string> {
             errorToString(err).trim()
         );
     }
+}
+
+/**
+ * Converts a button to a global button.
+ *
+ * @param {ego_contracts.GlobalButton} btn The input object.
+ *
+ * @return {ego_contracts.CodeButton} The output object.
+ */
+export function toCodeButton(
+    btn: ego_contracts.GlobalButton,
+    valueReplacer?: (val: any) => string,
+): ego_contracts.CodeButton {
+    if (arguments.length < 2) {
+        valueReplacer = (val: any) => {
+            return require('./global/values')
+                .replaceValues(val);
+        };
+    }
+
+    if (_.isNil(btn)) {
+        return <any>btn;
+    }
+
+    const STATUS_BTN: vscode.StatusBarItem = btn['__status_item'];
+    if (_.isNil(STATUS_BTN)) {
+        return <any>STATUS_BTN;
+    }
+
+    const BTN_ITEM: ego_contracts.ButtonItem = btn['__item'];
+    const CMD_ID: string = _.isUndefined(btn['__command']) ?
+        STATUS_BTN.command : btn['__command'];
+
+    let unparsedColor = BTN_ITEM ? BTN_ITEM.color
+        : STATUS_BTN.color;
+    let unparsedText = BTN_ITEM ? BTN_ITEM.text
+        : STATUS_BTN.text;
+    let unparsedTooltip = BTN_ITEM ? BTN_ITEM.tooltip
+        : STATUS_BTN.tooltip;
+
+    const CODE_BTN: ego_contracts.CodeButton = {
+        color: undefined,
+        disable: function() {
+            STATUS_BTN.command = undefined;
+        },
+        enable: function() {
+            STATUS_BTN.command = CMD_ID;
+        },
+        hide: function() {
+            STATUS_BTN.hide();
+        },
+        show: function() {
+            STATUS_BTN.show();
+        },
+        text: undefined,
+        tooltip: undefined,
+        update: function() {
+            const NEW_COLOR = valueReplacer(unparsedColor);
+            if (STATUS_BTN.color !== NEW_COLOR) {
+                STATUS_BTN.color = NEW_COLOR;
+            }
+
+            const NEW_TEXT = valueReplacer(unparsedText);
+            if (STATUS_BTN.text !== NEW_TEXT) {
+                STATUS_BTN.text = NEW_TEXT;
+            }
+
+            const NEW_TOOLTIP = valueReplacer(unparsedTooltip);
+            if (STATUS_BTN.tooltip !== NEW_TOOLTIP) {
+                STATUS_BTN.tooltip = NEW_TOOLTIP;
+            }
+        },
+    };
+
+    // CODE_BTN.color
+    Object.defineProperty(CODE_BTN, 'color', {
+        get: () => {
+            return unparsedColor;
+        },
+        set: (newValue: any) => {
+            unparsedColor = newValue;
+
+            CODE_BTN.update();
+        }
+    });
+
+    // CODE_BTN.text
+    Object.defineProperty(CODE_BTN, 'text', {
+        get: () => {
+            return unparsedText;
+        },
+        set: (newValue: any) => {
+            unparsedText = newValue;
+
+            CODE_BTN.update();
+        }
+    });
+
+    // CODE_BTN.tooltip
+    Object.defineProperty(CODE_BTN, 'tooltip', {
+        get: () => {
+            return unparsedTooltip;
+        },
+        set: (newValue: any) => {
+            unparsedTooltip = newValue;
+
+            CODE_BTN.update();
+        }
+    });
+
+    return CODE_BTN;
 }
 
 /**

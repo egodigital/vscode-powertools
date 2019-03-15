@@ -40,6 +40,39 @@ export function disposeGlobalUserButtons() {
 }
 
 /**
+ * Inits events for global buttons.
+ *
+ * @param {vscode.ExtensionContext} extension The extension context.
+ */
+export function initGlobalButtonEvents(extension: vscode.ExtensionContext) {
+    extension.subscriptions.push(
+        vscode.window.onDidChangeActiveTextEditor((editor) => {
+            try {
+                ego_helpers.executeOnEditorChangedEvents(
+                    GLOBAL_BUTTONS.map(gb => {
+                        const ITEM: ego_contracts.ButtonItem = gb['__item'];
+
+                        return {
+                            button: gb,
+                            onEditorChanged: ITEM.onEditorChanged,
+                        };
+                    }),
+                    (code: string, b) => {
+                        return ego_pt.executeCode(code, [{
+                            name: 'button',
+                            value: ego_helpers.toCodeButton(b.button),
+                        }]);
+                    }
+                );
+            } catch (e) {
+                ego_log.CONSOLE
+                    .trace(e, 'workspaces.buttons.initButtonEvents.onDidChangeActiveTextEditor(2)');
+            }
+        })
+    );
+}
+
+/**
  * Reloads all global buttons.
  */
 export async function reloadGlobalUserButtons() {
@@ -154,7 +187,10 @@ export async function reloadGlobalUserButtons() {
                         newBtn.command = CMD_ID;
                     });
 
-                    GLOBAL_BUTTONS.push({
+                    GLOBAL_BUTTONS.push(<any>{
+                        '__command': CMD_ID,
+                        '__item': b,
+                        '__status_item': newButton,
                         dispose: () => {
                             DISPOSE_BTN();
 

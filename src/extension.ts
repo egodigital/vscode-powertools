@@ -21,6 +21,7 @@ import * as childProcess from 'child_process';
 import * as ego_code from './code';
 import * as ego_commands from './commands';
 import * as ego_contracts from './contracts';
+import * as ego_global_buttons from './global/buttons';
 import * as ego_global_config from './global/config';
 import * as ego_global_values from './global/values';
 import * as ego_helpers from './helpers';
@@ -31,6 +32,7 @@ import * as ego_tools_proxies from './tools/proxies';
 import * as ego_values from './values';
 import * as ego_versions from './versions';
 import * as ego_workspace from './workspace';
+import * as ego_workspaces_buttons from './workspaces/buttons';
 import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -121,10 +123,14 @@ async function createNewWorkspace(folder: vscode.WorkspaceFolder): Promise<ego_w
  * Executes code (globally).
  *
  * @param {string} code The code to execute.
+ * @param {ego_contracts.Value|ego_contracts.Value[]} [values] One or more additional value.
  *
  * @return {any} The result of the execution.
  */
-export function executeCode(code: string): any {
+export function executeCode(
+    code: string,
+    values?: ego_contracts.Value | ego_contracts.Value[],
+): any {
     code = ego_helpers.toStringSafe(code);
     if ('' === code.trim()) {
         return;
@@ -134,6 +140,7 @@ export function executeCode(code: string): any {
         code: code,
         values: ego_values.toValueStorage(
             ego_global_values.getGlobalUserValues()
+                .concat( ego_helpers.asArray(values) )
         ),
     });
 }
@@ -559,6 +566,25 @@ export async function activate(context: vscode.ExtensionContext) {
 
         await ego_global_config.reloadGlobalSettings();
         ego_tools_proxies.TcpProxy.reloadGlobalList(context);
+    });
+
+    // global events
+    WF.next(async () => {
+        // global buttons
+        try {
+            ego_global_buttons.initGlobalButtonEvents(context);
+        } catch (e) {
+            ego_log.CONSOLE
+                .trace(e, 'extension.globalEvents(global.buttons)');
+        }
+
+        // workspace buttons
+        try {
+            ego_workspaces_buttons.initButtonEvents(context);
+        } catch (e) {
+            ego_log.CONSOLE
+                .trace(e, 'extension.globalEvents(workspaces.buttons)');
+        }
     });
 
     WF.next(() => {
