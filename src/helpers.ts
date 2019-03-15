@@ -423,6 +423,47 @@ export function importValues<TObj extends ego_contracts.CanImportValues = ego_co
 }
 
 /**
+ * Checks if an object is visible for an active editor.
+ *
+ * @param {ego_contracts.ConditionalForActiveEditor} obj The object to check.
+ *
+ * @return {boolean} Is visible or not.
+ */
+export function isVisibleForActiveEditor(obj: ego_contracts.ConditionalForActiveEditor): boolean {
+    if (!_.isNil(obj)) {
+        try {
+            const PATTERN = toStringSafe(obj.ifFile);
+            if ('' === PATTERN) {
+                return true;  // no pattern defined
+            }
+
+            const REGEX = new RegExp(PATTERN);
+
+            let fileName: string;
+
+            const EDITOR = vscode.window.activeTextEditor;
+            if (EDITOR) {
+                const DOC = EDITOR.document;
+                if (DOC) {
+                    fileName = DOC.fileName;
+                }
+            }
+
+            fileName = toStringSafe(fileName)
+                .split(path.sep)
+                .join('/');
+
+            return REGEX.test(fileName);
+        } catch (e) {
+            require('./log').CONSOLE
+                .trace(e, 'helpers.isVisibleForActiveEditor(1)');
+        }
+    }
+
+    return false;
+}
+
+/**
  * Loads a module from a script.
  *
  * @param {string} file The path to the script.

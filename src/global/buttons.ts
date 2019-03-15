@@ -48,15 +48,29 @@ export function initGlobalButtonEvents(extension: vscode.ExtensionContext) {
     extension.subscriptions.push(
         vscode.window.onDidChangeActiveTextEditor((editor) => {
             try {
-                ego_helpers.executeOnEditorChangedEvents(
-                    GLOBAL_BUTTONS.map(gb => {
-                        const ITEM: ego_contracts.ButtonItem = gb['__item'];
+                const LIST_OF_BUTTONS = GLOBAL_BUTTONS.map(gb => {
+                    const ITEM: ego_contracts.ButtonItem = gb['__item'];
+                    const STATUS_BAR_ITEM: vscode.StatusBarItem = gb['__status_item'];
 
-                        return {
-                            button: gb,
-                            onEditorChanged: ITEM.onEditorChanged,
-                        };
-                    }),
+                    return {
+                        button: gb,
+                        item: ITEM,
+                        onEditorChanged: ITEM.onEditorChanged,
+                        statusBarItem: STATUS_BAR_ITEM,
+                    };
+                });
+
+                // change visibility
+                LIST_OF_BUTTONS.forEach(x => {
+                    if (ego_helpers.isVisibleForActiveEditor(x.item)) {
+                        x.statusBarItem.show();
+                    } else {
+                        x.statusBarItem.hide();
+                    }
+                });
+
+                ego_helpers.executeOnEditorChangedEvents(
+                    LIST_OF_BUTTONS,
                     (code: string, b) => {
                         return ego_pt.executeCode(code, [{
                             name: 'button',

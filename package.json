@@ -291,6 +291,10 @@
                                                 "description": "The JavaScript code that checks the avaibility of that button.",
                                                 "type": "string"
                                             },
+                                            "ifFile": {
+                                                "description": "The regular expression, that checks if an object should be visible for an active editor or not.",
+                                                "type": "string"
+                                            },
                                             "importValues": {
                                                 "description": "Defines a list of properties, which uses (external) values for itself.",
                                                 "type": "object",
@@ -1414,6 +1418,10 @@
                                             },
                                             "if": {
                                                 "description": "The JavaScript code that checks the avaibility of that button.",
+                                                "type": "string"
+                                            },
+                                            "ifFile": {
+                                                "description": "The regular expression, that checks if an object should be visible for an active editor or not.",
                                                 "type": "string"
                                             },
                                             "importValues": {

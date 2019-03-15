@@ -484,7 +484,7 @@ export type ButtonEntry = ButtonItem;
 /**
  * A button item in the settings.
  */
-export interface ButtonItem extends Button, CanImportValues, Conditional, ForPlatforms, WithCreationEvents, WithEditorChangedEvents {
+export interface ButtonItem extends Button, CanImportValues, Conditional, ConditionalForActiveEditor, ForPlatforms, WithCreationEvents, WithEditorChangedEvents {
     /**
      * The action to invoke, when clicked.
      */
@@ -637,6 +637,15 @@ export interface Conditional {
     'if'?: string;
 }
 
+/**
+ * An object, which can check if it should be visible for an active editor.
+ */
+export interface ConditionalForActiveEditor {
+    /**
+     * The regular expression, that checks if an object should be visible for an active editor or not.
+     */
+    ifFile?: string;
+}
 
 /**
  * A button for a cron jon.

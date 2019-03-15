@@ -2,6 +2,7 @@
 
 ## 0.36.0 (March 16th, 2019; apps & buttons)
 
+* added `ifFile` setting for [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons), which is able to define a regular expression to define, if it is visible for an active editor or not ... s. [issue #13](https://github.com/egodigital/vscode-powertools/issues/13)
 * added `onEditorChanged` setting for [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons), which executes code, when the active editor changes ... s. [issue #13](https://github.com/egodigital/vscode-powertools/issues/13)
 * [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons) can execute [Visual Studio Code commands](https://code.visualstudio.com/api/references/commands) now ... s. [issue #14](https://github.com/egodigital/vscode-powertools/issues/14)
 * added `ego_escape_markdown()` function to [app.js](https://github.com/egodigital/vscode-powertools/wiki/Apps#web-view)

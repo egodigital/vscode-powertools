@@ -57,15 +57,29 @@ export function initButtonEvents(extension: vscode.ExtensionContext) {
             try {
                 ego_workspace.getAllWorkspaces().forEach(ws => {
                     try {
-                        ws.executeOnEditorChangedEvents(
-                            (<ego_contracts.WorkspaceButton[]>ws.instanceState[KEY_BUTTONS]).map(wsb => {
-                                const ITEM: ego_contracts.ButtonItem = wsb['__item'];
+                        const LIST_OF_BUTTONS = (<ego_contracts.WorkspaceButton[]>ws.instanceState[KEY_BUTTONS]).map(wsb => {
+                            const ITEM: ego_contracts.ButtonItem = wsb['__item'];
+                            const STATUS_BAR_ITEM: vscode.StatusBarItem = wsb['__status_item'];
 
-                                return {
-                                    button: wsb,
-                                    onEditorChanged: ITEM.onEditorChanged,
-                                };
-                            }),
+                            return {
+                                button: wsb,
+                                item: ITEM,
+                                onEditorChanged: ITEM.onEditorChanged,
+                                statusBarItem: STATUS_BAR_ITEM,
+                            };
+                        });
+
+                        // change visibility
+                        LIST_OF_BUTTONS.forEach(x => {
+                            if (ego_helpers.isVisibleForActiveEditor(x.item)) {
+                                x.statusBarItem.show();
+                            } else {
+                                x.statusBarItem.hide();
+                            }
+                        });
+
+                        ws.executeOnEditorChangedEvents(
+                            LIST_OF_BUTTONS,
                             (code: string, b) => {
                                 return ws.executeCode(code, [{
                                     name: 'button',
@@ -264,7 +278,11 @@ export async function reloadButtons() {
                         );
                     }
 
-                    newButton.show();
+                    if (ego_helpers.isVisibleForActiveEditor(b)) {
+                        newButton.show();
+                    } else {
+                        newButton.hide();
+                    }
                 }
             } catch (e) {
                 DISPOSE_BTN();
