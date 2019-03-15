@@ -1533,6 +1533,10 @@
                                                     "description": "The (JavaScript) code to executed after command has been destroyed.",
                                                     "type": "string"
                                                 },
+                                                "onEditorChanged": {
+                                                    "description": "The (JavaScript) code to executed after active editor has changed.",
+                                                    "type": "string"
+                                                },
                                                 "priority": {
                                                     "description": "The priority.",
                                                     "type": "number"
