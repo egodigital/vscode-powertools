@@ -200,6 +200,29 @@
                                                         "type": "string"
                                                     },
                                                     {
+                                                        "description": "Executes a Visual Studio Code command.",
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "arguments": {
+                                                                "description": "One or more arguments to pass.",
+                                                                "type": "array"
+                                                            },
+                                                            "command": {
+                                                                "description": "The ID of the command.",
+                                                                "type": "string"
+                                                            },
+                                                            "type": {
+                                                                "enum": [
+                                                                    "command"
+                                                                ],
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "command"
+                                                        ]
+                                                    },
+                                                    {
                                                         "description": "Executes a script.",
                                                         "type": "object",
                                                         "properties": {
@@ -1300,6 +1323,29 @@
                                                     {
                                                         "description": "The shell command to execute.",
                                                         "type": "string"
+                                                    },
+                                                    {
+                                                        "description": "Executes a Visual Studio Code command.",
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "arguments": {
+                                                                "description": "One or more arguments to pass.",
+                                                                "type": "array"
+                                                            },
+                                                            "command": {
+                                                                "description": "The ID of the command.",
+                                                                "type": "string"
+                                                            },
+                                                            "type": {
+                                                                "enum": [
+                                                                    "command"
+                                                                ],
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "command"
+                                                        ]
                                                     },
                                                     {
                                                         "description": "Executes a script.",

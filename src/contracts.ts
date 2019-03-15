@@ -454,6 +454,9 @@ export interface Button {
  * A button action.
  */
 export interface ButtonAction {
+    /**
+     * The type.
+     */
     type?: string;
 }
 
@@ -549,6 +552,20 @@ export interface CodeValueItem extends ValueItem {
      * The code to execute.
      */
     code: string;
+}
+
+/**
+ * A button action based on a command.
+ */
+export interface CommandButtonAction extends ButtonAction {
+    /**
+     * One or more arguments to pass.
+     */
+    arguments?: any[];
+    /**
+     * The ID of the command.
+     */
+    command: string;
 }
 
 /**

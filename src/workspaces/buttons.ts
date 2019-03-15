@@ -169,6 +169,24 @@ export async function reloadButtons() {
                         }
                         break;
 
+                    case 'command':
+                        {
+                            commandAction = async () => {
+                                const CMD_ACTION = <ego_contracts.CommandButtonAction>btnAction;
+
+                                const CMD_ID = ego_helpers.toStringSafe(CMD_ACTION.command);
+                                const CMD_ARGS: any[] =
+                                    _.isNil(CMD_ACTION.arguments) ? []
+                                                                  : ego_helpers.asArray(CMD_ACTION, false);
+
+                                await Promise.resolve(
+                                    vscode.commands.executeCommand
+                                        .apply(null, [ <any>CMD_ID ].concat(CMD_ARGS) )
+                                );
+                            };
+                        }
+                        break;
+
                     case 'script':
                         {
                             commandAction = async () => {
