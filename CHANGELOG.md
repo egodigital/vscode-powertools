@@ -1,5 +1,9 @@
 # Change Log (vscode-powertools)
 
+## 0.37.0 (March 18th, 2019; ????)
+
+@TODO
+
 ## 0.36.0 (March 16th, 2019; apps, buttons and commands)
 
 * added `ifFile` setting for [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons) and [command buttons](https://github.com/egodigital/vscode-powertools/wiki/Commands#button), which is able to define a regular expression to indicate, if they are visible for an active editor or not ... s. [issue #13](https://github.com/egodigital/vscode-powertools/issues/13)

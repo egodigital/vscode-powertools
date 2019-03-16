@@ -22,8 +22,6 @@ import * as fsExtra from 'fs-extra';
 import * as path from 'path';
 
 
-
-
 type StoreFile = {
     [category: string]: { [key: string]: StoreFileEntry };
 };
