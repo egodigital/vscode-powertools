@@ -1,11 +1,14 @@
 # Change Log (vscode-powertools)
 
-## 0.36.0 (March 16th, 2019; apps & buttons)
+## 0.36.0 (March 16th, 2019; apps, buttons and commands)
 
 * added `ifFile` setting for [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons) and [command buttons](https://github.com/egodigital/vscode-powertools/wiki/Commands#button), which is able to define a regular expression to indicate, if they are visible for an active editor or not ... s. [issue #13](https://github.com/egodigital/vscode-powertools/issues/13)
 * added `onEditorChanged` setting for [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons) and  and [command buttons](https://github.com/egodigital/vscode-powertools/wiki/Commands#button), which executes code, when the active editor changes ... s. [issue #13](https://github.com/egodigital/vscode-powertools/issues/13)
 * [buttons](https://github.com/egodigital/vscode-powertools/wiki/Buttons) can execute [Visual Studio Code commands](https://code.visualstudio.com/api/references/commands) now ... s. [issue #14](https://github.com/egodigital/vscode-powertools/issues/14)
 * added `ego_escape_markdown()` function to [app.js](https://github.com/egodigital/vscode-powertools/wiki/Apps#web-view)
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [opn](https://www.npmjs.com/package/opn) `^5.5.0`
+  * [uglify-js](https://www.npmjs.com/package/uglify-js) `^3.4.10`
 
 ## 0.35.1 (March 14th, 2019; tools)
 
