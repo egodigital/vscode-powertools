@@ -1,8 +1,10 @@
 # Change Log (vscode-powertools)
 
-## 0.37.0 (March 18th, 2019; ????)
+## 0.37.0 (March 19th, 2019; tools)
 
-@TODO
+* added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):
+  * `$yaml`: handles a value as YAML string and returns it as object
+* optimized output of results, which are displayed as Markdown documents
 
 ## 0.36.0 (March 16th, 2019; apps, buttons and commands)
 

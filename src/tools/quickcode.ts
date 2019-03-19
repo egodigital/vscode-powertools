@@ -1325,6 +1325,17 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         }
     );
 
+    // @ts-ignore
+    const $yaml = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (val: any) => {
+            const jsYAML = require('js-yaml');
+
+            return jsYAML.safeLoad(
+                val = await $str(val),
+            );
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -1507,6 +1518,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$utc` | Returns the current [time](https://momentjs.com/) in [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time). | `$utc`\n';
         md += '`$uuid(version?)` | Alias for `guid`. | `$uuid("4")`\n';
         md += '`$write(file, data, enc?)` | Writes data to a file. Relative paths will be mapped to the directory of the currently opened editor or the `.vscode-powertools` sub folder inside the user\'s home directory. | `$write("myFile.txt", "Data to write. Can be a string, stream or buffer")`\n';
+        md += '`$yaml(val)` | Handles a value as YAML string and returns it as object. | `$yaml( $load("https://example.com/test.yaml") )`\n';
         md += '\n';
     }
 

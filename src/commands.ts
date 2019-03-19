@@ -35,7 +35,6 @@ import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
 const geodist = require('geodist');
 const hexy = require('hexy');
-import * as htmlEntities from 'html-entities';
 import * as moment from 'moment';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -149,8 +148,6 @@ ${ codeToExecute }
             });
 
             if (!_.isUndefined(RESULT)) {
-                const HTML = new htmlEntities.AllHtmlEntities();
-
                 if (RESULT && _.isSymbol(RESULT['__httpresponse_tm_19790905'])) {
                     const WEB_VIEW = new ego_http.HttpResponseWebView(RESULT);
 
@@ -240,7 +237,7 @@ ${ codeToExecute }
                             }
                         }
 
-                        md += `${i + 1} | \`${ HTML.encode(
+                        md += `${i + 1} | \`${ ego_helpers.escapeMarkdown(
                             JSON.stringify(LOC)
                         )}\` (📍 [open](https://maps.google.com/?z=10&q=${ LAT },${ LNG })) | ${ distanceCol } | ${ bearingCol } \n`;
                     }
@@ -254,7 +251,7 @@ ${ codeToExecute }
                 } else if (Buffer.isBuffer(RESULT)) {
                     let md = '# Code Execution Result (Buffer)\n\n';
                     md += '```\n';
-                    md += HTML.encode( hexy.hexy(RESULT) ) + "\n";
+                    md += ego_helpers.escapeMarkdown( hexy.hexy(RESULT) ) + "\n";
                     md += '```';
 
                     const WEB_VIEW = new ego_markdown.MarkdownWebView({
@@ -280,7 +277,7 @@ ${ codeToExecute }
                             } else if (_.isUndefined(VALUE)) {
                                 json = '*(undefined)*';
                             } else {
-                                json = '`' + HTML.encode(
+                                json = '`' + ego_helpers.escapeMarkdown(
                                     _.isString(VALUE) ? VALUE : JSON.stringify(VALUE)
                                 ) + '`';
                             }
