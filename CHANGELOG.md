@@ -1,5 +1,16 @@
 # Change Log (vscode-powertools)
 
+## 0.38.0 (April 5th, 2019; Visual Studio Code 1.33 and npm update)
+
+* extension requires at least [Visual Studio Code 1.33](https://code.visualstudio.com/updates/v1_33) now
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [coffeescript](https://www.npmjs.com/package/coffeescript) `^2.4.0`
+  * [image-size](https://www.npmjs.com/package/image-size) `^0.7.3`
+  * [js-beautify](https://www.npmjs.com/package/js-beautify) `^1.9.1`
+  * [js-yaml](https://www.npmjs.com/package/js-yaml) `^3.13.3`
+  * [uglify-js](https://www.npmjs.com/package/uglify-js) `^3.5.3`
+  * [xlsx](https://www.npmjs.com/package/xlsx) `^0.14.2`
+
 ## 0.37.0 (March 19th, 2019; tools)
 
 * added following functions for [Code Execution](https://github.com/egodigital/vscode-powertools/wiki/Tools#code-execution):

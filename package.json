@@ -3,9 +3,9 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.37.0",
+    "version": "0.38.0",
     "engines": {
-        "vscode": "^1.32.0"
+        "vscode": "^1.33.0"
     },
     "categories": [
         "Azure",
@@ -2122,7 +2122,7 @@
     "devDependencies": {
         "@types/change-case": "^2.3.1",
         "@types/color-convert": "^1.9.0",
-        "@types/cron": "^1.6.1",
+        "@types/cron": "^1.7.0",
         "@types/csv-parse": "^1.1.12",
         "@types/ejs": "^2.6.3",
         "@types/exif": "^0.6.0",
@@ -2133,14 +2133,14 @@
         "@types/image-type": "^3.0.0",
         "@types/is-stream": "^1.1.0",
         "@types/js-beautify": "^1.8.0",
-        "@types/js-yaml": "^3.12.0",
+        "@types/js-yaml": "^3.12.1",
         "@types/lodash": "^4.14.123",
         "@types/mime-types": "^2.1.0",
         "@types/mocha": "^2.2.42",
         "@types/moment-timezone": "^0.5.12",
         "@types/node": "10.1.4",
         "@types/node-emoji": "^1.8.1",
-        "@types/opn": "^5.1.0",
+        "@types/opn": "^5.5.0",
         "@types/p-queue": "^3.2.1",
         "@types/pug": "^2.0.4",
         "@types/sanitize-filename": "^1.1.28",
@@ -2148,11 +2148,11 @@
         "@types/uuid": "^3.4.4",
         "@types/xlsx": "0.0.36",
         "@types/yazl": "^2.4.1",
-        "tslint": "^5.14.0",
+        "tslint": "^5.15.0",
         "typedoc": "^0.13.0",
         "typescript": "3.2.4",
-        "vsce": "^1.58.0",
-        "vscode": "^1.1.30"
+        "vsce": "^1.59.0",
+        "vscode": "^1.1.33"
     },
     "author": "e.GO Digital GmbH, Aachen, Germany",
     "license": "LGPL-3.0",
@@ -2173,10 +2173,10 @@
     },
     "dependencies": {
         "@mapbox/polyline": "^1.0.0",
-        "@slack/client": "^4.11.0",
+        "@slack/client": "^4.12.0",
         "change-case": "^3.1.0",
         "clean-css": "^4.2.1",
-        "coffeescript": "^2.3.2",
+        "coffeescript": "^2.4.0",
         "color-convert": "^2.0.0",
         "cron": "^1.7.0",
         "csv-parse": "^4.3.4",
@@ -2189,11 +2189,11 @@
         "hexy": "^0.3.0",
         "html-entities": "^1.2.1",
         "html-minifier": "^3.5.21",
-        "image-size": "^0.7.2",
+        "image-size": "^0.7.3",
         "image-type": "^3.1.0",
         "is-stream": "^1.1.0",
-        "js-beautify": "^1.9.0",
-        "js-yaml": "^3.12.2",
+        "js-beautify": "^1.9.1",
+        "js-yaml": "^3.13.1",
         "less": "^3.9.0",
         "lodash": "^4.17.11",
         "markdown-escapes": "^1.0.2",
@@ -2207,10 +2207,10 @@
         "pug": "^2.0.3",
         "sanitize-filename": "^1.6.1",
         "tmp": "0.0.33",
-        "uglify-js": "^3.4.10",
+        "uglify-js": "^3.5.3",
         "uuid": "^3.3.2",
         "vscode-helpers": "^4.0.1",
-        "xlsx": "^0.14.1",
+        "xlsx": "^0.14.2",
         "yazl": "^2.5.1"
     }
 }
