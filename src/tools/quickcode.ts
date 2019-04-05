@@ -947,7 +947,11 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
 
     // @ts-ignore
     const $cb = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
-        async (val: any) => {
+        async function (val?: any) {
+            if (arguments.length < 1) {
+                return await $vs.env.clipboard.readText();
+            }
+
             val = await $buff(val);
 
             if (_.isNil(val)) {
@@ -1466,7 +1470,7 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$base64(val, enc?)` | Converts a value to a Base64 string. | `$base64("mkloubert:P@ssword123!", "ascii")`\n';
         md += '`$beautify` | Beautifies the code in the active editor and opens the result in a new one. | `$beautify`\n';
         md += '`$buff(val, enc?)` | Converts a value to a [Buffer](https://nodejs.org/api/buffer.html), if needed. | `$buff("TM")`\n';
-        md += '`$cb(val)` | Copyies a value to clipboard. | `$cb("TM+MK")`\n';
+        md += '`$cb(val?)` | Copyies a value to Clipboard or, if no argument is defined, its current (text) value will be returned. | `$cb("TM+MK")`\n';
         md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
         md += '`$cmyk(cOrHex, m?, y?, k?)` | Converts CMYK color from or to hex. | `$cmyk(167, 255, 4)`\n';
         md += '`$code(val, lang?)` | Handles a value as string to display it in a webview with syntax highlight. | `$code("const TM = \'1979-09-05\';\\n\\nalert(TM);", "javascript")`\n';
