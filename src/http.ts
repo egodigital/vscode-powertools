@@ -150,9 +150,7 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
                     bodyToAppend = JSON.stringify(
                         OBJ, null, 2
                     );
-                } catch (e) {
-                    if (e) { }
-                }
+                } catch { }
             }
 
             // CSS, HTML or JavaScript?
