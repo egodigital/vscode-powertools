@@ -695,6 +695,10 @@ export interface DocumentOpenedEventActionScriptArguments extends WorkspaceScrip
      * The underlying document.
      */
     readonly document: vscode.TextDocument;
+    /**
+     * Short form of 'document.uri'
+     */
+    readonly file: vscode.Uri;
 }
 
 /**

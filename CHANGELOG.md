@@ -3,6 +3,7 @@
 ## 0.38.0 (April 5th, 2019; Visual Studio Code 1.33 and npm update)
 
 * [$cb](https://github.com/egodigital/vscode-powertools/wiki/Tools#cbval) now returns clipboard (text) value, if no argument is defined
+* added `file` shorthand property to [DocumentOpenedEventActionScriptArguments](https://egodigital.github.io/vscode-powertools/api/interfaces/_contracts_.documentopenedeventactionscriptarguments.html) interface, which is used in [document.opened](https://github.com/egodigital/vscode-powertools/wiki/Events#documentopened) events ... s. [issue #20](https://github.com/egodigital/vscode-powertools/issues/20)
 * extension requires at least [Visual Studio Code 1.33](https://code.visualstudio.com/updates/v1_33) now
 * updated the following [npm](https://www.npmjs.com/) modules:
   * [coffeescript](https://www.npmjs.com/package/coffeescript) `^2.4.0`

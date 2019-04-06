@@ -157,6 +157,17 @@ export async function reloadEvents() {
                                                     },
                                                 });
 
+                                                // scriptArgs.file
+                                                Object.defineProperty(scriptArgs, 'file', {
+                                                    enumerable: true,
+                                                    get: () => {
+                                                        const DOC: vscode.TextDocument = args[0];
+                                                        if (DOC) {
+                                                            return DOC.uri;
+                                                        }
+                                                    },
+                                                });
+
                                                 return scriptArgs;
                                             }
                                         );
