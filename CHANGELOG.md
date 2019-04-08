@@ -1,5 +1,9 @@
 # Change Log (vscode-powertools)
 
+## 0.40.0 (?????; ?????)
+
+* web view updates
+
 ## 0.39.0 (April 8th, 2019; events)
 
 * [document.opened](https://github.com/egodigital/vscode-powertools/wiki/Events#documentopened) event now supports file glob patterns as `file.changed`, `file.created` etc. ... s. [issue #20](https://github.com/egodigital/vscode-powertools/issues/20)
