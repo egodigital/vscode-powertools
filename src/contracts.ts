@@ -684,7 +684,7 @@ export interface CronJobItem extends JobItem {
 /**
  * An action for an event that is raised, after a document has been opened.
  */
-export interface DocumentOpenedEventItem extends EventItem {
+export interface DocumentOpenedEventItem extends FileEventItem {
 }
 
 /**

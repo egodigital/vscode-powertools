@@ -3,7 +3,7 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.38.1",
+    "version": "0.39.0",
     "engines": {
         "vscode": "^1.33.0"
     },
@@ -629,6 +629,20 @@
                                                         ]
                                                     }
                                                 ]
+                                            },
+                                            "exclude": {
+                                                "description": "One or more glob patterns of files to exclude.",
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "files": {
+                                                "description": "One or more glob patterns of files to include.",
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
                                             },
                                             "if": {
                                                 "description": "The JavaScript code that checks the avaibility of that event.",
@@ -2176,7 +2190,7 @@
         "@slack/client": "^4.12.0",
         "change-case": "^3.1.0",
         "clean-css": "^4.2.1",
-        "coffeescript": "^2.4.0",
+        "coffeescript": "^2.4.1",
         "color-convert": "^2.0.0",
         "cron": "^1.7.0",
         "csv-parse": "^4.3.4",

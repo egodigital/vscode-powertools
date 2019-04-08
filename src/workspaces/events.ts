@@ -146,31 +146,32 @@ export async function reloadEvents() {
                             switch (eventType) {
                                 case 'document.opened':
                                     {
-                                        await WORKSPACE.executeScript<ego_contracts.DocumentOpenedEventActionScriptArguments>(
-                                            <ego_contracts.ScriptEventAction>e.action,
-                                            (scriptArgs) => {
-                                                // scriptArgs.document
-                                                Object.defineProperty(scriptArgs, 'document', {
-                                                    enumerable: true,
-                                                    get: () => {
-                                                        return args[0];
-                                                    },
-                                                });
+                                        const DOC: vscode.TextDocument = args[0];
 
-                                                // scriptArgs.file
-                                                Object.defineProperty(scriptArgs, 'file', {
-                                                    enumerable: true,
-                                                    get: () => {
-                                                        const DOC: vscode.TextDocument = args[0];
-                                                        if (DOC) {
+                                        if (DOC && DOES_FILE_MATCH(DOC.uri, <ego_contracts.FileEventItem>e)) {
+                                            await WORKSPACE.executeScript<ego_contracts.DocumentOpenedEventActionScriptArguments>(
+                                                <ego_contracts.ScriptEventAction>e.action,
+                                                (scriptArgs) => {
+                                                    // scriptArgs.document
+                                                    Object.defineProperty(scriptArgs, 'document', {
+                                                        enumerable: true,
+                                                        get: () => {
+                                                            return DOC;
+                                                        },
+                                                    });
+
+                                                    // scriptArgs.file
+                                                    Object.defineProperty(scriptArgs, 'file', {
+                                                        enumerable: true,
+                                                        get: () => {
                                                             return DOC.uri;
-                                                        }
-                                                    },
-                                                });
+                                                        },
+                                                    });
 
-                                                return scriptArgs;
-                                            }
-                                        );
+                                                    return scriptArgs;
+                                                }
+                                            );
+                                        }
                                     }
                                     break;
 
