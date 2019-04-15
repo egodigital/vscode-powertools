@@ -45,7 +45,6 @@ const zip = require('node-zip');
  * Name of the key for storing app instances.
  */
 export const KEY_APPS = 'apps';
-// const REGEX_APP_NAME = /^([a-z])([a-z|0-9|\_|\-]{0,})$/gm;
 
 
 /**
