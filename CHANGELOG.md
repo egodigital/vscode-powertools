@@ -1,5 +1,9 @@
 # Change Log (vscode-powertools)
 
+## 0.41.0 (April 17th, 2019; updates)
+
+* updated page of `Power Tools: Help` command
+
 ## 0.40.0 (April 15th, 2019; MD Bootstrap 4.7.7)
 
 * updated to [MD Bootstrap 4.7.7 Free](https://mdbootstrap.com/docs/jquery/)
