@@ -1,6 +1,6 @@
 # Change Log (vscode-powertools)
 
-## 0.40.0 (April 15th. 2019; MD Bootstrap 4.7.7)
+## 0.40.0 (April 15th, 2019; MD Bootstrap 4.7.7)
 
 * updated to [MD Bootstrap 4.7.7 Free](https://mdbootstrap.com/docs/jquery/)
 * updated the following [npm](https://www.npmjs.com/) modules:
