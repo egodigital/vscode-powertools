@@ -1,8 +1,11 @@
 # Change Log (vscode-powertools)
 
-## 0.40.0 (?????; ?????)
+## 0.40.0 (April 15th. 2019; MD Bootstrap 4.7.7)
 
-* web view updates
+* updated to [MD Bootstrap 4.7.7 Free](https://mdbootstrap.com/docs/jquery/)
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.4.0`
+  * [uglify-js](https://www.npmjs.com/package/uglify-js) `^3.5.4`
 
 ## 0.39.0 (April 8th, 2019; events)
 
