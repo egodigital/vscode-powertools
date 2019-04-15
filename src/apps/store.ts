@@ -351,7 +351,6 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
                         {
                             'success': true,
                             'apps': ego_helpers.from(APPS)
-                                .orderBy(a => a.isInstalled ? 0 : 1)
                                 .groupBy(a => ego_helpers.normalizeString(a.name))
                                 .select(grp => {
                                     const APPS_OF_GROUP = grp.toArray();
@@ -371,7 +370,8 @@ export class AppStoreWebView extends ego_webview.WebViewWithContextBase {
                                 .select(x => {
                                     return x.apps[0];
                                 })
-                                .orderBy(x => ego_helpers.normalizeString(x.displayName))
+                                .orderBy(x => x.isInstalled ? 0 : 1)
+                                .thenBy(x => ego_helpers.normalizeString(x.displayName))
                                 .thenBy(x => ego_helpers.normalizeString(x.name))
                                 .thenBy(x => ego_helpers.normalizeString(x.source))
                                 .thenBy(x => ego_helpers.normalizeString(x.upgradeSource))
