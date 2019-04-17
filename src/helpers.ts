@@ -519,9 +519,10 @@ export async function showErrorMessage(err: any): Promise<string> {
 }
 
 /**
- * Converts a button to a global button.
+ * Converts a button to a button object, which can be used in code.
  *
  * @param {ego_contracts.GlobalButton} btn The input object.
+ * @param {Function} [valueReplacer] A custom value replacer.
  *
  * @return {ego_contracts.CodeButton} The output object.
  */
