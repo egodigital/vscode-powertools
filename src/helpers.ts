@@ -237,7 +237,7 @@ export function escapeMarkdown(val: any): string {
  * Executes the code in 'onEditorChanged' of an object.
  *
  * @param {TObj|TObj[]} objs One or more objects.
- * @param {Function} codeExecutor A custom code executor.
+ * @param {Function} [codeExecutor] A custom code executor.
  */
 export function executeOnEditorChangedEvents<
     TObj extends ego_contracts.WithEditorChangedEvents,
