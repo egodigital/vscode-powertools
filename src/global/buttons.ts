@@ -173,7 +173,7 @@ export async function reloadGlobalUserButtons() {
                                 await ego_pt.executeScript<ego_contracts.ButtonActionScriptArguments>(
                                     <ego_contracts.ScriptButtonAction>btnAction,
                                     (args) => {
-                                        // ARGS.button
+                                        // args.button
                                         Object.defineProperty(args, 'button', {
                                             enumerable: true,
                                             get: () => {
