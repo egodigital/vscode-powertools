@@ -1,9 +1,19 @@
 # Change Log (vscode-powertools)
 
-## 0.41.0 (April 17th, 2019; updates)
+## 0.41.0 (May 2nd, 2019; updates)
 
 * updated page of `Power Tools: Help` command
 * code cleanups and improvements
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [cron](https://www.npmjs.com/package/cron) `^1.7.1`
+  * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.4.1`
+  * [image-size](https://www.npmjs.com/package/image-size) `^0.7.4`
+  * [js-beautify](https://www.npmjs.com/package/js-beautify) `^1.10.0`
+  * [mime-types](https://www.npmjs.com/package/mime-types) `^2.1.24`
+  * [moment-timezone](https://www.npmjs.com/package/moment-timezone) `^0.5.25`
+  * [public-ip](https://www.npmjs.com/package/public-ip) `^3.1.0`
+  * [uglify-js](https://www.npmjs.com/package/uglify-js) `^3.5.10`
+  * [xlsx](https://www.npmjs.com/package/xlsx) `^0.14.3`
 
 ## 0.40.0 (April 15th, 2019; MD Bootstrap 4.7.7)
 
