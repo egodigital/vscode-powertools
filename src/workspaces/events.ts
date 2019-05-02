@@ -111,14 +111,14 @@ export async function reloadEvents() {
                 const FILES = ego_helpers.from(
                     ego_helpers.asArray(item.files)
                 ).select(f => WORKSPACE.replaceValues(f))
-                 .where(f => '' !== f.trim())
-                 .toArray();
+                    .where(f => '' !== f.trim())
+                    .toArray();
 
                 const EXCLUDE = ego_helpers.from(
                     ego_helpers.asArray(item.exclude)
                 ).select(e => WORKSPACE.replaceValues(e))
-                 .where(e => '' !== e.trim())
-                 .toArray();
+                    .where(e => '' !== e.trim())
+                    .toArray();
 
                 if (EXCLUDE.length > 0) {
                     if (
@@ -134,7 +134,7 @@ export async function reloadEvents() {
                 }
 
                 return ego_helpers.doesMatch(RELATIVE_PATH, FILES) ||
-                       ego_helpers.doesMatch('/' + RELATIVE_PATH, FILES);
+                    ego_helpers.doesMatch('/' + RELATIVE_PATH, FILES);
             };
 
             switch (ego_helpers.normalizeString(e.action.type)) {
@@ -246,6 +246,53 @@ export async function reloadEvents() {
                                         );
                                     }
                                     break;
+
+                                case 'file.willsave':
+                                    if (DOES_FILE_MATCH(args[1], <ego_contracts.FileEventItem>e)) {
+                                        const EVENT_ARGS: vscode.TextDocumentWillSaveEvent = args[3];
+
+                                        EVENT_ARGS.waitUntil(
+                                            WORKSPACE.executeScript<ego_contracts.FileWillSaveEventActionScriptArguments>(
+                                                <ego_contracts.ScriptEventAction>e.action,
+                                                (scriptArgs) => {
+                                                    // scriptArgs.changeType
+                                                    Object.defineProperty(scriptArgs, 'changeType', {
+                                                        enumerable: true,
+                                                        get: () => {
+                                                            return args[0];
+                                                        },
+                                                    });
+
+                                                    // scriptArgs.document
+                                                    Object.defineProperty(scriptArgs, 'document', {
+                                                        enumerable: true,
+                                                        get: () => {
+                                                            return args[2];
+                                                        },
+                                                    });
+
+                                                    // scriptArgs.file
+                                                    Object.defineProperty(scriptArgs, 'file', {
+                                                        enumerable: true,
+                                                        get: () => {
+                                                            return args[1];
+                                                        },
+                                                    });
+
+                                                    // scriptArgs.reason
+                                                    Object.defineProperty(scriptArgs, 'reason', {
+                                                        enumerable: true,
+                                                        get: () => {
+                                                            return EVENT_ARGS.reason;
+                                                        },
+                                                    });
+
+                                                    return scriptArgs;
+                                                }
+                                            )
+                                        );
+                                    }
+                                    break;
                             }
                         };
                     }
@@ -267,7 +314,7 @@ export async function reloadEvents() {
             }
         } catch (err) {
             WORKSPACE.logger
-                     .trace(err, 'events.reloadEvents(1)');
+                .trace(err, 'events.reloadEvents(1)');
         }
     });
 }

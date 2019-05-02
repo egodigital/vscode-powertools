@@ -1,7 +1,8 @@
 # Change Log (vscode-powertools)
 
-## 0.41.0 (May 2nd, 2019; updates)
+## 0.41.0 (May 2nd, 2019; events)
 
+* added [file.willsave](https://github.com/egodigital/vscode-powertools/wiki/Events#filewillsave) event ... s. [issue #24](https://github.com/egodigital/vscode-powertools/issues/24)
 * updated page of `Power Tools: Help` command
 * code cleanups and improvements
 * updated the following [npm](https://www.npmjs.com/) modules:

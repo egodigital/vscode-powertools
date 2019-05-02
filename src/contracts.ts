@@ -847,6 +847,16 @@ export interface FileValueItem extends ValueItem {
 }
 
 /**
+ * Arguments for script that is executed when a file is going to be saved.
+ */
+export interface FileWillSaveEventActionScriptArguments extends FileChangeEventActionScriptArguments {
+    /**
+     * The reason.
+     */
+    readonly reason: vscode.TextDocumentSaveReason;
+}
+
+/**
  * An object for specific platforms.
  */
 export interface ForPlatforms {
@@ -1744,6 +1754,10 @@ export enum FileChangeType {
      * Saved / updated by user
      */
     Saved,
+    /**
+     * Will save
+     */
+    WillSave,
 }
 
 /**

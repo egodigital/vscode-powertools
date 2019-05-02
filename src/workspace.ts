@@ -709,7 +709,7 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     }
 
     /**
-     * Is invoked when a text document has been changed.
+     * Is invoked when a text document has been saved.
      *
      * @param {vscode.TextDocument} doc The underlying text document.
      */
@@ -791,6 +791,7 @@ export class Workspace extends ego_helpers.WorkspaceBase {
     private async onFileChange(
         type: ego_contracts.FileChangeType, file: vscode.Uri,
         doc?: vscode.TextDocument,
+        ...args: any[]
     ) {
         if (this.isInFinalizeState) {
             return;
@@ -839,20 +840,41 @@ export class Workspace extends ego_helpers.WorkspaceBase {
             case ego_contracts.FileChangeType.Saved:
                 eventType = 'file.saved';
                 break;
+
+            case ego_contracts.FileChangeType.WillSave:
+                eventType = 'file.willsave';
+                break;
         }
 
         const EVENTS = this.getEventsBy(eventType);
         for (const E of EVENTS) {
             try {
                 await Promise.resolve(
-                    E.execute(eventType,
-                              type, file, doc)
+                    E.execute.apply(
+                        E,
+                        [eventType, type, file, doc].concat(args)
+                    )
                 );
             } catch (e) {
                 this.logger
                     .trace(e, 'workspace.onFileChange(1)');
             }
         }
+    }
+
+    /**
+     * Is invoked when a text document is going to be saved.
+     *
+     * @param {vscode.TextDocumentWillSaveEvent} e The event arguments.
+     */
+    public async onWillSaveTextDocument(e: vscode.TextDocumentWillSaveEvent) {
+        await this._QUEUE.add(async () => {
+            await this.onFileChange(
+                ego_contracts.FileChangeType.WillSave, e.document.uri,
+                e.document,
+                e,
+            );
+        });
     }
 
     /**

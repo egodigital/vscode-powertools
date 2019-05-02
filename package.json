@@ -587,7 +587,8 @@
                                                     "file.changed",
                                                     "file.created",
                                                     "file.deleted",
-                                                    "file.saved"
+                                                    "file.saved",
+                                                    "file.willsave"
                                                 ],
                                                 "type": "string"
                                             }

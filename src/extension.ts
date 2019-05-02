@@ -278,6 +278,12 @@ async function onDidSaveTextDocument(doc: vscode.TextDocument) {
     });
 }
 
+async function onWillSaveTextDocument(e: vscode.TextDocumentWillSaveEvent) {
+    await withTextDocument(e.document, async (ws, d) => {
+        await ws.onWillSaveTextDocument(e);
+    });
+}
+
 /**
  * Runs a shell command and shows it progress in the GUI (globally).
  *
@@ -524,6 +530,15 @@ export async function activate(context: vscode.ExtensionContext) {
                 }).catch((err) => {
                     ego_log.CONSOLE
                            .trace(err, 'vscode.workspace.onDidSaveTextDocument');
+                });
+            }),
+
+            // onWillSaveTextDocument
+            vscode.workspace.onWillSaveTextDocument((e) => {
+                onWillSaveTextDocument(e).then(() => {
+                }).catch((err) => {
+                    ego_log.CONSOLE
+                           .trace(err, 'vscode.workspace.onWillSaveTextDocument');
                 });
             }),
 
