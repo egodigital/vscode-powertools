@@ -3,9 +3,9 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.41.1",
+    "version": "0.42.0",
     "engines": {
-        "vscode": "^1.33.0"
+        "vscode": "^1.34.0"
     },
     "categories": [
         "Azure",
@@ -2137,19 +2137,19 @@
     "devDependencies": {
         "@types/change-case": "^2.3.1",
         "@types/color-convert": "^1.9.0",
-        "@types/cron": "^1.7.0",
-        "@types/csv-parse": "^1.1.12",
+        "@types/cron": "^1.7.1",
+        "@types/csv-parse": "^1.2.2",
         "@types/ejs": "^2.6.3",
         "@types/exif": "^0.6.0",
-        "@types/fs-extra": "^5.0.5",
+        "@types/fs-extra": "^5.1.0",
         "@types/html-entities": "^1.2.16",
         "@types/html-minifier": "^3.5.3",
         "@types/image-size": "^0.7.0",
         "@types/image-type": "^3.0.0",
         "@types/is-stream": "^1.1.0",
-        "@types/js-beautify": "^1.8.0",
+        "@types/js-beautify": "^1.8.1",
         "@types/js-yaml": "^3.12.1",
-        "@types/lodash": "^4.14.123",
+        "@types/lodash": "^4.14.129",
         "@types/mime-types": "^2.1.0",
         "@types/mocha": "^2.2.42",
         "@types/moment-timezone": "^0.5.12",
@@ -2166,8 +2166,8 @@
         "tslint": "^5.16.0",
         "typedoc": "^0.14.2",
         "typescript": "3.2.4",
-        "vsce": "^1.60.0",
-        "vscode": "^1.1.33"
+        "vsce": "^1.61.0",
+        "vscode": "^1.1.34"
     },
     "author": "e.GO Digital GmbH, Aachen, Germany",
     "license": "LGPL-3.0",
@@ -2187,7 +2187,7 @@
         "url": "https://github.com/egodigital/vscode-powertools.git"
     },
     "dependencies": {
-        "@mapbox/polyline": "^1.0.0",
+        "@mapbox/polyline": "^1.1.0",
         "@slack/client": "^4.12.0",
         "change-case": "^3.1.0",
         "clean-css": "^4.2.1",
@@ -2211,7 +2211,7 @@
         "js-yaml": "^3.13.1",
         "less": "^3.9.0",
         "lodash": "^4.17.11",
-        "markdown-escapes": "^1.0.2",
+        "markdown-escapes": "^1.0.3",
         "mime-types": "^2.1.24",
         "moment": "^2.24.0",
         "moment-timezone": "^0.5.25",
@@ -2222,7 +2222,7 @@
         "pug": "^2.0.3",
         "sanitize-filename": "^1.6.1",
         "tmp": "0.0.33",
-        "uglify-js": "^3.5.10",
+        "uglify-js": "^3.5.13",
         "uuid": "^3.3.2",
         "vscode-helpers": "^4.0.1",
         "xlsx": "^0.14.3",

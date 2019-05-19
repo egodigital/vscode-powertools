@@ -1,5 +1,14 @@
 # Change Log (vscode-powertools)
 
+## 0.42.0 (May 19th, 2019; es2017)
+
+* code is compiled with `es2017` now
+* extension requires at least [Visual Studio Code 1.34](https://code.visualstudio.com/updates/v1_34) now
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [@mapbox/polyline](https://www.npmjs.com/package/@mapbox/polyline) `^1.1.0`
+  * [markdown-escapes](https://www.npmjs.com/package/markdown-escapes) `^1.0.3`
+  * [uglify-js](https://www.npmjs.com/package/uglify-js) `^3.5.13`
+
 ## 0.41.1 (May 2nd, 2019; events)
 
 * added [file.willsave](https://github.com/egodigital/vscode-powertools/wiki/Events#filewillsave) event ... s. [issue #24](https://github.com/egodigital/vscode-powertools/issues/24)
