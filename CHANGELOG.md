@@ -1,6 +1,6 @@
 # Change Log (vscode-powertools)
 
-## 0.43.0 (Junde 1st, 2019; npm update)
+## 0.43.0 (June 1st, 2019; npm update)
 
 * updated the following [npm](https://www.npmjs.com/) modules:
   * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.4.3`
