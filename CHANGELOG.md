@@ -1,5 +1,11 @@
 # Change Log (vscode-powertools)
 
+## 0.43.0 (Junde 1st, 2019; npm update)
+
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.4.3`
+  * [uglify-js](https://www.npmjs.com/package/uglify-js) `^3.6.0`
+
 ## 0.42.0 (May 19th, 2019; es2017)
 
 * code is compiled with `es2017` now
