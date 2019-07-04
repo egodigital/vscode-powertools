@@ -1,5 +1,13 @@
 # Change Log (vscode-powertools)
 
+## 0.44.0 (July 4th, 2019; npm update)
+
+* extension requires at least [Visual Studio Code 1.36](https://code.visualstudio.com/updates/v1_36) now
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [deepmerge](https://www.npmjs.com/package/deepmerge) `^3.3.0`
+  * [ejs](https://www.npmjs.com/package/ejs) `^2.6.2`
+  * [pug](https://www.npmjs.com/package/pug) `^2.0.3`
+
 ## 0.43.0 (June 1st, 2019; npm update)
 
 * updated the following [npm](https://www.npmjs.com/) modules:
