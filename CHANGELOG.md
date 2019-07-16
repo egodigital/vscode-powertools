@@ -1,5 +1,11 @@
 # Change Log (vscode-powertools)
 
+## 0.45.0 (July 16th, 2019; npm update)
+
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [lodash](https://www.npmjs.com/package/lodash) `^4.17.14`
+  * [moment-timezone](https://www.npmjs.com/package/moment-timezone) `^0.5.26`
+
 ## 0.44.0 (July 4th, 2019; npm update)
 
 * extension requires at least [Visual Studio Code 1.36](https://code.visualstudio.com/updates/v1_36) now
