@@ -3,9 +3,9 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.45.0",
+    "version": "0.46.0",
     "engines": {
-        "vscode": "^1.36.0"
+        "vscode": "^1.37.0"
     },
     "categories": [
         "Azure",
@@ -2164,10 +2164,10 @@
         "@types/xlsx": "0.0.36",
         "@types/yazl": "^2.4.1",
         "tslint": "^5.18.0",
-        "typedoc": "^0.14.2",
+        "typedoc": "^0.15.0",
         "typescript": "3.4.5",
-        "vsce": "^1.65.0",
-        "vscode": "^1.1.35"
+        "vsce": "^1.66.0",
+        "vscode": "^1.1.36"
     },
     "author": "e.GO Digital GmbH, Aachen, Germany",
     "license": "LGPL-3.0",
@@ -2194,7 +2194,7 @@
         "coffeescript": "^2.4.1",
         "color-convert": "^2.0.0",
         "cron": "^1.7.1",
-        "csv-parse": "^4.4.3",
+        "csv-parse": "^4.4.5",
         "deepmerge": "^3.3.0",
         "ejs": "^2.6.2",
         "exif": "^0.6.0",
@@ -2207,10 +2207,10 @@
         "image-size": "^0.7.4",
         "image-type": "^3.1.0",
         "is-stream": "^1.1.0",
-        "js-beautify": "^1.10.0",
+        "js-beautify": "^1.10.2",
         "js-yaml": "^3.13.1",
         "less": "^3.9.0",
-        "lodash": "^4.17.14",
+        "lodash": "^4.17.15",
         "markdown-escapes": "^1.0.3",
         "mime-types": "^2.1.24",
         "moment": "^2.24.0",
@@ -2220,12 +2220,12 @@
         "opn": "^5.5.0",
         "public-ip": "^3.1.0",
         "pug": "^2.0.4",
-        "sanitize-filename": "^1.6.1",
+        "sanitize-filename": "^1.6.2",
         "tmp": "0.0.33",
         "uglify-js": "^3.6.0",
         "uuid": "^3.3.2",
         "vscode-helpers": "^4.0.1",
-        "xlsx": "^0.14.3",
+        "xlsx": "^0.14.5",
         "yazl": "^2.5.1"
     }
 }

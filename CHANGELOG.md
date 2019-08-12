@@ -1,5 +1,15 @@
 # Change Log (vscode-powertools)
 
+## 0.46.0 (August 12th, 2019; Visual Studio Code 1.37)
+
+* extension requires at least [Visual Studio Code 1.37](https://code.visualstudio.com/updates/v1_37) now
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.4.5`
+  * [js-beautify](https://www.npmjs.com/package/js-beautify) `^1.10.2`
+  * [lodash](https://www.npmjs.com/package/lodash) `^4.17.15`
+  * [sanitize-filename](https://www.npmjs.com/package/sanitize-filename) `^1.6.2`
+  * [xlsx](https://www.npmjs.com/package/xlsx) `^0.14.5`
+
 ## 0.45.0 (July 16th, 2019; npm update)
 
 * updated the following [npm](https://www.npmjs.com/) modules:
