@@ -1,5 +1,17 @@
 # Change Log (vscode-powertools)
 
+## 0.47.0 (September 8th, 2019; Visual Studio Code 1.38)
+
+* extension requires at least [Visual Studio Code 1.38](https://code.visualstudio.com/updates/v1_38) now
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [color-convert](https://www.npmjs.com/package/color-convert) `^2.0.1`
+  * [cron](https://www.npmjs.com/package/cron) `^1.7.2`
+  * [ejs](https://www.npmjs.com/package/ejs) `^2.7.1`
+  * [less](https://www.npmjs.com/package/less) `^3.10.3`
+  * [public-ip](https://www.npmjs.com/package/public-ip) `^3.2.0`
+  * [sanitize-filename](https://www.npmjs.com/package/sanitize-filename) `^1.6.3`
+  * [uuid](https://www.npmjs.com/package/uuid) `^3.3.3`
+
 ## 0.46.0 (August 12th, 2019; Visual Studio Code 1.37)
 
 * extension requires at least [Visual Studio Code 1.37](https://code.visualstudio.com/updates/v1_37) now

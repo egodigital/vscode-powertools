@@ -22,7 +22,7 @@ import * as ego_settings_global from '../settings/global';
 import * as ego_slack from '../slack';
 const opn = require('opn');
 import * as path from 'path';
-import * as sanitizeFilename from 'sanitize-filename';
+const sanitizeFilename = require('sanitize-filename');
 import * as vscode from 'vscode';
 
 
@@ -66,7 +66,7 @@ export async function sendToSlack(
 
     let fileName = doc.fileName;
     if (ego_helpers.isEmptyString(fileName)) {
-        fileName = `vscode-powertools-${ NOW.format('YYYYMMDDHHmmss') }.txt`;
+        fileName = `vscode-powertools-${NOW.format('YYYYMMDDHHmmss')}.txt`;
     } else {
         fileName = path.basename(fileName);
     }
@@ -92,7 +92,7 @@ export async function sendToSlack(
             message: 'Loading channels ...'
         });
 
-        if (cancelToken.isCancellationRequested) {
+        if (cancelToken.isCancellationRequested) {
             return true;
         }
 
@@ -103,7 +103,7 @@ export async function sendToSlack(
             message: 'Loading users ...'
         });
 
-        if (cancelToken.isCancellationRequested) {
+        if (cancelToken.isCancellationRequested) {
             return true;
         }
 
@@ -174,7 +174,7 @@ export async function sendToSlack(
             action: async () => {
                 let comment = await vscode.window.showInputBox({
                     ignoreFocusOut: true,
-                    prompt: `Define an optional comment for ${ fileName } ...`,
+                    prompt: `Define an optional comment for ${fileName} ...`,
                 });
 
                 if (_.isNil(comment)) {
@@ -193,7 +193,7 @@ export async function sendToSlack(
                     title: 'Slack',
                 }, async (progress) => {
                     progress.report({
-                        message: `Uploading file '${ fileName }' to '${ ch['__tm_displayName'] }' ...`
+                        message: `Uploading file '${fileName}' to '${ch['__tm_displayName']}' ...`
                     });
 
                     await CLIENT.files.upload({
@@ -206,19 +206,19 @@ export async function sendToSlack(
 
                 // open channel in browser?
                 const OPEN_OR_NOT = await vscode.window.showInformationMessage(
-                    `The file '${ fileName }' has been uploaded to '${ ch['__tm_displayName'] }'.
+                    `The file '${fileName}' has been uploaded to '${ch['__tm_displayName']}'.
 
 Do you like to open it?`,
                     'Yes', 'No'
                 );
                 if ('Yes' === OPEN_OR_NOT) {
                     opn(
-                        `https://${ encodeURIComponent(
+                        `https://${encodeURIComponent(
                             teamInfo.team.domain
-                        ) }.slack.com/messages/${
-                            encodeURIComponent(
-                                ch.id
-                            )
+                        )}.slack.com/messages/${
+                        encodeURIComponent(
+                            ch.id
+                        )
                         }/`, {
                             wait: false,
                         }
@@ -227,10 +227,10 @@ Do you like to open it?`,
             },
             label: `${
                 ego_helpers.toStringSafe(ch.__tm_prefix)
-            }${
+                }${
                 ego_helpers.toStringSafe(ch.__tm_displayName)
                     .trim()
-            }`,
+                }`,
         };
     }).toArray();
 

@@ -34,7 +34,7 @@ import * as mimeTypes from 'mime-types';
 const opn = require('opn');
 import * as os from 'os';
 import * as path from 'path';
-import * as sanitizeFilename from 'sanitize-filename';
+const sanitizeFilename = require('sanitize-filename');
 import * as tmp from 'tmp';
 import * as yazl from 'yazl';
 import * as vscode from 'vscode';
@@ -143,7 +143,7 @@ export abstract class AppWebViewBase extends ego_webview.WebViewWithContextBase 
 
         if (fsExtra.existsSync(p)) {
             return lstat ? fsExtra.lstatSync(p)
-                         : fsExtra.statSync(p);
+                : fsExtra.statSync(p);
         }
 
         return false;
@@ -201,7 +201,7 @@ export abstract class AppWebViewBase extends ego_webview.WebViewWithContextBase 
         const FUNC = funcProvider(this.module);
 
         return _.isNil(FUNC) ? this.module.onEvent
-                             : FUNC;
+            : FUNC;
     }
 
     /**
@@ -513,7 +513,7 @@ export class AppWebView extends AppWebViewBase {
                 let uri: string | vscode.Uri = this.getFileResourceUri(p);
                 if (!_.isNil(uri)) {
                     if (ego_helpers.toBooleanSafe(asString, true)) {
-                        uri = `${ uri }`;
+                        uri = `${uri}`;
                     }
                 }
 
@@ -555,7 +555,7 @@ export class AppWebView extends AppWebViewBase {
 
                 return this.render(
                     fsExtra.readFileSync(
-                        path.resolve( file ),
+                        path.resolve(file),
                         'utf8'
                     ),
                     data
@@ -723,7 +723,7 @@ export async function buildAppPackage() {
                 }
             } catch (e) {
                 ego_log.CONSOLE
-                       .trace(e, 'apps.buildAppPackage(2)');
+                    .trace(e, 'apps.buildAppPackage(2)');
             }
 
             // .egoignore
@@ -734,7 +734,7 @@ export async function buildAppPackage() {
                 }
             } catch (e) {
                 ego_log.CONSOLE
-                       .trace(e, 'apps.buildAppPackage(3)');
+                    .trace(e, 'apps.buildAppPackage(3)');
             }
 
             if (ego_helpers.isEmptyString(name)) {
@@ -760,7 +760,7 @@ export async function buildAppPackage() {
                                 );
 
                                 progress.report({
-                                    message: `Adding directory '${ FOLDER_PATH }' ...`,
+                                    message: `Adding directory '${FOLDER_PATH}' ...`,
                                 });
 
                                 let filesAdded = false;
@@ -793,7 +793,7 @@ export async function buildAppPackage() {
 
                                         if (!IS_IGNORED) {
                                             progress.report({
-                                                message: `Adding file '${ RELATIVE_PATH }' ...`,
+                                                message: `Adding file '${RELATIVE_PATH}' ...`,
                                             });
 
                                             NEW_PACKAGE.addBuffer(
@@ -825,8 +825,8 @@ export async function buildAppPackage() {
                                 ego_helpers.getExtensionDirInHome()
                             ),
                             filters: {
-                                'Package files (*.ego-app)': [ 'ego-app' ],
-                                'All files (*.*)': [ '*' ]
+                                'Package files (*.ego-app)': ['ego-app'],
+                                'All files (*.*)': ['*']
                             },
                             saveLabel: 'Save App Package To ...',
                         });
@@ -876,13 +876,13 @@ export async function buildAppPackage() {
             });
         } catch (e) {
             ego_log.CONSOLE
-                   .trace(e, 'apps.buildAppPackage(1)');
+                .trace(e, 'apps.buildAppPackage(1)');
         }
     }
 
     if (QUICK_PICKS.length < 1) {
         vscode.window
-              .showWarningMessage('No apps found!');
+            .showWarningMessage('No apps found!');
 
         return;
     }
@@ -981,7 +981,7 @@ export async function createApp() {
         const GIT = await ego_helpers.createGitClient();
 
         try {
-            const GIT_RESULT = await GIT.exec([ 'config', 'user.name' ]);
+            const GIT_RESULT = await GIT.exec(['config', 'user.name']);
             if (ego_helpers.isEmptyString(GIT_RESULT.stdErr.toString('utf8'))) {
                 author = GIT_RESULT.stdOut
                     .toString('utf8')
@@ -990,7 +990,7 @@ export async function createApp() {
         } catch { }
 
         try {
-            const GIT_RESULT = await GIT.exec([ 'config', 'user.email' ]);
+            const GIT_RESULT = await GIT.exec(['config', 'user.email']);
             if (ego_helpers.isEmptyString(GIT_RESULT.stdErr.toString('utf8'))) {
                 authorEmail = GIT_RESULT.stdOut
                     .toString('utf8')
@@ -1047,8 +1047,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER`.split('\n')
         `<!--
 
 ${ HTML_ENCODER.encode(
-    MIT_HEADER.join('\n')
-) }
+            MIT_HEADER.join('\n')
+        )}
 
 -->
 
@@ -1111,7 +1111,7 @@ function ego_on_loaded() {
     );
     await fsExtra.writeFile(
         INDEX_JS,
-        `${ MIT_HEADER.map(l => ('// ' + l).trim()).join('\n') }
+        `${MIT_HEADER.map(l => ('// ' + l).trim()).join('\n')}
 
 /**
  * Is invoked on an event.
@@ -1173,7 +1173,7 @@ exports.onDispose = (args) => {
  * of the web view.
  */
 exports.getTitle = () => {
-    return ${ JSON.stringify(DISPLAY_NAME) };
+    return ${ JSON.stringify(DISPLAY_NAME)};
 };
 
 /**
@@ -1183,7 +1183,7 @@ exports.getHtml = (args) => {
     return args.renderFile(
         'view.ejs',
         {
-            'page_title': ${ JSON.stringify(DISPLAY_NAME) },
+            'page_title': ${ JSON.stringify(DISPLAY_NAME)},
         }
     );
 };
@@ -1241,9 +1241,9 @@ SOFTWARE.`,
     );
     await fsExtra.writeFile(
         README_FILE,
-        `# ${ HTML_ENCODER.encode(NAME) }
+        `# ${HTML_ENCODER.encode(NAME)}
 
-${ ego_helpers.isEmptyString(description) ? 'This is an app for the [Visual Studio Code](https://code.visualstudio.com/) extension [Power Tools](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools).' : HTML_ENCODER.encode(description) }
+${ ego_helpers.isEmptyString(description) ? 'This is an app for the [Visual Studio Code](https://code.visualstudio.com/) extension [Power Tools](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools).' : HTML_ENCODER.encode(description)}
 
 ## Usage
 
@@ -1254,7 +1254,7 @@ Then follow these steps:
 * press \`F1\` in [Visual Studio Code](https://code.visualstudio.com/) to open the command list
 * select command \`Power Tools: Apps\`
 * select \`Open App ...\` sub command
-* now you can open the app by choosing \`${ HTML_ENCODER.encode(DISPLAY_NAME) }\`
+* now you can open the app by choosing \`${ HTML_ENCODER.encode(DISPLAY_NAME)}\`
 
 ## Credits
 
@@ -1333,20 +1333,20 @@ export async function getInstalledApps(): Promise<ego_contracts.InstalledApp[]> 
                                         EGO_IGNORE, 'utf8'
                                     )).split('\n')
                                 ).select(x => x.trim())
-                                 .where(x => '' !== x)
-                                 .where(x => !x.startsWith('#'))
-                                 .toArray();
+                                    .where(x => '' !== x)
+                                    .where(x => !x.startsWith('#'))
+                                    .toArray();
                             }
 
                             return false;
                         },
                         loadIcon: async () => {
-                            const EXTENSIONS = [ 'png', 'gif', 'jpg', 'jpeg' ];
+                            const EXTENSIONS = ['png', 'gif', 'jpg', 'jpeg'];
                             for (const EXT of EXTENSIONS) {
                                 try {
                                     const ICON_PATH = path.resolve(
                                         path.join(
-                                            APP_FULL_PATH, `icon.${ EXT }`
+                                            APP_FULL_PATH, `icon.${EXT}`
                                         )
                                     );
 
@@ -1358,7 +1358,7 @@ export async function getInstalledApps(): Promise<ego_contracts.InstalledApp[]> 
                                                 ICON_PATH
                                             );
 
-                                            return `data:${ MIME_TYPE };base64,${ ICON_DATA.toString('base64') }`;
+                                            return `data:${MIME_TYPE};base64,${ICON_DATA.toString('base64')}`;
                                         }
                                     }
                                 } catch { }
@@ -1366,7 +1366,7 @@ export async function getInstalledApps(): Promise<ego_contracts.InstalledApp[]> 
 
                             return false;
                         },
-                        loadPackageJSON: async function() {
+                        loadPackageJSON: async function () {
                             const PACKAGE_JSON = path.resolve(
                                 path.join(
                                     APP_FULL_PATH, 'package.json'
@@ -1383,7 +1383,7 @@ export async function getInstalledApps(): Promise<ego_contracts.InstalledApp[]> 
 
                             return false;
                         },
-                        loadREADME: async function() {
+                        loadREADME: async function () {
                             const README = path.resolve(
                                 path.join(
                                     APP_FULL_PATH, 'README.md'
@@ -1414,8 +1414,8 @@ export async function getInstalledApps(): Promise<ego_contracts.InstalledApp[]> 
 export async function installApp() {
     const APP_FILE = await vscode.window.showOpenDialog({
         filters: {
-            'Package files (*.ego-app)': [ 'ego-app' ],
-            'All files (*.*)': [ '*' ]
+            'Package files (*.ego-app)': ['ego-app'],
+            'All files (*.*)': ['*']
         },
         canSelectFolders: false,
         canSelectFiles: true,
@@ -1486,7 +1486,7 @@ export async function installAppFromFile(
     let installApp = true;
     if (await ego_helpers.exists(APP_DIR)) {
         const YES_OR_NO = await vscode.window.showWarningMessage(
-            `App '${ NAME }' is already installed. Do you want to upgrade it?`,
+            `App '${NAME}' is already installed. Do you want to upgrade it?`,
             'Yes', 'No!'
         );
 
@@ -1502,7 +1502,7 @@ export async function installAppFromFile(
         location: vscode.ProgressLocation.Notification,
     }, async (progress) => {
         progress.report({
-            message: `Installing app '${ NAME }' ...`,
+            message: `Installing app '${NAME}' ...`,
         });
 
         if (!(await ego_helpers.exists(APP_DIR))) {
@@ -1514,7 +1514,7 @@ export async function installAppFromFile(
             // cleanup directory
 
             progress.report({
-                message: `Remove old files of app '${ NAME }' ...`,
+                message: `Remove old files of app '${NAME}' ...`,
             });
 
             for (const ITEM of APP_DIR_ITEMS) {
@@ -1523,7 +1523,7 @@ export async function installAppFromFile(
                 }
 
                 progress.report({
-                    message: `Removing '${ ITEM }' of app '${ NAME }' ...`,
+                    message: `Removing '${ITEM}' of app '${NAME}' ...`,
                 });
 
                 const FULL_ITEM_PATH = path.resolve(
@@ -1542,7 +1542,7 @@ export async function installAppFromFile(
         }
 
         progress.report({
-            message: `Extracting files of app '${ NAME }' ...`,
+            message: `Extracting files of app '${NAME}' ...`,
         });
 
         for (const FILE in ZIP_FILE.files) {
@@ -1574,7 +1574,7 @@ export async function installAppFromFile(
             }
 
             progress.report({
-                message: `Extracting '${ filePath }' of app '${ NAME }' ...`,
+                message: `Extracting '${filePath}' of app '${NAME}' ...`,
             });
 
             if (isDir) {
@@ -1598,7 +1598,7 @@ export async function installAppFromFile(
     raiseInstalledAppListUpdated();
 
     vscode.window.showInformationMessage(
-        `App '${ NAME }' has been installed.`,
+        `App '${NAME}' has been installed.`,
     );
 }
 
@@ -1646,13 +1646,13 @@ export async function loadApps(
                     );
                 } catch (e) {
                     ego_log.CONSOLE
-                           .trace(e, 'apps.loadApps(2)');
+                        .trace(e, 'apps.loadApps(2)');
                 }
             }
         }
     } catch (e) {
         ego_log.CONSOLE
-               .trace(e, 'apps.loadApps(1)');
+            .trace(e, 'apps.loadApps(1)');
     }
 
     return APPS;
@@ -1723,7 +1723,7 @@ export async function openApp(
         }).thenBy(x => {
             return ego_helpers.normalizeString(x.detail);
         }).pipe(x => {
-            x.label = `$(zap)  ${ x.label }`;
+            x.label = `$(zap)  ${x.label}`;
         }).toArray()
     );
 
@@ -1785,7 +1785,7 @@ export async function openAppByName(
                             if (!(await ego_helpers.exists(NODE_MODULES))) {
                                 if (progress) {
                                     progress.report({
-                                        message: `Installing dependencies for app '${ APP.displayName }' ...`,
+                                        message: `Installing dependencies for app '${APP.displayName}' ...`,
                                     });
                                 }
 
@@ -1835,5 +1835,5 @@ export async function openAppByName(
  */
 export function raiseInstalledAppListUpdated() {
     ego_helpers.EVENTS
-               .emit(ego_contracts.EVENT_APP_LIST_UPDATED);
+        .emit(ego_contracts.EVENT_APP_LIST_UPDATED);
 }
