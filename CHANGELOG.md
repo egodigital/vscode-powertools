@@ -1,5 +1,9 @@
 # Change Log (vscode-powertools)
 
+## 0.48.0 (September 8th, 2019; WebView updates)
+
+* updated to [MD Bootstrap 4.8.9 (Free)](https://mdbootstrap.com/docs/jquery/)
+
 ## 0.47.0 (September 8th, 2019; Visual Studio Code 1.38)
 
 * extension requires at least [Visual Studio Code 1.38](https://code.visualstudio.com/updates/v1_38) now

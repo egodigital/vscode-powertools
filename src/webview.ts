@@ -63,11 +63,11 @@ export abstract class WebViewBase extends ego_helpers.DisposableBase {
      * @returns {string} The HTML.
      */
     protected generateHtml(): string {
-        return `${ this.generateHtmlHeader() }
+        return `${this.generateHtmlHeader()}
 
-${ this.generateHtmlBody() }
+${ this.generateHtmlBody()}
 
-${ this.generateHtmlFooter() }`;
+${ this.generateHtmlFooter()}`;
     }
 
     /**
@@ -89,20 +89,20 @@ ${ this.generateHtmlFooter() }`;
         </main>
 
         <!-- Showdown -->
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/showdown.js') }" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/showdown.js')}" crossorigin="anonymous"></script>
         <!-- JQuery -->
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/jquery-3.3.1.js') }" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/jquery-3.4.1.js')}" crossorigin="anonymous"></script>
         <!-- highlight.js -->
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/highlight.pack.js') }" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/highlight.pack.js')}" crossorigin="anonymous"></script>
         <!-- Bootstrap tooltips -->
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/popper.min.js') }" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/popper.min.js')}" crossorigin="anonymous"></script>
         <!-- Bootstrap core JavaScript -->
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/bootstrap.js') }" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/bootstrap.js')}" crossorigin="anonymous"></script>
         <!-- MDB core JavaScript -->
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/mdb.js') }" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/mdb.js')}" crossorigin="anonymous"></script>
 
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/app.js') }" crossorigin="anonymous"></script>
-        ${ WEBVIEW_JAVASCRIPT_URI && fsExtra.existsSync(WEBVIEW_JAVASCRIPT_URI.fsPath) ? `<script type="text/javascript" src="${ WEBVIEW_JAVASCRIPT_URI }" crossorigin="anonymous"></script>` : '' }
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/app.js')}" crossorigin="anonymous"></script>
+        ${ WEBVIEW_JAVASCRIPT_URI && fsExtra.existsSync(WEBVIEW_JAVASCRIPT_URI.fsPath) ? `<script type="text/javascript" src="${WEBVIEW_JAVASCRIPT_URI}" crossorigin="anonymous"></script>` : ''}
     </body>
 </html>`;
     }
@@ -124,20 +124,20 @@ ${ this.generateHtmlFooter() }`;
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title>Power Tools by e.GO :: ${ HTML_ENTITIES.encode(this.getTitle()) }</title>
+    <title>Power Tools by e.GO :: ${ HTML_ENTITIES.encode(this.getTitle())}</title>
 
     <!-- Font Awesome -->
-    <link href="${ this.getFileResourceUri('css/font-awesome.css') }" rel="stylesheet">
+    <link href="${ this.getFileResourceUri('css/font-awesome.css')}" rel="stylesheet">
     <!-- highlight.js -->
-    <link href="${ this.getFileResourceUri('css/highlight/default.css') }" rel="stylesheet">
-    <link href="${ this.getFileResourceUri('css/highlight/mono-blue.css') }" rel="stylesheet">
+    <link href="${ this.getFileResourceUri('css/highlight/default.css')}" rel="stylesheet">
+    <link href="${ this.getFileResourceUri('css/highlight/mono-blue.css')}" rel="stylesheet">
     <!-- Bootstrap core CSS -->
-    <link href="${ this.getFileResourceUri('css/bootstrap.css') }" rel="stylesheet">
+    <link href="${ this.getFileResourceUri('css/bootstrap.css')}" rel="stylesheet">
     <!-- Material Design Bootstrap -->
-    <link href="${ this.getFileResourceUri('css/mdb.css') }" rel="stylesheet">
+    <link href="${ this.getFileResourceUri('css/mdb.css')}" rel="stylesheet">
 
-    <link href="${ this.getFileResourceUri('css/app.css') }" rel="stylesheet">
-    ${ WEBVIEW_STYLE_URI && fsExtra.existsSync(WEBVIEW_STYLE_URI.fsPath) ? `<link href="${ WEBVIEW_STYLE_URI }" rel="stylesheet">` : '' }
+    <link href="${ this.getFileResourceUri('css/app.css')}" rel="stylesheet">
+    ${ WEBVIEW_STYLE_URI && fsExtra.existsSync(WEBVIEW_STYLE_URI.fsPath) ? `<link href="${WEBVIEW_STYLE_URI}" rel="stylesheet">` : ''}
 
     <script>
         const vscode = acquireVsCodeApi();
@@ -187,7 +187,7 @@ ${ this.generateHtmlFooter() }`;
             <div class="container">
                 <!-- Brand -->
                 <a class="navbar-brand waves-effect" href="https://www.e-go-digital.com/" target="_blank">
-                    <img src="${ this.getFileResourceUri('img/ego_digital.png') }" id="ego-logo">
+                    <img src="${ this.getFileResourceUri('img/ego_digital.png')}" id="ego-logo">
                 </a>
 
                 <div id="ego-social-media-buttons">
@@ -221,7 +221,7 @@ ${ this.generateHtmlFooter() }`;
                 path.join(R.fsPath, p)
             );
 
-            u = vscode.Uri.file( PATH_TO_CHECK ).with({
+            u = vscode.Uri.file(PATH_TO_CHECK).with({
                 scheme: 'vscode-resource'
             });
 
@@ -313,7 +313,7 @@ ${ this.generateHtmlFooter() }`;
                 }
 
                 newPanel = vscode.window.createWebviewPanel(
-                    `egoPowerTools${ this.getType() }`,
+                    `egoPowerTools${this.getType()}`,
                     title,
                     this.getViewColumns(),
                     this.getOptions(),
@@ -351,17 +351,17 @@ ${ this.generateHtmlFooter() }`;
                                         const URL_TEXT = ego_helpers.toStringSafe(msg.data.text).trim();
 
                                         // check if "parsable"
-                                        url.parse( URL_TO_OPEN );
+                                        url.parse(URL_TO_OPEN);
 
                                         let urlPromptText: string;
                                         if ('' === URL_TEXT) {
-                                            urlPromptText = `'${ URL_TO_OPEN }'`;
+                                            urlPromptText = `'${URL_TO_OPEN}'`;
                                         } else {
-                                            urlPromptText = `'${ URL_TEXT }' (${ URL_TO_OPEN })`;
+                                            urlPromptText = `'${URL_TEXT}' (${URL_TO_OPEN})`;
                                         }
 
                                         const SELECTED_ITEM = await vscode.window.showWarningMessage<ego_contracts.ActionMessageItem>(
-                                            `Do you really want to open the URL ${ urlPromptText }?`,
+                                            `Do you really want to open the URL ${urlPromptText}?`,
                                             {
                                                 title: 'Yes',
                                                 action: async () => {
