@@ -1,10 +1,11 @@
 # Change Log (vscode-powertools)
 
-## 0.48.0 (September 8th, 2019; WebView updates)
+## 0.48.1 (September 8th, 2019; WebView updates)
 
 * updated to [highlight.js 9.15.0](https://highlightjs.org/)
 * updated to [MD Bootstrap 4.8.9 (Free)](https://mdbootstrap.com/docs/jquery/), with [jQuery 3.4.1](https://jquery.com/)
 * updated to [mapbox-gl-js 1.3.1](https://github.com/mapbox/mapbox-gl-js)
+* bugfixes
 
 ## 0.47.0 (September 8th, 2019; Visual Studio Code 1.38)
 

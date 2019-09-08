@@ -91,7 +91,7 @@ ${ this.generateHtmlFooter()}`;
         <!-- Showdown -->
         <script type="text/javascript" src="${ this.getFileResourceUri('js/showdown.js')}" crossorigin="anonymous"></script>
         <!-- JQuery -->
-        <script type="text/javascript" src="${ this.getFileResourceUri('js/jquery-3.4.1.js')}" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="${ this.getFileResourceUri('js/jquery-3.4.1.min.js')}" crossorigin="anonymous"></script>
         <!-- highlight.js -->
         <script type="text/javascript" src="${ this.getFileResourceUri('js/highlight.pack.js')}" crossorigin="anonymous"></script>
         <!-- Bootstrap tooltips -->
