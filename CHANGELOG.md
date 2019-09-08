@@ -3,6 +3,7 @@
 ## 0.48.0 (September 8th, 2019; WebView updates)
 
 * updated to [MD Bootstrap 4.8.9 (Free)](https://mdbootstrap.com/docs/jquery/)
+* updated to [highlight.js 9.15.0](https://highlightjs.org/)
 
 ## 0.47.0 (September 8th, 2019; Visual Studio Code 1.38)
 
