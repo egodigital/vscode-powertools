@@ -1,5 +1,13 @@
 # Change Log (vscode-powertools)
 
+## 0.49.0 (September 10th, 2019; Visual Studio Code 1.39)
+
+* extension requires at least [Visual Studio Code 1.39](https://code.visualstudio.com/updates/v1_39) now
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.6.3`
+  * [image-size](https://www.npmjs.com/package/image-size) `^0.7.5`
+  * [uglify-js](https://www.npmjs.com/package/uglify-js) `^3.6.1`
+
 ## 0.48.1 (September 8th, 2019; WebView updates)
 
 * updated to [highlight.js 9.15.0](https://highlightjs.org/)
