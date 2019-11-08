@@ -7,6 +7,7 @@
   * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.6.5`
   * [moment-timezone](https://www.npmjs.com/package/moment-timezone) `^0.5.27`
   * [uglify-js](https://www.npmjs.com/package/uglify-js) `^3.6.8`
+  * [vscode-helpers](https://www.npmjs.com/package/vscode-helpers) `^6.0.0`
 
 ## 0.49.0 (September 10th, 2019; Visual Studio Code 1.39)
 

@@ -115,7 +115,7 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
      */
     public async initialize() {
         this.httpResponse = '';
-        this.httpResponse += `HTTP/${ this.result.version } ${ this.result.code } ${ this.result.status }\r\n`;
+        this.httpResponse += `HTTP/${this.result.version} ${this.result.code} ${this.result.status}\r\n`;
 
         const CONTENT_TYPE = this.getContentType();
         if (this.response.headers) {
@@ -128,7 +128,7 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
                 const HV = ego_helpers.asArray(this.response.headers[H])
                     .join('\r\n');
 
-                this.httpResponse += `${ HN }: ${ HV }\r\n`;
+                this.httpResponse += `${HN}: ${HV}\r\n`;
             }
         }
 
@@ -227,10 +227,10 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
 
                         const EXT = mimeTypes.extension(this.getContentType());
                         if (false !== EXT) {
-                            FILTERS[`${ EXT.toUpperCase() } files (*.${ EXT })`] = [ EXT ];
+                            FILTERS[`${EXT.toUpperCase()} files (*.${EXT})`] = [EXT];
                         }
 
-                        FILTERS['All files (*.*)'] = [ '*' ];
+                        FILTERS['All files (*.*)'] = ['*'];
 
                         const FILE = await vscode.window.showSaveDialog({
                             filters: FILTERS,
@@ -266,8 +266,8 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
                     let err: any;
                     try {
                         const FILTERS = {};
-                        FILTERS['HTTP files (*.http)'] = [ 'http' ];
-                        FILTERS['All files (*.*)'] = [ '*' ];
+                        FILTERS['HTTP files (*.http)'] = ['http'];
+                        FILTERS['All files (*.*)'] = ['*'];
 
                         const FILE = await vscode.window.showSaveDialog({
                             filters: FILTERS,
@@ -315,7 +315,7 @@ export class HttpResponseWebView extends ego_webview.WebViewBase {
     /**
      * Gets the underyling response context.
      */
-    public get response(): http.ClientResponse {
+    public get response(): http.IncomingMessage {
         return this.result.response;
     }
 }

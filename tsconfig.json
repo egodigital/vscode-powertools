@@ -1,11 +1,10 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es2017",
+        "target": "es2019",
         "outDir": "out",
         "lib": [
-            "es2017",
-            "esnext.asynciterable"
+            "es2019"
         ],
         "sourceMap": true,
         "rootDir": "src",
