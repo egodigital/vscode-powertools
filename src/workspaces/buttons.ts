@@ -191,7 +191,7 @@ export async function reloadButtons() {
                                 const CMD_ID = ego_helpers.toStringSafe(CMD_ACTION.command);
                                 const CMD_ARGS: any[] =
                                     _.isNil(CMD_ACTION.arguments) ? []
-                                                                  : ego_helpers.asArray(CMD_ACTION, false);
+                                                                  : ego_helpers.asArray(CMD_ACTION.arguments, false);
 
                                 await Promise.resolve(
                                     vscode.commands.executeCommand
