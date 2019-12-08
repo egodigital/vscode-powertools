@@ -129,6 +129,14 @@ To work with the code:
 * commit your changes to your new branch and sync it with your forked GitHub repo
 * make a [pull request](https://github.com/egodigital/vscode-powertools/pulls)
 
+### Contributors
+
+<table>
+      <tr><td style="text-align: center;"><a href="https://github.com/pitaj" target="_blank">Peter Jaszkowiak</a></td></tr>
+      <tr><td><a href="https://github.com/pitaj" target="_blank"><img src="https://avatars0.githubusercontent.com/u/803701?s=120&v=4"></a>
+        </td></tr>
+</table>
+
 ## Related projects [[&uarr;](#table-of-contents)]
 
 ### vscode-helpers [[&uarr;](#related-projects-)]

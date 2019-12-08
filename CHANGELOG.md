@@ -1,6 +1,15 @@
 # Change Log (vscode-powertools)
 
-## 0.50.0 (November 8th, 2019; Visual Studio Code 1.40)
+## 0.51.0 (December 8th, 2019; bugfixes and updates)
+
+* [Peter Jaszkowiak](https://github.com/pitaj) fixed button action type `command` with arguments ... s. [pull request #31](https://github.com/egodigital/vscode-powertools/pull/31)
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.8.2`
+  * [ejs](https://www.npmjs.com/package/ejs) `^2.7.4`
+  * [mime-types](https://www.npmjs.com/package/mime-types) `^2.1.25`
+  * [uglify-js](https://www.npmjs.com/package/uglify-js) `^3.7.1`
+
+## 0.50.1 (November 8th, 2019; Visual Studio Code 1.40)
 
 * extension requires at least [Visual Studio Code 1.40](https://code.visualstudio.com/updates/v1_40) now
 * updated the following [npm](https://www.npmjs.com/) modules:
@@ -8,6 +17,7 @@
   * [moment-timezone](https://www.npmjs.com/package/moment-timezone) `^0.5.27`
   * [uglify-js](https://www.npmjs.com/package/uglify-js) `^3.6.8`
   * [vscode-helpers](https://www.npmjs.com/package/vscode-helpers) `^6.0.0`
+* bugfixes
 
 ## 0.49.0 (September 10th, 2019; Visual Studio Code 1.39)
 
