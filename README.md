@@ -22,6 +22,7 @@ A swiss army knife with lots of tools, extensions and (scriptable) enhancements 
    * [Values](#values-)
 3. [Documentation](#documentation-)
 4. [Contribute](#contribute-)
+   * [Contributors](#contributors-)
 5. [Related projects](#related-projects-)
    * [vscode-helpers](#vscode-helpers-)
 

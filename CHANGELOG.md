@@ -1,6 +1,6 @@
 # Change Log (vscode-powertools)
 
-## 0.51.0 (December 8th, 2019; bugfixes and updates)
+## 0.51.1 (December 8th, 2019; bugfixes and updates)
 
 * [Peter Jaszkowiak](https://github.com/pitaj) fixed button action type `command` with arguments ... s. [pull request #31](https://github.com/egodigital/vscode-powertools/pull/31)
 * updated the following [npm](https://www.npmjs.com/) modules:
