@@ -1,5 +1,11 @@
 # Change Log (vscode-powertools)
 
+## 0.52.0 (December 12th, 2019; Visual Studio Code 1.41)
+
+* extension requires at least [Visual Studio Code 1.41](https://code.visualstudio.com/updates/v1_41) now
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [uglify-js](https://www.npmjs.com/package/uglify-js) `^3.7.2`
+
 ## 0.51.2 (December 8th, 2019; bugfixes and updates)
 
 * [Peter Jaszkowiak](https://github.com/pitaj) fixed button action type `command` with arguments ... s. [pull request #31](https://github.com/egodigital/vscode-powertools/pull/31)

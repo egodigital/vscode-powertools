@@ -3,9 +3,9 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.51.2",
+    "version": "0.52.0",
     "engines": {
-        "vscode": "^1.40.0"
+        "vscode": "^1.41.0"
     },
     "categories": [
         "Azure",
@@ -2164,9 +2164,9 @@
         "@types/xlsx": "0.0.36",
         "@types/yazl": "^2.4.2",
         "tslint": "^5.20.1",
-        "typedoc": "^0.15.3",
+        "typedoc": "^0.15.4",
         "typescript": "^3.7.3",
-        "vsce": "^1.70.0",
+        "vsce": "^1.71.0",
         "vscode": "^1.1.36"
     },
     "author": "e.GO Digital GmbH, Aachen, Germany",
@@ -2222,7 +2222,7 @@
         "pug": "^2.0.4",
         "sanitize-filename": "^1.6.3",
         "tmp": "0.0.33",
-        "uglify-js": "^3.7.1",
+        "uglify-js": "^3.7.2",
         "uuid": "^3.3.3",
         "vscode-helpers": "^6.0.0",
         "xlsx": "^0.14.5",
