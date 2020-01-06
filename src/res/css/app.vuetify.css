@@ -3,11 +3,11 @@ body {
     background-color: #ffffff;
 }
 
+a {
+    text-decoration: none;
+}
+
 #ego-logo {
     height: 32px;
     margin-top: 12px;
-}
-
-a {
-    text-decoration: none;
 }

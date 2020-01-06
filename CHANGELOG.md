@@ -1,5 +1,9 @@
 # Change Log (vscode-powertools)
 
+## 0.53.0 (January 6th, 2020; Apps and Vuetify)
+
+* [apps](https://github.com/egodigital/vscode-powertools/wiki/Apps) now supports [Vuetify](https://vuetifyjs.com/), which is default, when a new app is created
+
 ## 0.52.0 (December 12th, 2019; Visual Studio Code 1.41)
 
 * extension requires at least [Visual Studio Code 1.41](https://code.visualstudio.com/updates/v1_41) now
