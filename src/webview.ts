@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as _ from 'lodash';
 import * as ego_contracts from './contracts';
 import * as ego_helpers from './helpers';
 import * as ego_log from './log';
@@ -24,6 +25,110 @@ const opn = require('opn');
 import * as path from 'path';
 import * as url from 'url';
 import * as vscode from 'vscode';
+import * as vueParser from 'vue-parser';
+
+
+/**
+ * Options for 'getVueFooter()' function.
+ */
+export interface GetVueFooterOptions {
+    /**
+     * Extra HTML.
+     */
+    extra?: string;
+    /**
+     * URLs of scripts.
+     */
+    scripts?: {
+        /**
+         * The app script.
+         */
+        app?: string;
+        /**
+         * deepmerge
+         */
+        deepmerge?: string;
+        /**
+         * Vue
+         */
+        vue?: string;
+        /**
+         * Vuetify
+         */
+        vuetify?: string;
+    };
+}
+
+/**
+ * Options for 'getVueHeader()' function.
+ */
+export interface GetVueHeaderOptions {
+    /**
+     * Extra HTML.
+     */
+    extra?: string;
+    /**
+     * URLs to fonts.
+     */
+    fonts?: {
+        /**
+         * Font Awesome 5
+         */
+        fa5?: string;
+        /**
+         * Material icons.
+         */
+        materialIcons?: string;
+        /**
+         * The Roboto font.
+         */
+        roboto?: string;
+    };
+    /**
+     * List of image URLs.
+     */
+    images?: {
+        /**
+         * Logo.
+         */
+        logo?: string;
+    };
+    /**
+     * URLs of styles.
+     */
+    styles?: {
+        /**
+         * The app style.
+         */
+        app?: string;
+        /**
+         * Vuetify.
+         */
+        vuetify?: string;
+    };
+    /**
+     * The custom page title.
+     */
+    title?: string;
+}
+
+/**
+ * Result of 'getVueParts()' function.
+ */
+export interface GetVuePartsResult {
+    /**
+     * The content of the script tag.
+     */
+    script: string;
+    /**
+     * The content of the style tag.
+     */
+    style: string;
+    /**
+     * The content of the template tag.
+     */
+    template: string;
+}
 
 
 /**
@@ -63,11 +168,15 @@ export abstract class WebViewBase extends ego_helpers.DisposableBase {
      * @returns {string} The HTML.
      */
     protected generateHtml(): string {
-        return `${this.generateHtmlHeader()}
+        const HEADER = this.generateHtmlHeader();
+        const BODY = this.generateHtmlBody();
+        const FOOTER = this.generateHtmlFooter();
 
-${ this.generateHtmlBody()}
+        return `${HEADER}
 
-${ this.generateHtmlFooter()}`;
+${BODY}
+
+${FOOTER}`;
     }
 
     /**
@@ -549,4 +658,297 @@ export abstract class WebViewWithContextBase extends WebViewBase {
     ) {
         super();
     }
+}
+
+
+/**
+ * Returns the footer for an Vuetify based web site.
+ *
+ * @param {GetVueFooterOptions} [opts] Custom options.
+ *
+ * @return {string} The HTML code of the footer.
+ */
+export function getVueFooter(opts?: GetVueFooterOptions): string {
+    if (_.isNil(opts)) {
+        opts = {} as any;
+    }
+
+    let scriptApp: string;
+    let scriptDeepMerge: string;
+    let scriptVue: string;
+    let scriptVuetify: string;
+    if (opts.scripts) {
+        scriptApp = opts.scripts.app;
+        scriptDeepMerge = opts.scripts.deepmerge;
+        scriptVue = opts.scripts.vue;
+        scriptVuetify = opts.scripts.vuetify;
+    }
+
+    scriptApp = ego_helpers.toStringSafe(scriptApp)
+        .trim();
+
+    scriptDeepMerge = ego_helpers.toStringSafe(scriptDeepMerge)
+        .trim();
+    if ('' === scriptDeepMerge) {
+        scriptDeepMerge = 'https://cdn.jsdelivr.net/npm/deepmerge@4.2.2/dist/umd.js';
+    }
+
+    scriptVue = ego_helpers.toStringSafe(scriptVue)
+        .trim();
+    if ('' === scriptVue) {
+        scriptVue = 'https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js';
+    }
+
+    scriptVuetify = ego_helpers.toStringSafe(scriptVuetify)
+        .trim();
+    if ('' === scriptVuetify) {
+        scriptVuetify = 'https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js';
+    }
+
+    let extra = ego_helpers.toStringSafe(opts.extra);
+    if ('' === extra.trim()) {
+        extra = '';
+    }
+
+    return `
+        </v-content>
+      </v-app>
+    </div>
+
+${extra}
+
+    <script src="${scriptDeepMerge}"></script>
+    <script src="${scriptVue}"></script>
+    <script src="${scriptVuetify}"></script>
+
+${'' !== scriptApp ? `<script src="${scriptApp}"></script>` : ''}
+
+    <script>
+      const EGO_VUE = (() => {
+        const OPTS = deepmerge.all([
+          {
+            'el': '#ego-app',
+            'methods': {
+              'log': function() {
+                return ego_log
+                    .apply(this, arguments);
+              },
+              'post': function() {
+                return ego_post
+                    .apply(this, arguments);
+              },
+            },
+          },
+
+          'undefined' !== typeof PAGE ? PAGE : {},
+        ]);
+
+        OPTS['vuetify'] = new Vuetify({
+            iconfont: 'fa',
+        });
+
+        return new Vue(OPTS);
+      })();
+    </script>
+  </body>
+</html>`;
+}
+
+/**
+ * Returns the header for an Vuetify based web site.
+ *
+ * @param {GetVueFooterOptions} [opts] Custom options.
+ *
+ * @return {string} The HTML code of the header.
+ */
+export function getVueHeader(opts?: GetVueHeaderOptions): string {
+    if (_.isNil(opts)) {
+        opts = {} as any;
+    }
+
+    const HTML_ENC = new htmlEntities.AllHtmlEntities();
+
+    let fontAwesome5: string;
+    let fontMaterialIcons: string;
+    let fontRoboto: string;
+    if (opts.fonts) {
+        fontAwesome5 = opts.fonts.fa5;
+        fontMaterialIcons = opts.fonts.materialIcons;
+        fontRoboto = opts.fonts.roboto;
+    }
+
+    let styleApp: string;
+    let styleVuetify: string;
+    if (opts.styles) {
+        styleApp = opts.styles.app;
+        styleVuetify = opts.styles.vuetify;
+    }
+
+    fontAwesome5 = ego_helpers.toStringSafe(fontAwesome5)
+        .trim();
+    if ('' === fontAwesome5) {
+        fontAwesome5 = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css';
+    }
+
+    fontMaterialIcons = ego_helpers.toStringSafe(fontMaterialIcons)
+        .trim();
+    if ('' === fontMaterialIcons) {
+        fontMaterialIcons = 'https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.css';
+    }
+
+    fontRoboto = ego_helpers.toStringSafe(fontRoboto)
+        .trim();
+    if ('' === fontRoboto) {
+        fontRoboto = 'https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900';
+    }
+
+    styleApp = ego_helpers.toStringSafe(styleApp)
+        .trim();
+
+    styleVuetify = ego_helpers.toStringSafe(styleVuetify)
+        .trim();
+    if ('' === styleVuetify) {
+        styleVuetify = 'https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.css';
+    }
+
+    let title = ego_helpers.toStringSafe(opts.title)
+        .trim();
+
+    let extra = ego_helpers.toStringSafe(opts.extra);
+    if ('' === extra.trim()) {
+        extra = '';
+    }
+
+    let logo: string;
+    if (opts.images) {
+        logo = opts.images.logo;
+    }
+    logo = ego_helpers.toStringSafe(logo)
+        .trim();
+    if ('' === styleVuetify) {
+        logo = 'https://e-go-digital.com/site/templates/img/Logo-eGOdigital-RGB.svg';
+    }
+
+    return `<!DOCTYPE html>
+    <html>
+    <head>
+      <link href="${fontRoboto}" rel="stylesheet">
+      <link href="${fontAwesome5}" rel="stylesheet">
+      <link href="${fontMaterialIcons}" rel="stylesheet">
+
+${'' !== styleApp ? `<link href="${styleApp}" rel="stylesheet">` : ''}
+
+      <link href="${styleVuetify}" rel="stylesheet">
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+      <title>${HTML_ENC.encode(title)}</title>
+
+      <script>
+        const vscode = acquireVsCodeApi();
+
+        function ego_post(command, data) {
+          return vscode.postMessage({
+            command: command,
+            data: data
+          });
+        }
+
+        function ego_log(msg) {
+          try {
+            if (msg instanceof Error) {
+              msg = \`ERROR: \${ msg.message }
+\${ msg.stack }\`;
+            }
+
+            ego_post('log', {
+              message: JSON.stringify({
+                type: 'debug',
+                message: msg
+              })
+            });
+          } catch (e) { }
+        }
+
+        window.onerror = function(message, url, line, column, error) {
+          ego_log({
+            type: 'uncatched.error',
+            message: message,
+            url: url,
+            line: line,
+            column: column,
+            error: error
+          });
+
+          return false;
+        };
+      </script>
+    </head>
+
+    <body>
+
+${extra}
+
+      <div id="ego-mkloubert"></div>
+
+      <div id="ego-app">
+        <v-app>
+          <v-app-bar app clipped-left>
+            <v-toolbar-title class="headline text-uppercase">
+              <a href="https://e-go-digital.com/" target="_blank">
+                <img src="${logo}" id="ego-logo" />
+              </a>
+            </v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn text href="https://github.com/egodigital/generator-ego" target="_blank">
+              <span class="mr-2">
+                Generated by <strong>generator-ego</strong>
+              </span>
+              <v-icon>fas fa-external-link-alt</v-icon>
+            </v-btn>
+          </v-app-bar>
+
+          <v-content id="ego-content">`;
+}
+
+/**
+ * Handles a value as Vue file and extracts its parts.
+ *
+ * @param {any} vue The input value.
+ *
+ * @return {GetVuePartsResult} The extracted data.
+ */
+export function getVueParts(vue: any): GetVuePartsResult {
+    vue = ego_helpers.toStringSafe(vue);
+
+    const TEMPLATE = trimLeadingDocumentSlashes(
+        vueParser.parse(vue, 'template')
+    );
+    const SCRIPT = trimLeadingDocumentSlashes(
+        vueParser.parse(vue, 'script')
+    );
+    const STYLE = trimLeadingDocumentSlashes(
+        vueParser.parse(vue, 'style')
+    );
+
+    return {
+        script: SCRIPT,
+        style: STYLE,
+        template: TEMPLATE,
+    };
+}
+
+/**
+ * Handles a value as string and removes leading document slashes.
+ *
+ * @param {any} val The input value.
+ *
+ * @return {string} The output value.
+ */
+export function trimLeadingDocumentSlashes(val: any): string {
+    val = ego_helpers.from(ego_helpers.toStringSafe(val).split("\n"))
+        .skipWhile(x => '' === x.trim())
+        .skipWhile(x => x.trim().startsWith('//'))
+        .joinToString("\n")
+        .trim();
+
+    return val;
 }

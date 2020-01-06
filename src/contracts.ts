@@ -201,6 +201,10 @@ export interface AppItem extends CanImportValues, Conditional, ForPlatforms, Wit
      * The (display) name.
      */
     name?: string;
+    /**
+     * Use Vue (Vuetify) instead of Bootstrap or not.
+     */
+    vue?: boolean;
 }
 
 /**
@@ -324,6 +328,10 @@ export interface AppPackageJSON {
      * The version number.
      */
     version?: string;
+    /**
+     * Use Vuetify instead of Bootstrap or not.
+     */
+    vue?: boolean;
 }
 
 /**

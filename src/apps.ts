@@ -450,6 +450,7 @@ export abstract class AppWebViewBase extends ego_webview.WebViewWithContextBase 
  */
 export class AppWebView extends AppWebViewBase {
     private _module: ego_contracts.AppModule;
+    private _packageJSON: ego_contracts.AppPackageJSON;
 
     /**
      * Initializes a new instance of that class.
@@ -466,20 +467,6 @@ export class AppWebView extends AppWebViewBase {
         private readonly withState?: ego_contracts.WithState,
     ) {
         super(extension);
-
-        // package.json
-        const PACKAGE_JSON = path.resolve(
-            path.join(
-                path.dirname(scriptFile), 'package.json'
-            )
-        );
-        if (ego_helpers.isFileSync(PACKAGE_JSON, false)) {
-            this.packageJSON = JSON.parse(
-                fsExtra.readFileSync(
-                    PACKAGE_JSON, 'utf8'
-                )
-            );
-        }
     }
 
     /**
@@ -646,6 +633,64 @@ export class AppWebView extends AppWebViewBase {
     }
 
     /**
+     * Creates a new instance for a script file.
+     *
+     * @param {string} scriptFile The path to the script file.
+     * @param {vscode.ExtensionContext} extension The underlying extension context.
+     * @param {vscode.OutputChannel} output The output channel.
+     * @param {ego_contracts.WithState} [withState] An object with an initial state value.
+     *
+     * @return {AppWebView} The new instance.
+     */
+    public static fromScriptFile(
+        scriptFile: string,
+        extension: vscode.ExtensionContext,
+        output: vscode.OutputChannel,
+        withState?: ego_contracts.WithState,
+    ): AppWebView {
+        let app: AppWebView;
+        let packageJSON: ego_contracts.AppPackageJSON;
+
+        // package.json
+        const PACKAGE_JSON = path.resolve(
+            path.join(
+                path.dirname(scriptFile), 'package.json'
+            )
+        );
+        if (ego_helpers.isFileSync(PACKAGE_JSON, false)) {
+            packageJSON = JSON.parse(
+                fsExtra.readFileSync(
+                    PACKAGE_JSON, 'utf8'
+                )
+            );
+        }
+
+        if (packageJSON) {
+            if (ego_helpers.toBooleanSafe(packageJSON.vue)) {
+                app = new AppWebViewWithVue(
+                    extension,
+                    output,
+                    scriptFile,
+                    withState,
+                );
+            }
+        }
+
+        if (_.isNil(AppWebView)) {
+            app = new AppWebView(
+                extension,
+                output,
+                scriptFile,
+                withState,
+            );
+        }
+
+        app._packageJSON = packageJSON;
+
+        return app;
+    }
+
+    /**
      * @inheritdoc
      */
     protected getTitle(): string {
@@ -696,7 +741,103 @@ export class AppWebView extends AppWebViewBase {
     /**
      * The 'package.json' of the app (if available).
      */
-    public readonly packageJSON: ego_contracts.AppPackageJSON;
+    public get packageJSON(): ego_contracts.AppPackageJSON {
+        return this._packageJSON;
+    }
+}
+
+/**
+ * A web view for an app based on Vuetify.
+ */
+export class AppWebViewWithVue extends AppWebView {
+    /**
+     * @inheritdoc
+     */
+    protected generateHtml(): string {
+        const PARTS = ego_webview.getVueParts(
+            this.generateHtmlBody()
+        );
+
+        const HEADER = this.generateHtmlHeader();
+        const FOOTER = this.generateHtmlFooter();
+
+        return `${HEADER}
+
+${PARTS.template}
+
+${FOOTER}
+`;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected generateHtmlBody(): string {
+        const ARGS = this.createScriptArguments('get.html');
+
+        let vue: string;
+
+        const FUNC = this.getEventFunction(m => m.getHtml);
+        if (FUNC) {
+            vue = FUNC(ARGS);
+        }
+
+        return ego_helpers.toStringSafe(
+            vue
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected generateHtmlFooter(): string {
+        const PARTS = ego_webview.getVueParts(
+            this.generateHtmlBody()
+        );
+
+        return ego_webview.getVueFooter({
+            extra: `
+<style>
+
+${PARTS.style}
+
+</style>
+
+<script>
+
+${PARTS.script}
+
+</script>
+`,
+            scripts: {
+                app: `${this.getFileResourceUri('js/app.vuetify.js')}`,
+                deepmerge: `${this.getFileResourceUri('js/deepmerge.js')}`,
+                vue: `${this.getFileResourceUri('js/vue.js')}`,
+                vuetify: `${this.getFileResourceUri('js/vuetify.js')}`,
+            },
+        });
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected generateHtmlHeader(): string {
+        return ego_webview.getVueHeader({
+            fonts: {
+                fa5: `${this.getFileResourceUri('css/font-awesome-5.css')}`,
+                materialIcons: `${this.getFileResourceUri('css/materialdesignicons.css')}`,
+                roboto: `${this.getFileResourceUri('css/roboto.css')}`,
+            },
+            images: {
+                logo: `${this.getFileResourceUri('img/ego_digital.png')}`,
+            },
+            styles: {
+                app: `${this.getFileResourceUri('css/app.vuetify.css')}`,
+                vuetify: `${this.getFileResourceUri('css/vuetify.css')}`,
+            },
+            title: this.getTitle(),
+        });
+    }
 }
 
 
@@ -1638,10 +1779,9 @@ export async function loadApps(
                     }
 
                     APPS.push(
-                        new AppWebView(
-                            extension,
-                            output,
+                        AppWebView.fromScriptFile(
                             INDEX_JS,
+                            extension, output,
                         )
                     );
                 } catch (e) {
@@ -1769,9 +1909,9 @@ export async function openAppByName(
                     cancellable: false,
                     location: vscode.ProgressLocation.Notification,
                 }, async (progress) => {
-                    const APP = new AppWebView(
-                        extension, output,
+                    const APP = AppWebView.fromScriptFile(
                         INDEX_JS,
+                        extension, output,
                     );
 
                     if (APP.packageJSON) {

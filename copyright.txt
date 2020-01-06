@@ -11,4 +11,15 @@
 - /src/res/img/ego_digital.png
   - e.GO Digital GmbH (https://www.e-go-digital.com/)
 
-- Webview make use [MD Bootstrap free](https://mdbootstrap.com/)
+- /src/res/fonts/fa5/*
+  - https://fontawesome.com/
+
+- /src/res/fonts/FontAwesome*.*
+  - https://fontawesome.com/v4.7.0/
+
+- /src/res/fonts/materialdesignicons*.*
+  - https://MaterialDesignIcons.com
+
+- Webviews make use of
+  - [MD Bootstrap free](https://mdbootstrap.com/)
+  - [Vuetify](https://vuetifyjs.com/)

@@ -21,6 +21,7 @@ import * as ego_contracts from '../contracts';
 import * as ego_helpers from '../helpers';
 import * as ego_states from '../states';
 import * as ego_stores from '../stores';
+import * as ego_webview from '../webview';
 import * as ego_workspace from '../workspace';
 import * as ejs from 'ejs';
 import * as fsExtra from 'fs-extra';
@@ -42,7 +43,6 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
     /**
      * Initializes a new instance of that class.
      *
-     * @param {vscode.ExtensionContext} extension The underlying extension context.
      * @param {ego_workspace.Workspace} workspace The underlying workspace.
      * @param {ego_contracts.AppItem} item The item from the settings.
      * @param {vscode.StatusBarItem} [button] The underlying button.
@@ -63,7 +63,7 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
         );
 
         if (false === FULL_SCRIPT_PATH) {
-            throw new Error(`Script '${ SCRIPT_PATH }' not found!`);
+            throw new Error(`Script '${SCRIPT_PATH}' not found!`);
         }
 
         this.module = ego_helpers.loadScriptModule<ego_contracts.AppModule>(
@@ -99,7 +99,7 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
                 let uri: string | vscode.Uri = this.getFileResourceUri(p);
                 if (!_.isNil(uri)) {
                     if (ego_helpers.toBooleanSafe(asString, true)) {
-                        uri = `${ uri }`;
+                        uri = `${uri}`;
                     }
                 }
 
@@ -142,7 +142,7 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
 
                 return this.render(
                     fsExtra.readFileSync(
-                        path.resolve( file ),
+                        path.resolve(file),
                         'utf8'
                     ),
                     data
@@ -197,6 +197,35 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
     }
 
     /**
+     * Creates a new instance from an app item.
+     *
+     * @param {ego_workspace.Workspace} workspace The underlying workspace.
+     * @param {ego_contracts.AppItem} item The item from the settings.
+     * @param {vscode.StatusBarItem} [button] The underlying button.
+     *
+     * @return {WorkspaceAppWebView} The new instance.
+     */
+    public static fromItem(
+        item: ego_contracts.AppItem,
+        workspace: ego_workspace.Workspace,
+        button?: vscode.StatusBarItem,
+    ): WorkspaceAppWebView {
+        if (ego_helpers.toBooleanSafe(item.vue)) {
+            return new WorkspaceAppWebViewWithVue(
+                workspace,
+                item,
+                button,
+            );
+        }
+
+        return new WorkspaceAppWebView(
+            workspace,
+            item,
+            button,
+        );
+    }
+
+    /**
      * @inheritdoc
      */
     protected getResourceUris() {
@@ -222,6 +251,100 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
      * @inheritdoc
      */
     public readonly scriptFile: string;
+}
+
+/**
+ * A webview for a custom (workspace) app based on Vuetify.
+ */
+export class WorkspaceAppWebViewWithVue extends WorkspaceAppWebView {
+    /**
+     * @inheritdoc
+     */
+    protected generateHtml(): string {
+        const PARTS = ego_webview.getVueParts(
+            this.generateHtmlBody()
+        );
+
+        const HEADER = this.generateHtmlHeader();
+        const FOOTER = this.generateHtmlFooter();
+
+        return `${HEADER}
+
+${PARTS.template}
+
+${FOOTER}
+`;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected generateHtmlBody(): string {
+        const ARGS = this.createScriptArguments('get.html');
+
+        let vue: string;
+
+        const FUNC = this.getEventFunction(m => m.getHtml);
+        if (FUNC) {
+            vue = FUNC(ARGS);
+        }
+
+        return ego_helpers.toStringSafe(
+            vue
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected generateHtmlFooter(): string {
+        const PARTS = ego_webview.getVueParts(
+            this.generateHtmlBody()
+        );
+
+        return ego_webview.getVueFooter({
+            extra: `
+<style>
+
+${PARTS.style}
+
+</style>
+
+<script>
+
+${PARTS.script}
+
+</script>
+`,
+            scripts: {
+                app: `${this.getFileResourceUri('js/app.vuetify.js')}`,
+                deepmerge: `${this.getFileResourceUri('js/deepmerge.js')}`,
+                vue: `${this.getFileResourceUri('js/vue.js')}`,
+                vuetify: `${this.getFileResourceUri('js/vuetify.js')}`,
+            },
+        });
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected generateHtmlHeader(): string {
+        return ego_webview.getVueHeader({
+            fonts: {
+                fa5: `${this.getFileResourceUri('css/font-awesome-5.css')}`,
+                materialIcons: `${this.getFileResourceUri('css/materialdesignicons.css')}`,
+                roboto: `${this.getFileResourceUri('css/roboto.css')}`,
+            },
+            images: {
+                logo: `${this.getFileResourceUri('img/ego_digital.png')}`,
+            },
+            styles: {
+                app: `${this.getFileResourceUri('css/app.vuetify.css')}`,
+                vuetify: `${this.getFileResourceUri('css/vuetify.css')}`,
+            },
+            title: this.getTitle(),
+        });
+    }
 }
 
 
@@ -317,7 +440,7 @@ export async function reloadApps() {
             let newApp: ego_contracts.WorkspaceApp = {
                 description: undefined,
                 detail: undefined,
-                dispose: function() {
+                dispose: function () {
                     DISPOSE_BTN();
 
                     const VIEW = view;
@@ -334,14 +457,13 @@ export async function reloadApps() {
                     }
                 },
                 name: undefined,
-                open: async function() {
+                open: async function () {
                     if (view) {
                         return false;
                     }
 
-                    const NEW_VIEW = new WorkspaceAppWebView(
-                        WORKSPACE,
-                        item
+                    const NEW_VIEW = WorkspaceAppWebView.fromItem(
+                        item, WORKSPACE
                     );
 
                     if (!(await NEW_VIEW.open())) {
@@ -370,7 +492,7 @@ export async function reloadApps() {
                     ).trim();
 
                     return '' !== DESCRIPTION ? DESCRIPTION
-                                            : undefined;
+                        : undefined;
                 }
             });
 
@@ -400,7 +522,7 @@ export async function reloadApps() {
                     ).trim();
 
                     return '' !== NAME ? NAME
-                                    : undefined;
+                        : undefined;
                 }
             });
 
@@ -414,7 +536,7 @@ export async function reloadApps() {
 
             if (item.button) {
                 const ID = nextAppButtonCommandId++;
-                const CMD_ID = `ego.power-tools.buttons.appBtn${ ID }`;
+                const CMD_ID = `ego.power-tools.buttons.appBtn${ID}`;
 
                 newAppBtnCommand = vscode.commands.registerCommand(CMD_ID, async () => {
                     try {
@@ -455,7 +577,7 @@ export async function reloadApps() {
             }
         } catch (e) {
             WORKSPACE.logger
-                     .trace(e, 'apps.reloadApps(1)');
+                .trace(e, 'apps.reloadApps(1)');
 
             DISPOSE_BTN();
         }
