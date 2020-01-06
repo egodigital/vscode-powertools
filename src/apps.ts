@@ -1414,7 +1414,7 @@ exports.onEvent = async (args) => {
 
                 // s. https://code.visualstudio.com/api/references/vscode-api
                 vscode.window.showInformationMessage(
-                    'From 'app.vue': ' + JSON.stringify(args.data.data, null, 2)
+                    "From 'app.vue': " + JSON.stringify(args.data.data, null, 2)
                 );
 
                 // send this back to 'app.vue'
