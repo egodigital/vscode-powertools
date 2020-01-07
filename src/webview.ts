@@ -890,8 +890,6 @@ ${'' !== styleApp ? `<link href="${styleApp}" rel="stylesheet">` : ''}
 
 ${extra}
 
-      <div id="ego-mkloubert"></div>
-
       <div id="ego-app">
         <v-app>
           <v-app-bar app clipped-left>
