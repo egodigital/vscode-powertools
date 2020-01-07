@@ -126,6 +126,15 @@ export interface AppEventScriptArguments<TData = any> extends ScriptArguments {
      */
     readonly readFile: (path: string) => Buffer;
     /**
+     * Reads a file as text, relative to '.data' sub folder.
+     *
+     * @param {string} path The path of the file.
+     * @param {string} [enc] The custom encoding. Default: utf8
+     *
+     * @return {string} The read data.
+     */
+    readonly readTextFile: (path: string, enc?: string) => string;
+    /**
      * Reads a file or folder, relative to '.data' sub folder.
      *
      * @param {string} path The path of the file / folder.

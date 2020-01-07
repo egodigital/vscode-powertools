@@ -519,6 +519,15 @@ export class AppWebView extends AppWebViewBase {
             readFile: (p) => {
                 return this.readFile(p);
             },
+            readTextFile: function (p, e?) {
+                e = ego_helpers.normalizeString(e);
+                if ('' === e) {
+                    e = 'utf8';
+                }
+
+                return this.readFile(p)
+                    .toString(e);
+            },
             remove: (p) => {
                 this.removeFileOrFolder(p);
             },

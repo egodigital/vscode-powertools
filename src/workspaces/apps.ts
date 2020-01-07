@@ -148,6 +148,15 @@ export class WorkspaceAppWebView extends ego_apps.AppWebViewBase {
                     data
                 );
             },
+            readTextFile: function (p, e?) {
+                e = ego_helpers.normalizeString(e);
+                if ('' === e) {
+                    e = 'utf8';
+                }
+
+                return this.readFile(p)
+                    .toString(e);
+            },
             replaceValues: (val) => {
                 return this.workspace
                     .replaceValues(val);
