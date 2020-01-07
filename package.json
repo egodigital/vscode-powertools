@@ -2227,7 +2227,7 @@
         "pug": "^2.0.4",
         "sanitize-filename": "^1.6.3",
         "tmp": "0.0.33",
-        "uglify-js": "^3.7.3",
+        "uglify-js": "^3.7.4",
         "uuid": "^3.3.3",
         "vscode-helpers": "^6.0.0",
         "vue-parser": "^1.1.6",
