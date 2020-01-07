@@ -1410,48 +1410,53 @@ const PAGE = {
  * Is invoked on an event.
  */
 exports.onEvent = async (args) => {
-    const vscode = args.require('vscode');
+  const vscode = args.require('vscode');
 
-    switch (args.event) {
-        case 'on.command':
-            // is invoked, when the web view has
-            // been post a (command) message
-            if ('hello_from_webview_command' === args.data.command) {
-                // this has been send from
-                // 'mounted()' hook
-                // in 'app.vue'
+  switch (args.event) {
+    case 'on.command':
+      // is invoked, when the web view has
+      // been post a (command) message
+      {
+        const COMMAND_NAME = args.data.command;
+        const COMMAND_DATA = args.data.data;
 
-                // s. https://code.visualstudio.com/api/references/vscode-api
-                vscode.window.showInformationMessage(
-                    "From 'app.vue': " + JSON.stringify(args.data.data, null, 2)
-                );
+        if ('hello_from_webview_command' === COMMAND_NAME) {
+          // this has been send from
+          // 'mounted()' hook
+          // in 'app.vue'
 
-                // send this back to 'app.vue'
-                await args.post('hello_back_from_extension', {
-                    'message': 'Hello, Otto!'
-                });
-            }
-            break;
+          // s. https://code.visualstudio.com/api/references/vscode-api
+          vscode.window.showInformationMessage(
+            "From 'app.vue': " + JSON.stringify(COMMAND_DATA, null, 2)
+          );
 
-        case 'on.loaded':
-            // page inside web view has been completely loaded
-            break;
+          // send this back to 'app.vue'
+          await args.post('hello_back_from_extension', {
+            'message': 'Hello, Otto!'
+          });
+        }
+      }
+      break;
 
-        case 'on.hidden':
-            // web view has went to the background
-            break;
-        case 'on.shown':
-            // web view has went to the foreground
-            break;
+    case 'on.loaded':
+      // page inside web view has been completely loaded
+      break;
 
-        case 'on.close':
-            // the web view is going to be closed
-            break;
+    case 'on.hidden':
+      // web view has went to the background
+      break;
+    case 'on.shown':
+      // web view has went to the foreground
+      break;
 
-        case 'on.disposed':
-            // the web view has been disposed
-            break;
-    }
+    case 'on.close':
+      // the web view is going to be closed
+      break;
+
+    case 'on.disposed':
+      // the web view has been disposed
+      break;
+  }
 };
 
 /**
@@ -1466,16 +1471,16 @@ exports.onDispose = (args) => {
  * of the web view.
  */
 exports.getTitle = () => {
-    return ${ JSON.stringify(DISPLAY_NAME)};
+  return ${ JSON.stringify(DISPLAY_NAME)};
 };
 
 /**
  * This returns the Vue code for the body.
  */
 exports.getHtml = (args) => {
-    return args.readTextFile(
-        __dirname + '/app.vue',
-    );
+  return args.readTextFile(
+    __dirname + '/app.vue',
+  );
 };
 `,
         'utf8'
@@ -1533,7 +1538,7 @@ SOFTWARE.`,
         README_FILE,
         `# ${HTML_ENCODER.encode(NAME)}
 
-${ ego_helpers.isEmptyString(description) ? 'This is an app for the [Visual Studio Code](https://code.visualstudio.com/) extension [Power Tools](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools).' : HTML_ENCODER.encode(description)}
+${ ego_helpers.isEmptyString(description) ? 'This is an [Vuetify](https://vuetifyjs.com/) app for the [Visual Studio Code](https://code.visualstudio.com/) extension [Power Tools](https://marketplace.visualstudio.com/items?itemName=egodigital.vscode-powertools).' : HTML_ENCODER.encode(description)}
 
 ## Usage
 
