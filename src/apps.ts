@@ -1359,7 +1359,7 @@ const PAGE = {
      * This is called, when a command
      * has been received from the app script.
      */
-    onCommand: function(command, data) {
+    $onCommand: function(command, data) {
       switch (command) {
         case "hello_back_from_extension":
           {
@@ -1379,7 +1379,7 @@ const PAGE = {
     // send a message to
     // 'onEvent()' function
     // in 'index.js'
-    this.post("hello_from_webview_command", {
+    this.$post("hello_from_webview_command", {
       message: "Hello, Echo!"
     });
   }

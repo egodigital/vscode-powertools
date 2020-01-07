@@ -724,20 +724,23 @@ ${extra}
 ${'' !== scriptApp ? `<script src="${scriptApp}"></script>` : ''}
 
     <script>
+      Vue.prototype.$log = function() {
+        return ego_log
+          .apply(this, arguments);
+      };
+      Vue.prototype.$openUrl = function() {
+        return ego_open_external_url
+          .apply(this, arguments);
+      };
+      Vue.prototype.$post = function() {
+        return ego_post
+          .apply(this, arguments);
+      };
+
       const EGO_VUE = (() => {
         const OPTS = deepmerge.all([
           {
             'el': '#ego-app',
-            'methods': {
-              'log': function() {
-                return ego_log
-                    .apply(this, arguments);
-              },
-              'post': function() {
-                return ego_post
-                    .apply(this, arguments);
-              },
-            },
           },
 
           'undefined' !== typeof PAGE ? PAGE : {},

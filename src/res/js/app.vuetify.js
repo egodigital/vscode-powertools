@@ -13,6 +13,19 @@ function ego_is_nil(val) {
 }
 
 /**
+ * Asks the user in Visual Studio Code, if an external URL should be opened.
+ * 
+ * @param {String} url The requested URL to open.
+ * @param {String} text The display text.
+ */
+function ego_open_external_url(url, text) {
+    ego_post('openExternalUrl', {
+        text: ego_to_string(text),
+        url: ego_to_string(url)
+    });
+}
+
+/**
  * Converts a value to a string, which is not (null) and (undefined), if needed.
  *
  * @param {any} val The value to convert.
@@ -63,13 +76,13 @@ window.addEventListener('message', (e) => {
         return;
     }
 
-    if (!EGO_VUE.onCommand) {
+    if (!EGO_VUE.$onCommand) {
         return;
     }
 
     try {
         Promise.resolve(
-            EGO_VUE.onCommand(COMMAND, MESSAGE.data)
+            EGO_VUE.$onCommand(COMMAND, MESSAGE.data)
         ).catch((err) => {
             ego_log(err);
         });
