@@ -3,6 +3,11 @@
 ## 0.53.0 (January 6th, 2020; Apps and Vuetify)
 
 * [apps](https://github.com/egodigital/vscode-powertools/wiki/Apps) now support [Vuetify](https://github.com/egodigital/vscode-powertools/wiki/Vue%20%2F%20Vuetify), which is default, when a new app is created
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [coffeescript](https://www.npmjs.com/package/coffeescript) `^2.5.0`
+  * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.8.3`
+  * [mime-types](https://www.npmjs.com/package/mime-types) `^2.1.26`
+  * [uglify-js](https://www.npmjs.com/package/uglify-js) `^3.7.4`
 
 ## 0.52.0 (December 12th, 2019; Visual Studio Code 1.41)
 
