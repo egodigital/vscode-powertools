@@ -1418,7 +1418,7 @@ exports.onEvent = async (args) => {
             // been post a (command) message
             if ('hello_from_webview_command' === args.data.command) {
                 // this has been send from
-                // 'ego_on_loaded()' function
+                // 'mounted()' hook
                 // in 'app.vue'
 
                 // s. https://code.visualstudio.com/api/references/vscode-api
@@ -1470,12 +1470,12 @@ exports.getTitle = () => {
 };
 
 /**
- * This returns the HTML code for the body.
+ * This returns the Vue code for the body.
  */
 exports.getHtml = (args) => {
-    return args.readFile(
+    return args.readTextFile(
         __dirname + '/app.vue',
-    ).toString('utf8');
+    );
 };
 `,
         'utf8'
