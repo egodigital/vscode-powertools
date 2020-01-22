@@ -69,7 +69,7 @@ async function createNewWorkspace(folder: vscode.WorkspaceFolder): Promise<ego_w
         };
 
         LOGGER.addAction((log) => {
-            let fullMsg = `[${ folder.name }] `;
+            let fullMsg = `[${folder.name}] `;
 
             const ICON = ego_log.LOG_ICONS[log.type];
 
@@ -79,11 +79,11 @@ async function createNewWorkspace(folder: vscode.WorkspaceFolder): Promise<ego_w
 
             let tagPrefix = '';
             if (!ego_helpers.isEmptyString(log.tag)) {
-                tagPrefix = `${ ego_helpers.normalizeString(log.tag) } :: `;
+                tagPrefix = `${ego_helpers.normalizeString(log.tag)} :: `;
             }
 
             CONTEXT.output.appendLine(
-                `${ fullMsg }${ tagPrefix }${ ego_helpers.toStringSafe(log.message).trim() }`
+                `${fullMsg}${tagPrefix}${ego_helpers.toStringSafe(log.message).trim()}`
             );
         });
 
@@ -110,7 +110,7 @@ async function createNewWorkspace(folder: vscode.WorkspaceFolder): Promise<ego_w
         }
     } catch (e) {
         ego_log.CONSOLE
-               .trace(e, 'extension.createNewWorkspace(1)');
+            .trace(e, 'extension.createNewWorkspace(1)');
 
         ego_helpers.tryDispose(fileWatcher);
         ego_helpers.tryDispose(newWorkspace);
@@ -142,7 +142,7 @@ export function executeCode(
         code: code,
         values: ego_values.toValueStorage(
             ego_global_values.getGlobalUserValues()
-                .concat( ego_helpers.asArray(values) )
+                .concat(ego_helpers.asArray(values))
         ),
     });
 }
@@ -175,7 +175,7 @@ export async function executeScript<
     scriptPath = path.resolve(scriptPath);
 
     if (!(await ego_helpers.exists(scriptPath))) {
-        throw new Error(`Script '${ scriptPath }' not found!`);
+        throw new Error(`Script '${scriptPath}' not found!`);
     }
 
     const SCRIPT_MODULE = ego_helpers.loadScriptModule<ego_contracts.ScriptModule>(
@@ -261,7 +261,7 @@ async function onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
             }
         } catch (e) {
             ego_log.CONSOLE
-                   .trace(e, 'extension.onDidChangeConfiguration(1)');
+                .trace(e, 'extension.onDidChangeConfiguration(1)');
         }
     }
 }
@@ -331,7 +331,7 @@ export async function runShellCommand(settings: ego_contracts.WithShellCommand, 
             const COMPLETED = (err: any, result?: string) => {
                 if (err) {
                     outputChannel
-                        .appendLine(`[FAILED: '${ ego_helpers.errorToString(err) }']`);
+                        .appendLine(`[FAILED: '${ego_helpers.errorToString(err)}']`);
 
                     WRITE_RESULT(result);
 
@@ -348,11 +348,11 @@ export async function runShellCommand(settings: ego_contracts.WithShellCommand, 
 
             try {
                 outputChannel
-                    .append(`Running shell command '${ COMMAND_TO_EXECUTE }' ... `);
+                    .append(`Running shell command '${COMMAND_TO_EXECUTE}' ... `);
 
                 if (progress) {
                     progress.report({
-                        message: `Running '${ COMMAND_TO_EXECUTE }' ...`,
+                        message: `Running '${COMMAND_TO_EXECUTE}' ...`,
                     });
                 }
 
@@ -414,7 +414,7 @@ async function withTextDocument(
             }
         } catch (e) {
             WS.logger
-              .err(e, 'extension.withTextDocument(1)');
+                .err(e, 'extension.withTextDocument(1)');
         }
     }
 }
@@ -452,7 +452,7 @@ export async function activate(context: vscode.ExtensionContext) {
             packageFile = await ego_helpers.getPackageFile();
         } catch (e) {
             ego_log.CONSOLE
-                   .trace(e, 'extension.activate(package file)');
+                .trace(e, 'extension.activate(package file)');
         }
     });
 
@@ -508,7 +508,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 async (err, ev, folder, workspace) => {
                     if (err) {
                         ego_log.CONSOLE
-                               .trace(err, 'extension.activate.registerWorkspaceWatcher(remove)');
+                            .trace(err, 'extension.activate.registerWorkspaceWatcher(remove)');
 
                         return;
                     }
@@ -529,7 +529,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 onDidSaveTextDocument(e).then(() => {
                 }).catch((err) => {
                     ego_log.CONSOLE
-                           .trace(err, 'vscode.workspace.onDidSaveTextDocument');
+                        .trace(err, 'vscode.workspace.onDidSaveTextDocument');
                 });
             }),
 
@@ -538,7 +538,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 onWillSaveTextDocument(e).then(() => {
                 }).catch((err) => {
                     ego_log.CONSOLE
-                           .trace(err, 'vscode.workspace.onWillSaveTextDocument');
+                        .trace(err, 'vscode.workspace.onWillSaveTextDocument');
                 });
             }),
 
@@ -547,7 +547,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 onDidOpenTextDocument(doc).then(() => {
                 }).catch((err) => {
                     ego_log.CONSOLE
-                           .trace(err, 'vscode.workspace.onDidOpenTextDocument');
+                        .trace(err, 'vscode.workspace.onDidOpenTextDocument');
                 });
             }),
 
@@ -558,14 +558,14 @@ export async function activate(context: vscode.ExtensionContext) {
                         await onDidChangeConfiguration(e);
                     } catch (e) {
                         ego_log.CONSOLE
-                               .trace(e, 'vscode.workspace.onDidChangeConfiguration(1)');
+                            .trace(e, 'vscode.workspace.onDidChangeConfiguration(1)');
                     }
 
                     await ego_global_config.reloadGlobalSettings();
                 })().then(() => {
                 }).catch(err => {
                     ego_log.CONSOLE
-                           .trace(err, 'vscode.workspace.onDidChangeConfiguration(2)');
+                        .trace(err, 'vscode.workspace.onDidChangeConfiguration(2)');
                 });
             }),
         );
@@ -668,8 +668,8 @@ export async function activate(context: vscode.ExtensionContext) {
                     if (IFACES.length > 0) {
                         outputChannel.appendLine(`    - '${IFNAME}':`);
                         IFACES.forEach(x => {
-                                            outputChannel.appendLine(`      [${x.family}] '${x.address}' / '${x.netmask}' ('${x.mac}')`);
-                                       });
+                            outputChannel.appendLine(`      [${x.family}] '${x.address}' / '${x.netmask}' ('${x.mac}')`);
+                        });
 
                         outputChannel.appendLine('');
                     }
@@ -713,7 +713,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
             const NEW_APPS_MSG = 1 === newApps.length ?
                 '[New App] One new app has been released in the store.' :
-                `[New Apps] ${ newApps.length } new apps have been released in the store.`;
+                `[New Apps] ${newApps.length} new apps have been released in the store.`;
 
             vscode.window.showInformationMessage(
                 NEW_APPS_MSG + ' Do you like to open the store?',
