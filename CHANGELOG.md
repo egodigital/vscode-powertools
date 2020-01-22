@@ -1,5 +1,15 @@
 # Change Log (vscode-powertools)
 
+## 0.54.0 (January 22nd, 2020; YAML support)
+
+* added YAML support for [Generate TypeScript Code](https://github.com/egodigital/vscode-powertools/wiki/Tools#generate-typescript-code) feature
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [cron](https://www.npmjs.com/package/cron) `^1.8.1`
+  * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.8.5`
+  * [js-beautify](https://www.npmjs.com/package/js-beautify) `^1.10.3`
+  * [uglify-js](https://www.npmjs.com/package/uglify-js) `^2.5.0`
+  * [uuid](https://www.npmjs.com/package/uuid) `^3.4.0`
+
 ## 0.53.0 (January 6th, 2020; Apps and Vuetify)
 
 * [apps](https://github.com/egodigital/vscode-powertools/wiki/Apps) now support [Vuetify](https://github.com/egodigital/vscode-powertools/wiki/Vue%20%2F%20Vuetify), which is default, when a new app is created

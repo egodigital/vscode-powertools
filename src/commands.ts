@@ -38,6 +38,7 @@ const hexy = require('hexy');
 import * as moment from 'moment';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as yaml from 'js-yaml';
 
 
 const SUPPORTED_LANGUAGES = [
@@ -48,6 +49,7 @@ const SUPPORTED_LANGUAGES = [
 const SUPPORTED_TYPESCRIPT_SRC_LANGUAGES = [
     'javascript',
     'json',
+    'yaml',
 ];
 
 
@@ -86,6 +88,10 @@ export function registerCommands(
             val = JSON.parse(
                 doc.getText()
             );
+        } else if ('yaml' === LANGUAGE) {
+            val = yaml.safeLoad(
+                doc.getText()
+            );
         } else if ('javascript' === LANGUAGE) {
             let codeToExecute = doc.getText()
                 .trim();
@@ -98,14 +104,14 @@ export function registerCommands(
 
             val = await Promise.resolve(eval(`(async () => {
 
-${ codeToExecute }
+${ codeToExecute}
 
 })()`));
         }
 
         if (val === LANGUAGE_NOT_SUPPORTED) {
             vscode.window.showWarningMessage(
-                `Language '${ LANGUAGE }' is not supported.`
+                `Language '${LANGUAGE}' is not supported.`
             );
         } else {
             const TYPESCRIPT = ego_tools_typescript.toTypeScript(
@@ -237,9 +243,9 @@ ${ codeToExecute }
                             }
                         }
 
-                        md += `${i + 1} | \`${ ego_helpers.escapeMarkdown(
+                        md += `${i + 1} | \`${ego_helpers.escapeMarkdown(
                             JSON.stringify(LOC)
-                        )}\` (📍 [open](https://maps.google.com/?z=10&q=${ LAT },${ LNG })) | ${ distanceCol } | ${ bearingCol } \n`;
+                        )}\` (📍 [open](https://maps.google.com/?z=10&q=${LAT},${LNG})) | ${distanceCol} | ${bearingCol} \n`;
                     }
 
                     const WEB_VIEW = new ego_markdown.MarkdownWebView({
@@ -251,7 +257,7 @@ ${ codeToExecute }
                 } else if (Buffer.isBuffer(RESULT)) {
                     let md = '# Code Execution Result (Buffer)\n\n';
                     md += '```\n';
-                    md += ego_helpers.escapeMarkdown( hexy.hexy(RESULT) ) + "\n";
+                    md += ego_helpers.escapeMarkdown(hexy.hexy(RESULT)) + "\n";
                     md += '```';
 
                     const WEB_VIEW = new ego_markdown.MarkdownWebView({
@@ -264,8 +270,8 @@ ${ codeToExecute }
                     const TYPE = _.isArray(RESULT) ? 'Array' : 'Object';
                     const COL_1 = _.isArray(RESULT) ? 'Index' : 'Property';
 
-                    let md = `# Code Execution Result (${ TYPE })\n\n`;
-                    md += `${ COL_1 } | Value\n`;
+                    let md = `# Code Execution Result (${TYPE})\n\n`;
+                    md += `${COL_1} | Value\n`;
                     md += `----- | -----\n`;
                     for (const KEY of ego_helpers.from(Object.keys(RESULT)).orderBy(k => ego_helpers.normalizeString(k))) {
                         const VALUE = RESULT[KEY];
@@ -285,12 +291,12 @@ ${ codeToExecute }
                             json = '*(ERROR)*';
                         }
 
-                        md += `${ KEY } | ${ json }\n`;
+                        md += `${KEY} | ${json}\n`;
                     }
 
                     const WEB_VIEW = new ego_markdown.MarkdownWebView({
                         markdown: md,
-                        title: `Code Execution Result (${ TYPE })`,
+                        title: `Code Execution Result (${TYPE})`,
                     });
 
                     await WEB_VIEW.open();
@@ -448,7 +454,7 @@ ${ codeToExecute }
                 }).orderBy(qp => {
                     return ego_helpers.normalizeString(qp.label);
                 }).pipe(qp => {
-                    qp.label = `$(zap)  ${ qp.label }`.trim();
+                    qp.label = `$(zap)  ${qp.label}`.trim();
                 }).toArray();
 
                 if (QUICK_PICKS.length < 1) {
@@ -474,7 +480,7 @@ ${ codeToExecute }
         }),
 
         // execute command
-        vscode.commands.registerCommand('ego.power-tools.executeCommand.currentFileOrFolder', async function(fileOrFolder?: vscode.Uri) {
+        vscode.commands.registerCommand('ego.power-tools.executeCommand.currentFileOrFolder', async function (fileOrFolder?: vscode.Uri) {
             try {
                 if (_.isNil(fileOrFolder)) {
                     // try active editor
@@ -500,7 +506,7 @@ ${ codeToExecute }
 
                 if (!(await ego_helpers.exists(fileOrFolder.fsPath))) {
                     vscode.window.showWarningMessage(
-                        `'${ fileOrFolder.fsPath }' does not exist!`
+                        `'${fileOrFolder.fsPath}' does not exist!`
                     );
 
                     return;
@@ -583,7 +589,7 @@ ${ codeToExecute }
 
                 if (QUICK_PICKS.length < 1) {
                     vscode.window.showWarningMessage(
-                        `No command found for that ${ typeForDisplay }!`
+                        `No command found for that ${typeForDisplay}!`
                     );
 
                     return;
@@ -598,7 +604,7 @@ ${ codeToExecute }
                         {
                             canPickMany: false,
                             ignoreFocusOut: true,
-                            placeHolder: `Select one or more command, that should be executed for that ${ typeForDisplay } ...`,
+                            placeHolder: `Select one or more command, that should be executed for that ${typeForDisplay} ...`,
                         }
                     );
                 }
@@ -745,7 +751,7 @@ ${ codeToExecute }
                             }
                         } catch (e) {
                             ego_log.CONSOLE
-                                   .trace(e, 'ego.power-tools.logs(1)');
+                                .trace(e, 'ego.power-tools.logs(1)');
                         }
                     }
                 }
@@ -762,7 +768,7 @@ ${ codeToExecute }
                                 lf.path
                             );
                         },
-                        detail: `Last Change: ${ moment(lf.stats.mtime).format('YYYY-MM-DD HH:mm:ss') }`,
+                        detail: `Last Change: ${moment(lf.stats.mtime).format('YYYY-MM-DD HH:mm:ss')}`,
                         label: '$(book)  ' + lf.date
                             .format('YYYY-MM-DD'),
                     };
@@ -837,8 +843,8 @@ ${ codeToExecute }
                                 canSelectFolders: false,
                                 canSelectMany: false,
                                 filters: {
-                                    'JavaScript files (*.js)': [ 'js' ],
-                                    'All files (*.*)': [ '*' ]
+                                    'JavaScript files (*.js)': ['js'],
+                                    'All files (*.*)': ['*']
                                 },
                             });
 
