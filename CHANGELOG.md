@@ -1,5 +1,9 @@
 # Change Log (vscode-powertools)
 
+## 0.55.0 (January 24nd, 2020; TOML support)
+
+* added TOML and XML/XSL support for [Generate TypeScript Code](https://github.com/egodigital/vscode-powertools/wiki/Tools#generate-typescript-code) feature
+
 ## 0.54.0 (January 22nd, 2020; YAML support)
 
 * added YAML support for [Generate TypeScript Code](https://github.com/egodigital/vscode-powertools/wiki/Tools#generate-typescript-code) feature

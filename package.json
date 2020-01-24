@@ -3,7 +3,7 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.54.0",
+    "version": "0.55.0",
     "engines": {
         "vscode": "^1.41.0"
     },
@@ -2131,7 +2131,7 @@
     "scripts": {
         "build": "(rm -r ./out || true) && (\"./node_modules/.bin/tsc\" -p ./) && (mkdir \"./out/res\") && (cp -r ./src/res/* ./out/res)",
         "compile": "tsc -p ./",
-        "deploy": "npm install && npm run build && node ./publish.js",
+        "deploy": "node ./deploy.js",
         "doc": "(rm -r ./doc || true) && (\"./node_modules/.bin/typedoc\" --out ./doc ./src)",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "sync:package": "node ./syncPackageJSON.js",
@@ -2167,6 +2167,7 @@
         "@types/tmp": "0.0.33",
         "@types/uuid": "^3.4.6",
         "@types/xlsx": "0.0.36",
+        "@types/xml2js": "^0.4.5",
         "@types/yazl": "^2.4.2",
         "tslint": "^5.20.1",
         "typedoc": "^0.15.8",
@@ -2227,11 +2228,13 @@
         "pug": "^2.0.4",
         "sanitize-filename": "^1.6.3",
         "tmp": "0.0.33",
+        "toml": "^3.0.0",
         "uglify-js": "^3.7.6",
         "uuid": "^3.4.0",
         "vscode-helpers": "^6.0.0",
         "vue-parser": "^1.1.6",
         "xlsx": "^0.14.5",
+        "xml2js": "^0.4.23",
         "yazl": "^2.5.1"
     }
 }

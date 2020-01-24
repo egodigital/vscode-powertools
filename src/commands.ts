@@ -37,7 +37,9 @@ const geodist = require('geodist');
 const hexy = require('hexy');
 import * as moment from 'moment';
 import * as path from 'path';
+import * as toml from 'toml';
 import * as vscode from 'vscode';
+import * as xml from 'xml2js';
 import * as yaml from 'js-yaml';
 
 
@@ -49,6 +51,9 @@ const SUPPORTED_LANGUAGES = [
 const SUPPORTED_TYPESCRIPT_SRC_LANGUAGES = [
     'javascript',
     'json',
+    'toml',
+    'xml',
+    'xsl',
     'yaml',
 ];
 
@@ -90,6 +95,14 @@ export function registerCommands(
             );
         } else if ('yaml' === LANGUAGE) {
             val = yaml.safeLoad(
+                doc.getText()
+            );
+        } else if ('toml' === LANGUAGE) {
+            val = toml.parse(
+                doc.getText()
+            );
+        } else if (['xml', 'xsl'].indexOf(LANGUAGE) > -1) {
+            val = await xml.parseStringPromise(
                 doc.getText()
             );
         } else if ('javascript' === LANGUAGE) {
