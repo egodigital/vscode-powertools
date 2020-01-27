@@ -1,5 +1,9 @@
 # Change Log (vscode-powertools)
 
+## 0.56.1 (January 27nd, 2020; SCSS support)
+
+* Vue based [apps](https://github.com/egodigital/vscode-powertools/wiki/Vue%20%2F%20Vuetify) now support [SCSS](https://www.npmjs.com/package/sass) styles
+
 ## 0.55.0 (January 24nd, 2020; TOML support)
 
 * added TOML and XML/XSL support for [Generate TypeScript Code](https://github.com/egodigital/vscode-powertools/wiki/Tools#generate-typescript-code) feature
