@@ -23,6 +23,7 @@ import * as fsExtra from 'fs-extra';
 import * as htmlEntities from 'html-entities';
 const opn = require('opn');
 import * as path from 'path';
+import * as sass from 'sass';
 import * as url from 'url';
 import * as vscode from 'vscode';
 import * as vueParser from 'vue-parser';
@@ -923,13 +924,35 @@ export function getVueParts(vue: any): GetVuePartsResult {
     const SCRIPT = trimLeadingDocumentSlashes(
         vueParser.parse(vue, 'script')
     );
+
+    // styles CSS and SASS
     const STYLE = trimLeadingDocumentSlashes(
         vueParser.parse(vue, 'style')
     );
 
+    let styleAll = '';
+
+    if (!ego_helpers.isEmptyString(STYLE)) {
+        try {
+            const RENDER_RESULT = sass.renderSync({
+                data: STYLE,
+            });
+
+            styleAll += RENDER_RESULT.css
+                .toString('utf8');
+        } catch (e) {
+            styleAll = `
+/* ERROR: ${ego_helpers.toStringSafe(e)} */
+`;
+
+            ego_log.CONSOLE
+                .trace(e, 'webview.getVueParts(1)');
+        }
+    }
+
     return {
         script: SCRIPT,
-        style: STYLE,
+        style: styleAll,
         template: TEMPLATE,
     };
 }
