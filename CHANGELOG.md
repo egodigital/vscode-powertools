@@ -1,6 +1,6 @@
 # Change Log (vscode-powertools)
 
-## 0.56.1 (January 27nd, 2020; SCSS support)
+## 0.56.2 (January 27th, 2020; SCSS support)
 
 * Vue based [apps](https://github.com/egodigital/vscode-powertools/wiki/Vue%20%2F%20Vuetify) now support [SCSS](https://www.npmjs.com/package/sass) styles
 
