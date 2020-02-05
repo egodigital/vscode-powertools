@@ -12,3 +12,4 @@ img/**
 **/*.ts
 publish.js
 syncPackageJSON.js
+.github/**

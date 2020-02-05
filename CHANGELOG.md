@@ -1,5 +1,12 @@
 # Change Log (vscode-powertools)
 
+## 0.57.0 (February 5th, 2020; npm update)
+
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [clean-css](https://www.npmjs.com/package/clean-css) `^4.2.3`
+  * [coffeescript](https://www.npmjs.com/package/coffeescript) `^2.5.1`
+  * [uglify-js](https://www.npmjs.com/package/uglify-js) `^3.7.7`
+
 ## 0.56.2 (January 27th, 2020; SCSS support)
 
 * Vue based [apps](https://github.com/egodigital/vscode-powertools/wiki/Vue%20%2F%20Vuetify) now support [SCSS](https://www.npmjs.com/package/sass) styles
