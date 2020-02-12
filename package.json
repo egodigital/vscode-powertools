@@ -3,9 +3,9 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.57.0",
+    "version": "0.58.0",
     "engines": {
-        "vscode": "^1.41.0"
+        "vscode": "^1.42.0"
     },
     "categories": [
         "Azure",
@@ -2216,7 +2216,7 @@
         "is-stream": "^1.1.0",
         "js-beautify": "^1.10.3",
         "js-yaml": "^3.13.1",
-        "less": "^3.10.3",
+        "less": "^3.11.1",
         "lodash": "^4.17.15",
         "markdown-escapes": "^1.0.4",
         "mime-types": "^2.1.26",

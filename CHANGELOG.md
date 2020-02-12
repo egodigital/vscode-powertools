@@ -1,5 +1,11 @@
 # Change Log (vscode-powertools)
 
+## 0.58.0 (February 12th, 2020; Visual Studio Code 1.42)
+
+* extension requires at least [Visual Studio Code 1.42](https://code.visualstudio.com/updates/v1_42) now
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [less](https://www.npmjs.com/package/less) `^3.11.1`
+
 ## 0.57.0 (February 5th, 2020; npm update)
 
 * updated the following [npm](https://www.npmjs.com/) modules:
