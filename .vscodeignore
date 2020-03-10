@@ -7,9 +7,9 @@ img/**
 .gitattributes
 .gitignore
 **/tsconfig.json
-**/tslint.json
 **/*.map
 **/*.ts
 publish.js
 syncPackageJSON.js
 .github/**
+.DS_Store
