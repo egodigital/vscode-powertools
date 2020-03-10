@@ -1,5 +1,14 @@
 # Change Log (vscode-powertools)
 
+## 0.59.0 (February 12th, 2020; Visual Studio Code 1.43)
+
+* extension requires at least [Visual Studio Code 1.43](https://code.visualstudio.com/updates/v1_43) now
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.8.8`
+  * [moment-timezone](https://www.npmjs.com/package/moment-timezone) `^0.5.28`
+  * [sass](https://www.npmjs.com/package/sass) `^1.26.2`
+  * [uglify-js](https://www.npmjs.com/package/uglify-js) `^3.8.0`
+
 ## 0.58.0 (February 12th, 2020; Visual Studio Code 1.42)
 
 * extension requires at least [Visual Studio Code 1.42](https://code.visualstudio.com/updates/v1_42) now
