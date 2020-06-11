@@ -331,9 +331,9 @@ ${FOOTER}`;
                 path.join(R.fsPath, p)
             );
 
-            u = vscode.Uri.file(PATH_TO_CHECK).with({
-                scheme: 'vscode-resource'
-            });
+            u = this.view.asWebviewUri(
+                vscode.Uri.file(PATH_TO_CHECK)
+            );
 
             try {
                 if (ego_helpers.isFileSync(PATH_TO_CHECK, false)) {
