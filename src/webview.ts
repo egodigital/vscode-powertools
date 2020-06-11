@@ -331,9 +331,15 @@ ${FOOTER}`;
                 path.join(R.fsPath, p)
             );
 
+            /* does currently not work: 'Cannot read property 'createKey' of undefined.'
             u = this.view.asWebviewUri(
                 vscode.Uri.file(PATH_TO_CHECK)
             );
+            */
+
+            u = vscode.Uri.file(PATH_TO_CHECK).with({
+                scheme: 'vscode-resource'
+            });
 
             try {
                 if (ego_helpers.isFileSync(PATH_TO_CHECK, false)) {

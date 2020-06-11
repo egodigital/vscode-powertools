@@ -1,9 +1,8 @@
 # Change Log (vscode-powertools)
 
-## 0.60.0 (June 11th, 2020; Visual Studio Code 1.46)
+## 0.60.1 (June 11th, 2020; Visual Studio Code 1.46)
 
 * extension requires at least [Visual Studio Code 1.46](https://code.visualstudio.com/updates/v1_46) now
-* fix [issue #37 - Adopt VS Code's 'asWebviewUri' API](https://github.com/egodigital/vscode-powertools/issues/37) opened by [Matt Bierner](https://github.com/mjbvz)
 * updated the following [npm](https://www.npmjs.com/) modules:
   * [@mapbox/polyline](https://www.npmjs.com/package/@mapbox/polyline) `^1.1.1`
   * [csv-parse](https://www.npmjs.com/package/csv-parse) `^4.10.1`
