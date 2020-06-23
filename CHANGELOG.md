@@ -1,5 +1,13 @@
 # Change Log (vscode-powertools)
 
+## 0.61.0 (June 23rd, 2020; React support for apps)
+
+* add [React](https://reactjs.org/) support for [apps](https://github.com/egodigital/vscode-powertools/wiki/Apps)
+* updated the following [npm](https://www.npmjs.com/) modules:
+  * [moment](https://www.npmjs.com/package/moment) `^2.27.0`
+  * [sass](https://www.npmjs.com/package/sass) `^1.26.9`
+  * [uglify-js](https://www.npmjs.com/package/uglify-js) `^3.10.0`
+
 ## 0.60.1 (June 11th, 2020; Visual Studio Code 1.46)
 
 * extension requires at least [Visual Studio Code 1.46](https://code.visualstudio.com/updates/v1_46) now

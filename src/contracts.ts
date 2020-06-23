@@ -211,6 +211,10 @@ export interface AppItem extends CanImportValues, Conditional, ForPlatforms, Wit
      */
     name?: string;
     /**
+     * Use React.js (Material UI) instead of Bootstrap or not.
+     */
+    react?: boolean;
+    /**
      * Use Vue (Vuetify) instead of Bootstrap or not.
      */
     vue?: boolean;
@@ -333,6 +337,10 @@ export interface AppPackageJSON {
      * Options for the script.
      */
     options?: { [key: string]: any };
+    /**
+     * Use React.js instead of Bootstrap or not.
+     */
+    react?: boolean;
     /**
      * The version number.
      */

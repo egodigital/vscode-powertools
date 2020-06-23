@@ -3,7 +3,7 @@
     "publisher": "ego-digital",
     "displayName": "Power Tools",
     "description": "A set of useful and handy tools for Visual Studio Code.",
-    "version": "0.60.1",
+    "version": "0.61.0",
     "engines": {
         "vscode": "^1.46.0"
     },
@@ -168,6 +168,11 @@
                                                     ],
                                                     "type": "string"
                                                 }
+                                            },
+                                            "react": {
+                                                "description": "Use React.js (Material UI) instead of Bootstrap or not.",
+                                                "type": "boolean",
+                                                "default": false
                                             },
                                             "script": {
                                                 "description": "The path to the app script.",
@@ -2154,7 +2159,7 @@
         "@types/is-stream": "^1.1.0",
         "@types/js-beautify": "^1.11.0",
         "@types/js-yaml": "^3.12.4",
-        "@types/lodash": "^4.14.155",
+        "@types/lodash": "^4.14.156",
         "@types/mime-types": "^2.1.0",
         "@types/mocha": "^2.2.42",
         "@types/moment-timezone": "^0.5.13",
@@ -2173,7 +2178,7 @@
         "tslint": "^6.1.2",
         "typedoc": "^0.17.7",
         "typescript": "^3.9.5",
-        "vsce": "^1.76.1",
+        "vsce": "^1.77.0",
         "vscode": "^1.1.37"
     },
     "author": "e.GO Digital GmbH, Aachen, Germany",
@@ -2220,7 +2225,7 @@
         "lodash": "^4.17.15",
         "markdown-escapes": "^1.0.4",
         "mime-types": "^2.1.27",
-        "moment": "^2.26.0",
+        "moment": "^2.27.0",
         "moment-timezone": "^0.5.31",
         "node-emoji": "^1.10.0",
         "node-zip": "^1.1.1",
@@ -2228,10 +2233,10 @@
         "public-ip": "^3.2.0",
         "pug": "^2.0.4",
         "sanitize-filename": "^1.6.3",
-        "sass": "^1.26.8",
+        "sass": "^1.26.9",
         "tmp": "0.0.33",
         "toml": "^3.0.0",
-        "uglify-js": "^3.9.4",
+        "uglify-js": "^3.10.0",
         "uuid": "^3.4.0",
         "vscode-helpers": "^6.0.0",
         "vue-parser": "^1.1.6",

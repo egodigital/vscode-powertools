@@ -675,7 +675,27 @@ export class AppWebView extends AppWebViewBase {
         }
 
         if (packageJSON) {
-            if (ego_helpers.toBooleanSafe(packageJSON.vue)) {
+            if ([
+                packageJSON.react,
+                packageJSON.vue
+            ].filter(f => !!f).length > 1) {
+                // only a single technology can be selected
+
+                throw new Error('You can only choose a single web technology for the app!');
+            }
+
+            if (ego_helpers.toBooleanSafe(packageJSON.react)) {
+                // React
+
+                app = new AppWebViewWithReact(
+                    extension,
+                    output,
+                    scriptFile,
+                    withState,
+                );
+            } else if (ego_helpers.toBooleanSafe(packageJSON.vue)) {
+                // Vue
+
                 app = new AppWebViewWithVue(
                     extension,
                     output,
@@ -752,6 +772,107 @@ export class AppWebView extends AppWebViewBase {
      */
     public get packageJSON(): ego_contracts.AppPackageJSON {
         return this._packageJSON;
+    }
+}
+
+/**
+ * A web view for an app based on React.
+ */
+export class AppWebViewWithReact extends AppWebView {
+    /**
+     * @inheritdoc
+     */
+    protected generateHtml(): string {
+        // TODO: replace with React
+        const PARTS = ego_webview.getVueParts(
+            this.generateHtmlBody()
+        );
+
+        const HEADER = this.generateHtmlHeader();
+        const FOOTER = this.generateHtmlFooter();
+
+        return `${HEADER}
+
+${PARTS.template}
+
+${FOOTER}
+`;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected generateHtmlBody(): string {
+        // TODO: replace with React
+
+        const ARGS = this.createScriptArguments('get.html');
+
+        let vue: string;
+
+        const FUNC = this.getEventFunction(m => m.getHtml);
+        if (FUNC) {
+            vue = FUNC(ARGS);
+        }
+
+        return ego_helpers.toStringSafe(
+            vue
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected generateHtmlFooter(): string {
+        // TODO: replace with React
+
+        const PARTS = ego_webview.getVueParts(
+            this.generateHtmlBody()
+        );
+
+        return ego_webview.getVueFooter({
+            extra: `
+<style>
+
+${PARTS.style}
+
+</style>
+
+<script>
+
+${PARTS.script}
+
+</script>
+`,
+            scripts: {
+                app: `${this.getFileResourceUri('js/app.vuetify.js')}`,
+                deepmerge: `${this.getFileResourceUri('js/deepmerge.js')}`,
+                vue: `${this.getFileResourceUri('js/vue.js')}`,
+                vuetify: `${this.getFileResourceUri('js/vuetify.js')}`,
+            },
+        });
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected generateHtmlHeader(): string {
+        // TODO: replace with React
+
+        return ego_webview.getVueHeader({
+            fonts: {
+                fa5: `${this.getFileResourceUri('css/font-awesome-5.css')}`,
+                materialIcons: `${this.getFileResourceUri('css/materialdesignicons.css')}`,
+                roboto: `${this.getFileResourceUri('css/roboto.css')}`,
+            },
+            images: {
+                logo: `${this.getFileResourceUri('img/ego_digital.png')}`,
+            },
+            styles: {
+                app: `${this.getFileResourceUri('css/app.vuetify.css')}`,
+                vuetify: `${this.getFileResourceUri('css/vuetify.css')}`,
+            },
+            title: this.getTitle(),
+        });
     }
 }
 
