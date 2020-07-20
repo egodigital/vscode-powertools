@@ -1,5 +1,10 @@
 # Change Log (vscode-powertools)
 
+## 0.61.0 (July 20th, 2020; Visual Studio Code 1.47)
+
+* extension requires at least [Visual Studio Code 1.46](https://code.visualstudio.com/updates/v1_46) now
+* npm update
+
 ## 0.60.1 (June 11th, 2020; Visual Studio Code 1.46)
 
 * extension requires at least [Visual Studio Code 1.46](https://code.visualstudio.com/updates/v1_46) now
