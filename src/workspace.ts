@@ -33,7 +33,7 @@ import * as ego_workspaces_npm from './workspaces/npm';
 import * as ego_workspaces_startup from './workspaces/startup';
 import * as fsExtra from 'fs-extra';
 import * as path from 'path';
-import * as pQueue from 'p-queue';
+import pQueue from 'p-queue';
 import * as vscode from 'vscode';
 
 
@@ -60,7 +60,7 @@ export interface WorkspaceContext {
     /**
      * The underlying queue for handling concurrent actions between all workspaces.
      */
-    readonly queue: pQueue<pQueue.DefaultAddOptions>;
+    readonly queue: pQueue;
 }
 
 /**

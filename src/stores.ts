@@ -88,8 +88,8 @@ export abstract class StoreBase implements ego_contracts.Store {
      * @param {any} value The value to set.
      * @param {ego_contracts.BoxedValue<boolean>} succeeded Indicates if operation was successful or not.
      */
-    protected abstract async setValue(key: string, value: any,
-                                      succeeded: ego_contracts.BoxedValue<boolean>): Promise<void>;
+    protected abstract setValue(key: string, value: any,
+                                succeeded: ego_contracts.BoxedValue<boolean>): Promise<void>;
 }
 
 /**
