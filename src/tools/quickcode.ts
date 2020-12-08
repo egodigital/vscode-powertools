@@ -1340,6 +1340,23 @@ ${ $h.toStringSafe(DOCUMENT.getText()) }
         }
     );
 
+    // @ts-ignore
+    const $bcrypt = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (val: any, salt: any = 10) => {
+            return require('bcryptjs').hash(await $str(val), salt);
+        }
+    );
+
+    // @ts-ignore
+    const $bcryptcomp = asAsync_628dffd9c1e74e5cb82620a2c575e5dd(
+        async (val: any, hash: any) => {
+            return require('bcryptjs').compare(
+                await $str(val),
+                await $str(hash),
+            );
+        }
+    );
+
     // code to execute
     let _code_g93c97d35bd94b22b3041037bdc64780: string = $h.toStringSafe(_opts_f4eba53df3b74b7aa4e3a3228b528d78.code);
     if (!_code_g93c97d35bd94b22b3041037bdc64780.trim().startsWith('return ')) {
@@ -1469,6 +1486,8 @@ async function showHelp_579c52a1992b472183db2fff8c764504() {
         md += '`$asc(str)` | Handles a value as string and returns the ASCII (codes). | `$asc("T")`\n';
         md += '`$base64(val, enc?)` | Converts a value to a Base64 string. | `$base64("mkloubert:P@ssword123!", "ascii")`\n';
         md += '`$beautify` | Beautifies the code in the active editor and opens the result in a new one. | `$beautify`\n';
+        md += '`$bcrypt(val, saltOtRounds?)` | Handles a value as string and hashes with [bcrypt](https://en.wikipedia.org/wiki/Bcrypt). | `$bcrypt("MyP@ssword123!", 10)`\n';
+        md += '`$bcryptcomp(val, hash)` | Handles a value and a hash as strings and checks, with [bcrypt](https://en.wikipedia.org/wiki/Bcrypt), if they match. | `$bcryptcomp("MyP@ssword123!", "$2a$10$JemKONAF8YtWJR88jIh52O7a2011ntsCJCzUwMC.hMIbQb1jylLs.")`\n';
         md += '`$buff(val, enc?)` | Converts a value to a [Buffer](https://nodejs.org/api/buffer.html), if needed. | `$buff("TM")`\n';
         md += '`$cb(val?)` | Copyies a value to Clipboard or, if no argument is defined, its current (text) value will be returned. | `$cb("TM+MK")`\n';
         md += '`$cmd(id, ...args)` | Executes a [Visual Studio Code command](https://code.visualstudio.com/api/references/commands). | `$cmd("vscode.openFolder")`\n';
