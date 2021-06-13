@@ -1,6 +1,6 @@
 # Change Log (vscode-powertools)
 
-## 0.64.1 (June 13th, 2021; PLEASE UPDATE)
+## 0.64.2 (June 13th, 2021; PLEASE UPDATE)
 
 * that version of the extension is no longer supported! ... please backup, uninstall and change to [new location](https://marketplace.visualstudio.com/items?itemName=egomobile.vscode-powertools)
 
